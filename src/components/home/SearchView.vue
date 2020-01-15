@@ -37,8 +37,8 @@
       <div class="headTopMargin" v-if="currentContent=='search'">
         <el-tabs stretch v-model="activeName">
           <el-tab-pane label="综合" name="first">
-            <div ref="test" :class="['music-box',showOverFlow?'showOverFlow':'hideOverFlow']">
-              <ul>
+            <div class="music-box">
+              <ul ref="test">
                 <li class="disable text-black">
                   <div class="content">单曲</div>
                   <div class="icon">
@@ -65,6 +65,11 @@
                     </div>
                   </div>
                 </li>
+
+                <li
+                  style="display:flex; justify-content: center;align-items: center;height:2em;"
+                  v-if="isLoading"
+                >正在加载中</li>
               </ul>
             </div>
           </el-tab-pane>
@@ -147,47 +152,47 @@
     <!-- /联想栏 -->
 
     <!-- 内容栏 -->
-    <transition
+    <!-- <transition
       enter-active-class="animated slideInUp"
       leave-active-class="animated slideInDown"
       tag="div"
       class="history-tags"
       mode="out-in"
-    >
-      <div class="container headTopMargin" v-if="currentContent=='default'">
-        <!-- 搜索历史 -->
-        <div class="history-box">
-          <div class="history-head">
-            <h3>搜索历史</h3>
-            <div class="lcon-more" @click="clearHistory">
-              <img src="../../assets/images/garbage.png" />
-            </div>
+    >-->
+    <div class="container headTopMargin" v-if="currentContent=='default'">
+      <!-- 搜索历史 -->
+      <div class="history-box">
+        <div class="history-head">
+          <h3>搜索历史</h3>
+          <div class="lcon-more" @click="clearHistory">
+            <img src="../../assets/images/garbage.png" />
           </div>
-          <div class="content">
-            <div class="history-tags">
-              <transition-group
-                enter-active-class="animated bounceIn"
-                leave-active-class="animated bounceOut"
-                tag="div"
-                class="history-tags"
-              >
-                <div
-                  class="tag"
-                  v-for="item in historyTags"
-                  :key="item.id"
-                  @click="tagTouchHander(item.name)"
-                >{{item.name}}</div>
-              </transition-group>
+        </div>
+        <div class="content">
+          <div class="history-tags">
+            <transition-group
+              enter-active-class="animated bounceIn"
+              leave-active-class="animated bounceOut"
+              tag="div"
+              class="history-tags"
+            >
+              <div
+                class="tag"
+                v-for="item in historyTags"
+                :key="item.id"
+                @click="tagTouchHander(item.name)"
+              >{{item.name}}</div>
+            </transition-group>
 
-              <div class="topBar" @click="changeTagView" v-if="historyTags!=null&&showTagBar">
-                <img src="@/assets/images/top.png" :class="isShowTagBtn?'fff':'rrr'" />
-              </div>
+            <div class="topBar" @click="changeTagView" v-if="historyTags!=null&&showTagBar">
+              <img src="@/assets/images/top.png" :class="isShowTagBtn?'fff':'rrr'" />
             </div>
           </div>
         </div>
-        <!-- /搜索历史 -->
       </div>
-    </transition>
+      <!-- /搜索历史 -->
+    </div>
+    <!-- </transition> -->
 
     <!-- /内容栏 -->
   </div>
@@ -215,9 +220,9 @@ export default {
       flag: false, //点击历史/热门标签后为watch监听作判断
       searchResult: [], //搜索结果
       page: 1, //搜索结果页数
-      showOverFlow: false, //搜索结果的滚动条是否显示
       overFlowTimeout: null, //滚动条定时器
-      isLoading: false //是否正在刷新
+      isLoading: false, //是否正在刷新
+      moveHeight: 0 //滚动条滑动距离
     };
   },
   methods: {
@@ -227,7 +232,7 @@ export default {
     },
     //返回到主页
     back() {
-      this.currentContent = "default"
+      this.currentContent = "default";
       this.$router.back(-1);
       // this.$router.push("/?back=true");
     },
@@ -276,10 +281,13 @@ export default {
         this.historyTags.push(data);
         this.$util.localUtil("historyTags", this.historyTags);
       }
+      this.searchText = val;
       this.initHistoryData();
       //========
       //展开搜索页面
-      this.getSearchResult();
+      this.page = 1;
+      this.moveHeight = 0;
+      this.getSearchResult(val);
       this.currentContent = "search";
     },
     //标签的展开和关闭
@@ -357,7 +365,9 @@ export default {
       this.flag = true;
       this.currentContent = "search";
       this.searchText = val;
-      this.getSearchResult();
+      self.page = 1;
+      self.moveHeight = 0;
+      this.getSearchResult(val);
     },
     //清空历史搜索
     clearHistory() {
@@ -365,14 +375,17 @@ export default {
       return;
     },
     //获取搜索结果
-    async getSearchResult() {
+    async getSearchResult(val) {
       const self = this;
+      if (this.page == 1) {
+        this.searchResult = [];
+      }
       var result = await this.$axios
         .get("/searchMusicApi", {
           params: {
             p: self.page++, //页数
             n: 15, //每页数据数量
-            w: self.searchText,
+            w: val,
             format: "json"
           }
         })
@@ -381,6 +394,7 @@ export default {
         });
       if (result.status == 200) {
         var goalData = result.data.data.song.list;
+
         for (var item of goalData) {
           this.searchResult.push(item);
         }
@@ -389,34 +403,31 @@ export default {
     },
     /*  搜索结果滚动条改变事件
      *  上拉加载新的词条
-     *  无操作隐藏滚动条
+     *
      */
     handleScroll() {
       //非search页面不操作
       if (this.currentContent != "search") {
         return;
       }
+      if (this.$refs.test.scrollHeight == undefined) {
+        return;
+      }
       const self = this;
       var totalHeight = this.$refs.test.scrollHeight;
       var clientHeight = this.$refs.test.clientHeight;
       var moveHeight = this.$refs.test.scrollTop;
-
-      if (totalHeight - clientHeight - moveHeight < 80 && !this.isLoading) {
-        console.log("Refresh");
+      // console.log(totalHeight);
+      // console.log(clientHeight);
+      // console.log(moveHeight);
+      if (moveHeight + clientHeight >= totalHeight - 20 && !this.isLoading) {
         //   设置为正在加载中
         this.isLoading = true;
+        console.log("Refresh");
         setTimeout(() => {
-          this.getSearchResult();
+          this.getSearchResult(self.searchText);
         }, 200);
       }
-
-      self.showOverFlow = true;
-      window.clearTimeout(this.overFlowTimeout);
-      this.overFlowTimeout = null;
-      //滚动条定时器
-      this.overFlowTimeout = window.setTimeout(function() {
-        self.showOverFlow = false;
-      }, 1500);
     },
     //加载搜索下一页结果
     loadSearchResult() {}
@@ -449,7 +460,7 @@ export default {
     this.initHistoryData();
   },
   mounted() {
-      window.addEventListener("scroll", this.handleScroll, true);
+    window.addEventListener("scroll", this.handleScroll, true);
   }
 };
 </script>
@@ -795,8 +806,8 @@ export default {
 
 ::-webkit-scrollbar {
   /*滚动条整体样式*/
-  width: 3px; /*高宽分别对应横竖滚动条的尺寸*/
-  height: 1px;
+  // width: 3px; /*高宽分别对应横竖滚动条的尺寸*/
+  // height: 1px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -817,14 +828,15 @@ export default {
 }
 .music-box {
   box-sizing: border-box;
-  height: 700px;
-  overflow-y: auto;
-  overflow-x: hidden; //设置Y轴出现滚动条，X轴隐藏
-  overflow-y: overlay;
+
   ul {
     width: 100%;
     padding: 0;
     margin: 0;
+    overflow-y: auto;
+    overflow-x: hidden; //设置Y轴出现滚动条，X轴隐藏
+    overflow-y: overlay;
+    max-height: 700px;
 
     .disable {
       font-size: 15px;

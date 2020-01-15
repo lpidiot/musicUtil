@@ -9,9 +9,14 @@
         <div>丸之内虐待狂</div>
         <div>更多</div>
       </div>
+      <div class="around-box">
+        <div class="around1">
+          <div class="around2"></div>
+        </div>
+      </div>
+
       <div class="player-content">
         <div :class="['bracket',isStop?'rotate':'']">
-          <!-- <img src="@/assets/images/nrJyJP.png" /> -->
         </div>
         <div :class="['msk','animation',isStop?'stop':'running']">
           <img
@@ -133,7 +138,7 @@ export default {
     .bracket {
       position: absolute;
       z-index: 1;
-      left: 55%;
+      left: 54.2%;
       top: 50px;
       -webkit-transform-origin: top left;
       transform-origin: top left;
@@ -146,7 +151,7 @@ export default {
       width: 2rem;
       height: 0;
       padding-bottom: 2.5rem;
-      background-image: url(https://s3.music.126.net/mobile-new/img/needle-ip6.png?be4ebbeb6befadfcae75ce174e7db862=);
+      background-image: url('../../assets/images/nrJyJP.png');
       background-size: 100% 100%;
       background-repeat: no-repeat;
       transition: all 0.6s ease;
@@ -155,34 +160,55 @@ export default {
       transform: translate(-40%) rotate(-16deg);
       transition: all 0.6s ease;
     }
-    // .msk {
-    //   position: absolute;
-    //   height: 100vh;
-    //   background: url(https://s2.music.126.net/style/web2/img/coverall.png?de57f1fd876defc937c110aeb0ed6a17)
-    //     no-repeat;
-    //   width: 206px;
-    //   height: 205px;
-    //   top: -4px;
-    //   left: -4px;
-    //   background-position: -140px -580px;
-    //   border-radius: 50%;
-    // }
+
     .msk {
       position: absolute;
-      top: 93px;
-      background: url(https://s3.music.126.net/mobile-new/img/disc-ip6.png?69796123ad7cfe95781ea38aac8f2d48=)
+      top: 98px;
+      background: url('../../assets/images/bol.png')
         no-repeat;
       background-size: cover;
       box-sizing: border-box;
       width: 200px;
       height: 200px;
+      padding: 0;
       .cover {
-        width: 130px;
-        height: 130px;
+        width: 132px;
+        height: 132px;
         margin: 34px;
         border-radius: 50%;
       }
     }
   }
+}
+
+.around-box {
+  background-color: rgba(255, 255, 255, 0.2);
+  margin: 0 auto;
+  width: 13px;
+  height: 13px;
+  position: relative;
+  top: 20px;
+  border-radius: 50%;
+  padding: 1%;
+  z-index: 99;
+}
+
+.around1 {
+  width: 97%;
+  height: 97%;
+  background-color: #fff;
+  border-radius: 50%;
+  padding: 1.5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // background: linear-gradient(#101012, #272729, #101012);
+}
+.around2 {
+  width: 40%;
+  height: 40%;
+  background-color: #dedede;
+  z-index: 99;
+  border-radius: 50%;
 }
 </style>
