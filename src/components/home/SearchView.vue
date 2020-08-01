@@ -28,12 +28,12 @@
     <!-- /head栏 -->
 
     <!-- 搜索结果栏 -->
-    <transition
+    <!-- <transition
       enter-active-class="animated fadeInUp"
       leave-active-class="animated fadeOutDown"
       tag="div"
       mode="out-in"
-    >
+    > -->
       <div class="headTopMargin" v-if="currentContent=='search'">
         <el-tabs stretch v-model="activeName">
           <el-tab-pane label="综合" name="first">
@@ -79,7 +79,7 @@
           <el-tab-pane label="歌词" name="fifth">eee</el-tab-pane>
         </el-tabs>
       </div>
-    </transition>
+    <!-- </transition> -->
     <!-- /搜索结果栏 -->
     <!-- </div> -->
 
@@ -96,6 +96,7 @@
         <li
           v-if="goalHistory.length==0&&thinks.song.length==0&&thinks.singer.length==0&&thinks.album.length==0"
         >没有找到该词条哦TAT</li>
+        <!-- 后续加上loading加载提示 -->
         <li class="disable" v-if="goalHistory.length>0">
           <div class="icon">
             <img src="@/assets/images/history.png" alt />
@@ -256,13 +257,21 @@ export default {
     },
     //展开搜索内容详细
     openSearchDetail(val) {
-      //先添加搜索历史
-
-      //为obj就是从keyup
+     //为obj就是从keyup
       if (typeof val == "object") {
         val = this.searchText.trim();
       }
+      //this.searchText = val;
+      //this.initHistoryData();
+      //========
+      //展开搜索页面
+      this.page = 0;
+      this.moveHeight = 0;
+      this.currentContent = "search";
+      this.getSearchResult(val);
 
+      //添加搜索历史
+     
       //排除已经存在的一致的标签 用flag来记录
       var tagData = this.$util.localUtil("historyTags");
       var flag = true;
@@ -272,27 +281,19 @@ export default {
           break;
         }
       }
-
       if (flag) {
         var data = {
           id: this.$util.createUuid(8, 10),
           name: val
         };
-        this.historyTags.push(data);
-        this.$util.localUtil("historyTags", this.historyTags);
+        tagData.push(data);
+        this.$util.localUtil("historyTags", tagData);
       }
-      this.searchText = val;
-      this.initHistoryData();
-      //========
-      //展开搜索页面
-      this.page = 1;
-      this.moveHeight = 0;
-      this.getSearchResult(val);
-      this.currentContent = "search";
+
     },
     //标签的展开和关闭
     changeTagView() {
-      var historyTags = this.historyTags;
+      var historyTags = this.$util.localUtil("historyTags");
       var tagNum = 0;
       var totalSongLength = 0;
       for (var tag of historyTags) {
@@ -365,7 +366,7 @@ export default {
       this.flag = true;
       this.currentContent = "search";
       this.searchText = val;
-      self.page = 1;
+      self.page = 0;
       self.moveHeight = 0;
       this.getSearchResult(val);
     },
@@ -377,7 +378,7 @@ export default {
     //获取搜索结果
     async getSearchResult(val) {
       const self = this;
-      if (this.page == 1) {
+      if (this.page == 0) {
         this.searchResult = [];
       }
       var result = await this.$axios
