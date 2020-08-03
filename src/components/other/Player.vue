@@ -4,10 +4,17 @@
     :style="[{'background-image':'url(https://qpic.y.qq.com/music_cover/Z89aLA93LOSOicz0QOnMbonRk9ySaEU2phYUYiajyZxCBvgOZrSPDswg/300?n=1)'}]"
   >
     <div class="player-container" @click="changePlay">
-      <div class="player-head">
-        <div>返回</div>
-        <div>丸之内虐待狂</div>
-        <div>更多</div>
+      <div class="player-head-wyy">
+        <div class="head-wyy-btn">
+          <img src="@/assets/images/back.png" alt />
+        </div>
+        <div class="head-wyy-title">
+          丸之内虐待狂
+          <div class="head-wyy-title-subtit">zhuangji</div>
+        </div>
+        <div class="head-wyy-btn">
+          <img src="@/assets/images/share.png" alt />
+        </div>
       </div>
       <div class="around-box">
         <div class="around1">
@@ -16,36 +23,44 @@
       </div>
 
       <div class="player-content">
-        <div :class="['bracket',isStop?'rotate':'']">
-        </div>
-        <div :class="['msk','animation',isStop?'stop':'running']">
-          <img
-            class="cover"
-            src="http://p1.music.126.net/Nagysgn-c_pyLwHSTsFtXQ==/109951164514817375.jpg?param=130y130"
-          />
+        <div :class="['bracket',isStop?'rotate':'']"></div>
+        <div class="whiteRound">
+          <div :class="['msk','animation',isStop?'stop':'running']">
+            <img
+              class="cover"
+              src="http://p1.music.126.net/Nagysgn-c_pyLwHSTsFtXQ==/109951164514817375.jpg?param=130y130"
+            />
+          </div>
         </div>
       </div>
-      <div class="toolbar-box">
-        <div class="bar">
-          <img src />
-        </div>
+
+      <div class="control-box">
+         <VueAudio :theUrl="audioUrl" theControlList="noDownload noSpeed onlyOnePlaying" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import VueAudio from "../other/VueAudio";
 export default {
+  components: {
+     VueAudio,
+  },
   data() {
     return {
-      isStop: false
+      isStop: false,
+      audioUrl: require("../../assets/music/aaa.mp3"),
     };
   },
   methods: {
     changePlay() {
       this.isStop = !this.isStop;
+    },
+    play(){
+     this.$refs.audio.startPlayOrPause();
     }
-  }
+  },
 };
 </script>
 
@@ -122,14 +137,40 @@ export default {
   transition: 0.5s ease;
   display: flex;
   flex-direction: column;
-  .player-head {
+  padding: 0 10px;
+  box-sizing: border-box;
+  .player-head-wyy {
     width: 100%;
+    height: 50px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    .head-wyy-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      img {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .head-wyy-title {
+      color: white;
+      font-size: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .head-wyy-title-subtit {
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+    }
   }
   .player-content {
-    height: 500px;
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -139,7 +180,7 @@ export default {
       position: absolute;
       z-index: 1;
       left: 54.2%;
-      top: 50px;
+      top: 67px;
       -webkit-transform-origin: top left;
       transform-origin: top left;
       -webkit-transform: translate(-40%) rotate(0deg);
@@ -151,7 +192,7 @@ export default {
       width: 2rem;
       height: 0;
       padding-bottom: 2.5rem;
-      background-image: url('../../assets/images/nrJyJP.png');
+      background-image: url("../../assets/images/nrJyJP.png");
       background-size: 100% 100%;
       background-repeat: no-repeat;
       transition: all 0.6s ease;
@@ -161,54 +202,75 @@ export default {
       transition: all 0.6s ease;
     }
 
-    .msk {
+    .whiteRound {
       position: absolute;
-      top: 98px;
-      background: url('../../assets/images/bol.png')
-        no-repeat;
-      background-size: cover;
-      box-sizing: border-box;
+      top: 110px;
       width: 200px;
       height: 200px;
-      padding: 0;
-      .cover {
-        width: 132px;
-        height: 132px;
-        margin: 34px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      padding: 1.5%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .msk {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        background: url("../../assets/images/bol.png") no-repeat;
+        background-size: cover;
+        box-sizing: border-box;
+        padding: 0;
+        .cover {
+          width: 132px;
+          height: 132px;
+          margin: 34px;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+  .around-box {
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 0 auto;
+    width: 13px;
+    height: 13px;
+    position: relative;
+    border-radius: 50%;
+    padding: 1%;
+    z-index: 99;
+    .around1 {
+      width: 97%;
+      height: 97%;
+      background-color: #fff;
+      border-radius: 50%;
+      padding: 1.5%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      // background: linear-gradient(#101012, #272729, #101012);
+      .around2 {
+        width: 40%;
+        height: 40%;
+        background-color: #dedede;
+        z-index: 99;
         border-radius: 50%;
       }
     }
   }
-}
 
-.around-box {
-  background-color: rgba(255, 255, 255, 0.2);
-  margin: 0 auto;
-  width: 13px;
-  height: 13px;
-  position: relative;
-  top: 20px;
-  border-radius: 50%;
-  padding: 1%;
-  z-index: 99;
-}
+  .control-box {
+    width: calc(100% - 20px);
+    display: flex;
+    align-items: center;
+    position: absolute;
+    bottom: 10px;
+    justify-items: center;
+    box-sizing: border-box;
+    flex-direction: row;
 
-.around1 {
-  width: 97%;
-  height: 97%;
-  background-color: #fff;
-  border-radius: 50%;
-  padding: 1.5%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  // background: linear-gradient(#101012, #272729, #101012);
-}
-.around2 {
-  width: 40%;
-  height: 40%;
-  background-color: #dedede;
-  z-index: 99;
-  border-radius: 50%;
+  }
 }
 </style>

@@ -34,9 +34,9 @@ const routes = [{
   {
     path: '/songListDetail/:id',
     component: SongListDetail
-  },{
-    path:'/player',
-    component:Player
+  }, {
+    path: '/player',
+    component: Player
   }
 ]
 
