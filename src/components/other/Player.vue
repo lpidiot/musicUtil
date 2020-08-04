@@ -3,14 +3,14 @@
     class="backgroundBox"
     :style="[{'background-image':'url(https://qpic.y.qq.com/music_cover/Z89aLA93LOSOicz0QOnMbonRk9ySaEU2phYUYiajyZxCBvgOZrSPDswg/300?n=1)'}]"
   >
-    <div class="player-container" @click="changePlay">
+    <div :class="hg">
       <div class="player-head-wyy">
         <div class="head-wyy-btn">
           <img src="@/assets/images/back.png" alt />
         </div>
         <div class="head-wyy-title">
-          丸之内虐待狂
-          <div class="head-wyy-title-subtit">zhuangji</div>
+          song
+          <div class="head-wyy-title-subtit">Album</div>
         </div>
         <div class="head-wyy-btn">
           <img src="@/assets/images/share.png" alt />
@@ -23,9 +23,9 @@
       </div>
 
       <div class="player-content">
-        <div :class="['bracket',isStop?'rotate':'']"></div>
+        <div :class="['bracket',isPlaying?'':'rotate']"></div>
         <div class="whiteRound">
-          <div :class="['msk','animation',isStop?'stop':'running']">
+          <div :class="['msk','animation',isPlaying?'running':'stop']">
             <img
               class="cover"
               src="http://p1.music.126.net/Nagysgn-c_pyLwHSTsFtXQ==/109951164514817375.jpg?param=130y130"
@@ -35,7 +35,41 @@
       </div>
 
       <div class="control-box">
-         <VueAudio :theUrl="audioUrl" theControlList="noDownload noSpeed onlyOnePlaying" />
+        <VueAudio
+          ref="audio"
+          :theUrl="audioUrl"
+          theControlList="noDownload noSpeed onlyOnePlaying"
+        />
+        <div class="toolbar-box">
+          <!-- <div class="toolbar">
+            <img src="@/assets/images/stop.png" alt />
+          </div>-->
+          <div class="toolbar">
+            <img src="@/assets/images/circle.png" style=" width: 25px;
+          height: 25px;" alt />
+          </div>
+          <div class="toolbar">
+            <img src="@/assets/images/prev.png" style=" width: 25px;
+          height: 25px;" alt />
+          </div>
+
+          <div v-if="isPlaying" class="toolbar" @click="play()">
+            <img src="@/assets/images/stop.png" alt />
+          </div>
+          <div v-else class="toolbar" @click="play()">
+            <img src="@/assets/images/c_play.png" alt />
+          </div>
+
+          <div class="toolbar">
+            <img src="@/assets/images/next.png" style=" width: 25px;
+          height: 25px;" alt />
+          </div>
+
+          <div class="toolbar">
+            <img src="@/assets/images/menu.png" style=" width: 25px;
+          height: 25px;" alt />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -45,21 +79,32 @@
 import VueAudio from "../other/VueAudio";
 export default {
   components: {
-     VueAudio,
+    VueAudio,
   },
   data() {
     return {
-      isStop: false,
+      isPlaying: false,
       audioUrl: require("../../assets/music/aaa.mp3"),
     };
   },
   methods: {
-    changePlay() {
-      this.isStop = !this.isStop;
+    play() {
+      this.isPlaying = !this.isPlaying;
+      this.$refs.audio.startPlayOrPause();
     },
-    play(){
-     this.$refs.audio.startPlayOrPause();
-    }
+  },
+  computed: {
+    hg() {
+      var s = ["player-container"];
+      if (
+        /Safari/.test(navigator.userAgent) &&
+        !/Chrome/.test(navigator.userAgent)
+      ) {
+        localStorage.setItem("isSafari", 1);
+        return ["player-container", "safariheight"];
+      }
+      return ["player-container"];
+    },
   },
 };
 </script>
@@ -128,11 +173,11 @@ export default {
   background-size: cover;
   box-sizing: border-box;
   width: 100%;
-  height: 100vh;
 }
 .player-container {
   width: 100%;
   height: 100vh;
+  -webkit-backdrop-filter: blur(45px);
   backdrop-filter: blur(45px);
   transition: 0.5s ease;
   display: flex;
@@ -145,6 +190,7 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    padding: 15px 0;
     .head-wyy-btn {
       display: flex;
       justify-content: center;
@@ -179,8 +225,8 @@ export default {
     .bracket {
       position: absolute;
       z-index: 1;
-      left: 54.2%;
-      top: 67px;
+      left: calc(50% + 16px);
+      top: 97px;
       -webkit-transform-origin: top left;
       transform-origin: top left;
       -webkit-transform: translate(-40%) rotate(0deg);
@@ -204,9 +250,9 @@ export default {
 
     .whiteRound {
       position: absolute;
-      top: 110px;
-      width: 200px;
-      height: 200px;
+      top: 145px;
+      width: 270px;
+      height: 270px;
       background-color: rgba(255, 255, 255, 0.2);
       border-radius: 50%;
       padding: 1.5%;
@@ -224,9 +270,9 @@ export default {
         box-sizing: border-box;
         padding: 0;
         .cover {
-          width: 132px;
-          height: 132px;
-          margin: 34px;
+          width: 172px;
+          height: 172px;
+          margin: 48px;
           border-radius: 50%;
         }
       }
@@ -266,11 +312,46 @@ export default {
     display: flex;
     align-items: center;
     position: absolute;
-    bottom: 10px;
-    justify-items: center;
+    bottom: 30px;
     box-sizing: border-box;
-    flex-direction: row;
+    flex-direction: column;
 
+    .toolbar-box {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 5px 0;
+      .toolbar {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        img {
+          width: 50px;
+          height: 50px;
+        }
+      }
+    }
   }
+}
+</style>
+<style>
+.el-slider__button {
+  border: none !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+.el-slider__runway {
+  height: 1.5px !important;
+  background-color: #b2babb !important;
+}
+.el-slider__button-wrapper {
+  top: -0.43rem !important;
+}
+.el-slider__bar {
+  height: 1.5px !important;
+  background-color: #eee !important;
 }
 </style>

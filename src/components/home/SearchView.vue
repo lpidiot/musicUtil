@@ -418,6 +418,7 @@ export default {
       var totalHeight = this.$refs.test.scrollHeight;
       var clientHeight = this.$refs.test.clientHeight;
       var moveHeight = this.$refs.test.scrollTop;
+      //window.scroll(0,30);
       // console.log(totalHeight);
       // console.log(clientHeight);
       // console.log(moveHeight);
@@ -518,6 +519,7 @@ export default {
   top: 0px;
   padding: 0 10px;
   box-sizing: border-box;
+  z-index: 999;
   // border-bottom: 1px solid #e4e7ed;
   // box-shadow: 0 1px 2px #e4e7ed;
   width: 100%;
@@ -533,7 +535,7 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 60px;
+    height: 50px;
     .bar {
       width: 28px;
       height: 28px;
@@ -675,7 +677,7 @@ export default {
 /* /联想栏 */
 // 距离head栏的宽度
 .headTopMargin {
-  margin-top: 70px;
+  margin-top: 54px;
 }
 
 /* 历史栏 */
@@ -838,7 +840,7 @@ export default {
     overflow-x: hidden; //设置Y轴出现滚动条，X轴隐藏
     overflow-y: overlay;
     max-height: 700px;
-
+    padding-bottom: 100px;;
     .disable {
       font-size: 15px;
       font-weight: 600;

@@ -5,36 +5,21 @@
 </template>
 
 <script>
-window.onload = function() {
-  var lastTouchEnd = 0;
-  document.addEventListener("touchstart", function(event) {
-    if (event.touches.length > 1) {
-      event.preventDefault();
-    }
-  });
-  document.addEventListener(
-    "touchend",
-    function(event) {
-      var now = new Date().getTime();
-      if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-      }
-      lastTouchEnd = now;
-    },
-    false
-  );
-  document.addEventListener("gesturestart", function(event) {
-    event.preventDefault();
-  });
-  document.addEventListener("dblclick", function(event) {
-    event.preventDefault();
-  });
-};
+
 export default {
   data() {
     return {};
   },
-  methods: {}
+  methods: {},
+  // created(){
+  //   var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+  //   if (userAgent.indexOf("Safari") > -1) {//判断是否Safari浏览器
+  //   alert('Safari');
+  //       return "Safari";
+  //   } else{
+  //     alert('sss');
+  //   }
+  // }
 };
 </script>
 

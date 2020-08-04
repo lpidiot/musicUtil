@@ -50,7 +50,7 @@ function realFormatSecond(second) {
     var mimute = Math.floor(second / 60);
     second = second - mimute * 60;
     return (
-      hours + ":" + ("0" + mimute).slice(-2) + ":" + ("0" + second).slice(-2)
+       ("0" + mimute).slice(-2) + ":" + ("0" + second).slice(-2)
     );
   } else {
     return "0:00:00";
@@ -101,6 +101,9 @@ export default {
     };
   },
   methods: {
+    isPlaying(){
+      return this.audio.playing;
+    },
     setControlList() {
       let controlList = this.theControlList.split(" ");
       controlList.forEach((item) => {
@@ -247,5 +250,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  color: #B2BABB;
 }
 </style>

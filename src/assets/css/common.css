@@ -6,15 +6,17 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: none;
-    position: relative;
     width: 100%;
-    height: 100%;
+    height:100%;
     margin: 0;
     padding: 0;
     color: #34495e;
     font-size: 14px;
     line-height: 1.5;
     overflow: hidden;
+}
+.safariheight{
+    height: calc(100vh - 75px);
 }
 
 .el-tabs__nav-scroll {
