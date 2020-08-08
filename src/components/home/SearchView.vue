@@ -33,52 +33,52 @@
       leave-active-class="animated fadeOutDown"
       tag="div"
       mode="out-in"
-    > -->
-      <div class="headTopMargin" v-if="currentContent=='search'">
-        <el-tabs stretch v-model="activeName">
-          <el-tab-pane label="综合" name="first">
-            <div class="music-box">
-              <ul ref="test">
-                <li class="disable text-black">
-                  <div class="content">单曲</div>
-                  <div class="icon">
-                    <img src="@/assets/images/play_blue_32.png" alt />
-                  </div>
-                </li>
+    >-->
+    <div class="headTopMargin" v-if="currentContent=='search'">
+      <el-tabs stretch v-model="activeName">
+        <el-tab-pane label="综合" name="first">
+          <div class="music-box">
+            <ul ref="test">
+              <li class="disable text-black">
+                <div class="content">单曲</div>
+                <div class="icon">
+                  <img src="@/assets/images/play_blue_32.png" alt />
+                </div>
+              </li>
 
-                <li v-for="song in searchResult" :key="song.songid">
-                  <div class="musicInfo">
-                    <div class="musicName">{{song.songname}}</div>
-                    <div class="subName">
-                      <div class="subName-icon">
-                        <img src="@/assets/images/play_operation.png" />
-                      </div>
-                      <div class="subName-content">{{song.singer[0].name}}</div>
+              <li v-for="song in searchResult" :key="song.songid">
+                <div class="musicInfo">
+                  <div class="musicName">{{song.songname}}</div>
+                  <div class="subName">
+                    <div class="subName-icon" v-if="song.pay.paydownload">
+                      <img src="@/assets/images/vip.png" />
                     </div>
+                    <div class="subName-content">{{song.singer[0].name}}</div>
                   </div>
-                  <div class="toolBar">
-                    <div class="bar">
-                      <img src="@/assets/images/play_operation.png" />
-                    </div>
-                    <div class="bar">
-                      <img src="@/assets/images/more_option.png" />
-                    </div>
+                </div>
+                <div class="toolBar">
+                  <div class="bar" v-if="song.vid">
+                    <img src="@/assets/images/play_operation.png" />
                   </div>
-                </li>
+                  <div class="bar" @click="songDetailSwitch">
+                    <img src="@/assets/images/more_option.png" />
+                  </div>
+                </div>
+              </li>
 
-                <li
-                  style="display:flex; justify-content: center;align-items: center;height:2em;"
-                  v-if="isLoading"
-                >正在加载中</li>
-              </ul>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="单曲" name="second">bbb</el-tab-pane>
-          <el-tab-pane label="歌单" name="third">ccc</el-tab-pane>
-          <el-tab-pane label="专辑" name="fourth">ddd</el-tab-pane>
-          <el-tab-pane label="歌词" name="fifth">eee</el-tab-pane>
-        </el-tabs>
-      </div>
+              <li
+                style="display:flex; justify-content: center;align-items: center;height:2em;"
+                v-if="isLoading"
+              >正在加载中</li>
+            </ul>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="单曲" name="second">bbb</el-tab-pane>
+        <el-tab-pane label="歌单" name="third">ccc</el-tab-pane>
+        <el-tab-pane label="专辑" name="fourth">ddd</el-tab-pane>
+        <el-tab-pane label="歌词" name="fifth">eee</el-tab-pane>
+      </el-tabs>
+    </div>
     <!-- </transition> -->
     <!-- /搜索结果栏 -->
     <!-- </div> -->
@@ -196,11 +196,24 @@
     <!-- </transition> -->
 
     <!-- /内容栏 -->
+
+
+    <!-- 底部弹框 -->
+
+    <wrapper ref="songDetail">
+      sadsfsafsafsafsfsfsafsaffas
+    </wrapper>
+    <!-- /底部弹框 -->
   </div>
 </template>
 
 <script>
+import Wrapper from "../other/Wrapper";
+
 export default {
+  components: {
+    Wrapper,
+  },
   data() {
     return {
       searchText: "", //搜索框绑定对象
@@ -214,7 +227,7 @@ export default {
         singer: [],
         mv: [],
         song: [],
-        history: []
+        history: [],
       }, //联想数据
       currentContent: "default", //选项卡值
       activeName: "first",
@@ -223,7 +236,7 @@ export default {
       page: 1, //搜索结果页数
       overFlowTimeout: null, //滚动条定时器
       isLoading: false, //是否正在刷新
-      moveHeight: 0 //滚动条滑动距离
+      moveHeight: 0, //滚动条滑动距离
     };
   },
   methods: {
@@ -257,7 +270,7 @@ export default {
     },
     //展开搜索内容详细
     openSearchDetail(val) {
-     //为obj就是从keyup
+      //为obj就是从keyup
       if (typeof val == "object") {
         val = this.searchText.trim();
       }
@@ -271,7 +284,7 @@ export default {
       this.getSearchResult(val);
 
       //添加搜索历史
-     
+
       //排除已经存在的一致的标签 用flag来记录
       var tagData = this.$util.localUtil("historyTags");
       var flag = true;
@@ -284,12 +297,11 @@ export default {
       if (flag) {
         var data = {
           id: this.$util.createUuid(8, 10),
-          name: val
+          name: val,
         };
         tagData.push(data);
         this.$util.localUtil("historyTags", tagData);
       }
-
     },
     //标签的展开和关闭
     changeTagView() {
@@ -329,8 +341,8 @@ export default {
           outCharset: "utf-8",
           notice: 0,
           platform: "yqq.json",
-          needNewCode: 0
-        }
+          needNewCode: 0,
+        },
       });
       if (result.status == 200) {
         if (result.data.data != undefined) {
@@ -354,7 +366,7 @@ export default {
             album: album,
             singer: singer,
             mv: mv,
-            song: song
+            song: song,
           };
           this.thinks = goal;
         }
@@ -387,10 +399,10 @@ export default {
             p: self.page++, //页数
             n: 15, //每页数据数量
             w: val,
-            format: "json"
-          }
+            format: "json",
+          },
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
       if (result.status == 200) {
@@ -399,6 +411,7 @@ export default {
         for (var item of goalData) {
           this.searchResult.push(item);
         }
+        console.log(this.searchResult);
         self.isLoading = false;
       }
     },
@@ -431,8 +444,10 @@ export default {
         }, 200);
       }
     },
-    //加载搜索下一页结果
-    loadSearchResult() {}
+   songDetailSwitch(){
+     this.$refs.songDetail.sw();
+   }
+
   },
   watch: {
     //搜索文本改变时获取联想数据并判断历史记录中有没有已经搜索过的记录 有就添加到相关变量
@@ -456,14 +471,14 @@ export default {
       }
       this.goalHistory = goal;
       this.initHistoryData();
-    }
+    },
   },
   created() {
     this.initHistoryData();
   },
   mounted() {
     window.addEventListener("scroll", this.handleScroll, true);
-  }
+  },
 };
 </script>
 
@@ -519,7 +534,7 @@ export default {
   top: 0px;
   padding: 0 10px;
   box-sizing: border-box;
-  z-index: 999;
+  z-index: 10;
   // border-bottom: 1px solid #e4e7ed;
   // box-shadow: 0 1px 2px #e4e7ed;
   width: 100%;
@@ -840,7 +855,7 @@ export default {
     overflow-x: hidden; //设置Y轴出现滚动条，X轴隐藏
     overflow-y: overlay;
     max-height: 700px;
-    padding-bottom: 100px;;
+    padding-bottom: 100px;
     .disable {
       font-size: 15px;
       font-weight: 600;
@@ -879,7 +894,7 @@ export default {
             line-clamp: 1;
             -webkit-line-clamp: 1;
             -webkit-box-orient: vertical;
-            color: #aeaeae;
+            color: #707070;
             font-size: 12px;
           }
           .subName-icon {

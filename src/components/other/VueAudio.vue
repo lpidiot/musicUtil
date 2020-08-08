@@ -1,6 +1,5 @@
 <template>
   <div class="di main-wrap" :v-loading="audio.waiting">
-    <!-- 这里设置了ref属性后，在vue组件中，就可以用this.$refs.audio来访问该dom元素 -->
     <audio
       ref="audio"
       class="dn"

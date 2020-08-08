@@ -1,0 +1,147 @@
+<template>
+  <div>
+    <!--  :class="['wrapper',isShow?'fade-in':'fade-out']" -->
+    <div
+      :class="['wrapper',isShow?'fade-in':'fade-out']"
+      v-if="isShow"
+      :style="{
+        'width': width,
+        'height': height,
+        'backgroundColor': backgroundColor,
+      }"
+    >
+      <div class="wrapper-content">
+        <slot></slot>
+      </div>
+    </div>
+    <div class="cover" v-if="isShow" @click=" sw" />
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      isShow: false,
+    };
+  },
+  props: {
+    modal: {
+      type: Boolean,
+      default: false,
+    }, //模态
+    width: {
+      type: String,
+      default: "100%",
+    }, //模态
+    height: {
+      type: String,
+      default: "50%",
+    }, //模态
+    backgroundColor: {
+      type: String,
+      default: "#fff",
+    },
+  },
+  methods: {
+    sw() {
+      const self = this;
+      setTimeout(function () {
+        self.isShow = !self.isShow;
+      }, 200);
+    },
+  },
+  computed: {},
+};
+</script>
+
+<style lang="scss" scoped>
+@keyframes moveTop {
+  0% {
+    transform: translate3d(0, 100%, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes moveTop {
+  0% {
+    transform: translate3d(0, 100%, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes moveBottom {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 100%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes moveBottom {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 100%, 0);
+    opacity: 1;
+  }
+}
+
+.cover {
+  overflow: hidden;
+  position: fixed;
+  width: 100vh;
+  height: 100vh;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background-color: rgba(#000, 0.75);
+  z-index: 900;
+  transition: all 0.6s ease;
+  transition: background 0.6s ease-in-out;
+  &.mask-fade {
+    background-color: rgba(rgb(187, 177, 177), 0);
+    opacity: 0.2;
+  }
+}
+.wrapper {
+  position: fixed;
+  width: 100%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background-color: #F7F7F7;
+  border-radius: 8px 8px 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  .wrapper-content {
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+    display: flex;
+    justify-content: end;
+    flex-direction: column;
+    overflow: auto;
+  }
+}
+.fade-in {
+  animation: moveTop 0.5s ease;
+}
+.fade-out {
+  animation: moveBottom 0.5s ease;
+}
+</style>

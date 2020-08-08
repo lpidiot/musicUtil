@@ -41,9 +41,6 @@
           theControlList="noDownload noSpeed onlyOnePlaying"
         />
         <div class="toolbar-box">
-          <!-- <div class="toolbar">
-            <img src="@/assets/images/stop.png" alt />
-          </div>-->
           <div class="toolbar">
             <img src="@/assets/images/circle.png" style=" width: 25px;
           height: 25px;" alt />
