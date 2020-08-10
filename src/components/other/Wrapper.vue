@@ -14,7 +14,7 @@
         <slot></slot>
       </div>
     </div>
-    <div class="cover" v-if="isShow" @click=" sw" />
+    <div class="cover" v-if="isShow&&showMask" @click=" sw" />
   </div>
 </template>
 
@@ -30,17 +30,21 @@ export default {
       type: Boolean,
       default: false,
     }, //模态
+     showMask: {
+      type: Boolean,
+      default: true,
+    }, //显示遮盖层
     width: {
       type: String,
       default: "100%",
     }, //模态
     height: {
       type: String,
-      default: "50%",
+      default: "auto",
     }, //模态
     backgroundColor: {
       type: String,
-      default: "#fff",
+      default: "#F0EFEC",
     },
   },
   methods: {
@@ -125,9 +129,9 @@ export default {
   right: 0;
   bottom: 0;
   z-index: 999;
-  background-color: #F7F7F7;
+  background-color: #F0EFEC;
   border-radius: 8px 8px 0 0;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
   .wrapper-content {
     width: 100%;
     height: 100%;
@@ -136,6 +140,7 @@ export default {
     justify-content: end;
     flex-direction: column;
     overflow: auto;
+    box-sizing:border-box;
   }
 }
 .fade-in {

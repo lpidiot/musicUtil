@@ -201,18 +201,20 @@
     <!-- 底部弹框 -->
 
     <wrapper ref="songDetail">
-      sadsfsafsafsafsfsfsafsaffas
+        <ListGroup></ListGroup>
     </wrapper>
+    
     <!-- /底部弹框 -->
   </div>
 </template>
 
 <script>
 import Wrapper from "../other/Wrapper";
-
+import ListGroup from "../other/ListGroup";
 export default {
   components: {
     Wrapper,
+    ListGroup
   },
   data() {
     return {
