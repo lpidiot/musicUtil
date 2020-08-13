@@ -46,7 +46,7 @@
                 </div>
               </li>
 
-              <li v-for="song in searchResult" :key="song.songid">
+              <li v-for="song in searchResult" :key="song.songmid" @click="startPlay(song.songmid)">
                 <div class="musicInfo">
                   <div class="musicName">{{song.songname}}</div>
                   <div class="subName">
@@ -60,7 +60,7 @@
                   <div class="bar" v-if="song.vid">
                     <img src="@/assets/images/play_operation.png" />
                   </div>
-                  <div class="bar" @click="songDetailSwitch">
+                  <div class="bar" @click.stop="songDetailSwitch">
                     <img src="@/assets/images/more_option.png" />
                   </div>
                 </div>
@@ -197,13 +197,12 @@
 
     <!-- /内容栏 -->
 
-
     <!-- 底部弹框 -->
 
-    <wrapper ref="songDetail">
-        <ListGroup></ListGroup>
+    <wrapper ref="songDetail" :filter="true">
+      <ListGroup :barList="barList"></ListGroup>
     </wrapper>
-    
+
     <!-- /底部弹框 -->
   </div>
 </template>
@@ -214,7 +213,7 @@ import ListGroup from "../other/ListGroup";
 export default {
   components: {
     Wrapper,
-    ListGroup
+    ListGroup,
   },
   data() {
     return {
@@ -239,9 +238,53 @@ export default {
       overFlowTimeout: null, //滚动条定时器
       isLoading: false, //是否正在刷新
       moveHeight: 0, //滚动条滑动距离
+      barList: [
+        {
+          id: 1,
+          title: "下载",
+          imgUrl: require("@/assets/images/download.png"),
+          fun: this.aaa,
+        },
+        {
+          id: 2,
+          title: "分享",
+          imgUrl: require("@/assets/images/share2.png"),
+          fun: this.aaa,
+        },
+        {
+          id: 3,
+          title: "订阅",
+          imgUrl: require("@/assets/images/dinyue.png"),
+          fun: this.aaa,
+        },
+        {
+          id: 4,
+          title: "信息",
+          imgUrl: require("@/assets/images/info.png"),
+          fun: this.aaa,
+        },
+        {
+          id: 5,
+          title: "列表",
+          imgUrl: require("@/assets/images/list.png"),
+        },
+        {
+          id: 7,
+          title: "列表2",
+          imgUrl: require("@/assets/images/list2.png"),
+        },
+        {
+          id: 6,
+          title: "设置",
+          imgUrl: require("@/assets/images/setting.png"),
+        },
+      ],
     };
   },
   methods: {
+    aaa() {
+      alert("触发");
+    },
     //搜索框获得、失去焦点 改变样式
     changeFocus() {
       this.isFocus = !this.isFocus;
@@ -263,12 +306,14 @@ export default {
           tagNum++;
         }
       }
+
       if (historyTags.length > tagNum) {
         this.showTagBar = true;
       } else {
         this.showTagBar = false;
       }
       this.historyTags = historyTags.splice(0, tagNum);
+     
     },
     //展开搜索内容详细
     openSearchDetail(val) {
@@ -277,7 +322,7 @@ export default {
         val = this.searchText.trim();
       }
       //this.searchText = val;
-      //this.initHistoryData();
+      this.initHistoryData();
       //========
       //展开搜索页面
       this.page = 0;
@@ -426,9 +471,6 @@ export default {
       if (this.currentContent != "search") {
         return;
       }
-      if (this.$refs.test.scrollHeight == undefined) {
-        return;
-      }
       const self = this;
       var totalHeight = this.$refs.test.scrollHeight;
       var clientHeight = this.$refs.test.clientHeight;
@@ -446,10 +488,13 @@ export default {
         }, 200);
       }
     },
-   songDetailSwitch(){
-     this.$refs.songDetail.sw();
-   }
-
+    songDetailSwitch() {
+      this.$refs.songDetail.sw();
+    },
+    //开始播放所选歌曲
+    startPlay(e) {
+      this.$router.push("/player");
+    },
   },
   watch: {
     //搜索文本改变时获取联想数据并判断历史记录中有没有已经搜索过的记录 有就添加到相关变量
@@ -478,12 +523,20 @@ export default {
   created() {
     this.initHistoryData();
   },
+  beforeCreate() {
+    document.querySelector("body").setAttribute("style", " overflow: hidden;");
+  },
+  beforeDestroy() {
+    document.querySelector("body").removeAttribute("style");
+    window.addEventListener("scroll", null, true);
+  },
   mounted() {
     window.addEventListener("scroll", this.handleScroll, true);
   },
 };
 </script>
-
+<style>
+</style>
 <style lang="scss" scoped>
 @keyframes myfirst {
   from {

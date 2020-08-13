@@ -5,14 +5,14 @@
       <!-- 侧栏图标区 -->
       <div class="search-box">
         <div class="bar">
-          <img src="http://101.200.165.62/blogRecourse/img/555.jpg" />
+          <img src="@/assets/images/setting2.png" />
         </div>
         <div class="searchbar text-sub" @click="openSearchView">
           <img src="../../assets/images/search.png" />
           搜索音乐
         </div>
         <div class="bar">
-          <img src="http://101.200.165.62/blogRecourse/img/555.jpg" />
+          <img src="@/assets/images/setting2.png" />
         </div>
       </div>
 

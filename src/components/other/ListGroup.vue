@@ -1,6 +1,6 @@
 <template>
   <div class="listGroup">
-    <div v-for="item in barList" :key="item.id" class="list">
+    <div v-for="item in barList" :key="item.id" class="list" @click.prevent="item.fun?item.fun():''">
       <div>{{item.title}}</div>
       <div class="list-img" :style="{width:width,height:height}">
         <img :src="item.imgUrl" />
@@ -13,45 +13,7 @@
 <script>
 export default {
   data() {
-    return {
-      barList: [
-        {
-          id: 1,
-          title: "下载",
-          imgUrl: require("@/assets/images/download.png"),
-        },
-        {
-          id: 2,
-          title: "分享",
-          imgUrl: require("@/assets/images/share2.png"),
-        },
-        {
-          id: 3,
-          title: "订阅",
-          imgUrl: require("@/assets/images/dinyue.png"),
-        },
-         {
-          id: 4,
-          title: "信息",
-          imgUrl: require("@/assets/images/info.png"),
-        },
-         {
-          id: 5,
-          title: "列表",
-          imgUrl: require("@/assets/images/list.png"),
-        },
-        {
-          id: 7,
-          title: "列表2",
-          imgUrl: require("@/assets/images/list2.png"),
-        },
-         {
-          id: 6,
-          title: "设置",
-          imgUrl: require("@/assets/images/setting.png"),
-        }
-      ],
-    };
+    return {    };
   },
   props: {
     width: {
@@ -62,8 +24,23 @@ export default {
       type: String,
       default: "22px",
     },
+    backgroundColor:{
+      type: String,
+      default: "#ffffff",
+    },
+    barList:{
+      type:Array
+    }
   },
-  methods: {},
+  methods: {
+    qqq(e){
+      if(e){
+        console.log('111');
+      }else{
+        console.log('000');
+      }
+    }
+  },
 };
 </script>
 

@@ -35,17 +35,13 @@
       </div>
 
       <div class="control-box">
-        <VueAudio
-          ref="audio"
-          :theUrl="audioUrl"
-          theControlList="noDownload noSpeed onlyOnePlaying"
-        />
+        <VueAudio ref="audio" :urls="audioUrl" theControlList="noDownload noSpeed onlyOnePlaying" />
         <div class="toolbar-box">
           <div class="toolbar">
             <img src="@/assets/images/circle.png" style=" width: 25px;
           height: 25px;" alt />
           </div>
-          <div class="toolbar">
+          <div class="toolbar" @click="prev">
             <img src="@/assets/images/prev.png" style=" width: 25px;
           height: 25px;" alt />
           </div>
@@ -57,7 +53,7 @@
             <img src="@/assets/images/c_play.png" alt />
           </div>
 
-          <div class="toolbar">
+          <div class="toolbar" @click="next">
             <img src="@/assets/images/next.png" style=" width: 25px;
           height: 25px;" alt />
           </div>
@@ -81,13 +77,36 @@ export default {
   data() {
     return {
       isPlaying: false,
-      audioUrl: require("../../assets/music/aaa.mp3"),
+      audioUrl: [
+        require("../../assets/music/aaa.mp3"),
+        require("../../assets/music/bbb.mp3"),
+      ],
     };
   },
   methods: {
     play() {
       this.isPlaying = !this.isPlaying;
       this.$refs.audio.startPlayOrPause();
+    },
+    prev() {
+      const that = this;
+      this.pausePlay();
+      this.$refs.audio.setPrevSong();
+      setTimeout(function () {
+        that.play();
+      }, 750);
+    },
+    next() {
+      const that = this;
+      this.pausePlay();
+      this.$refs.audio.setNextSong();
+      setTimeout(function () {
+        that.play();
+      }, 750);
+    },
+    pausePlay() {
+      this.isPlaying = false;
+      this.$refs.audio.pausePlay();
     },
   },
   computed: {

@@ -1,51 +1,219 @@
 <template>
-  <div>
-    <div v-for="(item, index) in audios" :key="index">
-      <VueAudio :theUrl="item.url" theControlList="noDownload noSpeed onlyOnePlaying" />
+  <div style="padding: 0 10px;">
+    <div :class="['headBox',isScroll?'border':'']">
+      <div class="bar">
+        <img src="@/assets/images/back_blue.png" alt />返回
+      </div>
+      <div class="bar roundBar">
+        <img src="@/assets/images/more_blue.png" alt />
+      </div>
     </div>
 
-    <div class="toolbarBox">
-      <div class="toolbar">ads</div>
-      <div class="toolbar">ads</div>
-      <div class="toolbar">ads</div>
+    <div class="interval" />
+    <div class="content">
+      <div class="coverBox">
+        <img src="@/assets/images/test.jpg" alt />
+      </div>
+      <div class="info">aaa</div>
+    </div>
+
+    <div>
+      asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />asaaaa
+      <br />
     </div>
   </div>
 </template>
 
 <script>
-import VueAudio from "../other/VueAudio";
+import Head from "../other/Head";
 export default {
-  components: {
-    VueAudio,
-  },
+  components: {},
   data() {
     return {
-      audios: [
-        {
-          url: require("../../assets/music/aaa.mp3"),
-          controlList: "noDownload noSpeed onlyOnePlaying",
-        },
-      ],
+      isScroll: false,
     };
   },
 
-  methods: {},
+  methods: {
+    handleScroll() {
+      const self = this;
+      var scrolltopTemp =
+        document.documentElement.scrollTop || document.body.scrollTop;
+      if (scrolltopTemp != 0) {
+        this.isScroll = true;
+      } else {
+        this.isScroll = false;
+      }
+    },
+  },
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll, true);
+  },
 };
 </script>
 
 <style scoped lang="scss">
-.toolbarBox {
+.interval {
+  margin: 0;
+  padding: 0;
+  margin-top: 40px;
+}
+.border {
+  border-bottom: 1px solid #c5c5c5;
+  box-shadow: none;
+}
+.headBox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   width: 100%;
+  padding: 10px;
   display: flex;
   align-items: center;
-  position: fixed;
-  bottom: 10px;
-  justify-items: center;
-  .toolbar {
+  justify-content: space-between;
+  height: 40px;
+  box-sizing: border-box;
+  background-color: #f5f5f5;
+  .bar {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 1;
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  .roundBar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #dcdcdc;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 30px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  img {
+    width: 200px;
+    height: 200px;
+  }
+  div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>

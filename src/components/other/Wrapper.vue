@@ -8,13 +8,15 @@
         'width': width,
         'height': height,
         'backgroundColor': backgroundColor,
+        'backdrop-filter':filter?'blur(45px)':'',
+        'opacity':filter?'0.9':'1'
       }"
     >
       <div class="wrapper-content">
         <slot></slot>
       </div>
     </div>
-    <div class="cover" v-if="isShow&&showMask" @click=" sw" />
+    <div class="cover" v-if="isShow&&showMask" @click="sw" />
   </div>
 </template>
 
@@ -30,7 +32,11 @@ export default {
       type: Boolean,
       default: false,
     }, //模态
-     showMask: {
+    filter: {
+      type: Boolean,
+      default: false,
+    },
+    showMask: {
       type: Boolean,
       default: true,
     }, //显示遮盖层
@@ -107,8 +113,6 @@ export default {
 .cover {
   overflow: hidden;
   position: fixed;
-  width: 100vh;
-  height: 100vh;
   left: 0;
   right: 0;
   bottom: 0;
@@ -129,7 +133,6 @@ export default {
   right: 0;
   bottom: 0;
   z-index: 999;
-  background-color: #F0EFEC;
   border-radius: 8px 8px 0 0;
   padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
   .wrapper-content {
@@ -140,7 +143,7 @@ export default {
     justify-content: end;
     flex-direction: column;
     overflow: auto;
-    box-sizing:border-box;
+    box-sizing: border-box;
   }
 }
 .fade-in {

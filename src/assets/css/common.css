@@ -13,7 +13,11 @@ body {
     color: #34495e;
     font-size: 14px;
     line-height: 1.5;
-    overflow: hidden;
+}
+
+.container{
+    padding: 0 10px;
+    box-sizing: border-box;
 }
 .safariheight{
     height: calc(100vh - 75px);

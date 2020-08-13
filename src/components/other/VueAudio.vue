@@ -3,7 +3,7 @@
     <audio
       ref="audio"
       class="dn"
-      :src="url"
+      :src="currentUrl"
       :preload="audio.preload"
       @play="onPlay"
       @error="onError"
@@ -48,17 +48,15 @@ function realFormatSecond(second) {
     second = second - hours * 3600;
     var mimute = Math.floor(second / 60);
     second = second - mimute * 60;
-    return (
-       ("0" + mimute).slice(-2) + ":" + ("0" + second).slice(-2)
-    );
+    return ("0" + mimute).slice(-2) + ":" + ("0" + second).slice(-2);
   } else {
     return "0:00:00";
   }
 }
 export default {
   props: {
-    theUrl: {
-      type: String,
+    urls: {
+      type: Array,
       required: true,
     },
     theSpeeds: {
@@ -75,7 +73,8 @@ export default {
   name: "VueAudio",
   data() {
     return {
-      url: this.theUrl,
+      currentUrl: this.urls[0],
+      idx: 0,
       audio: {
         currentTime: 0,
         maxTime: 0,
@@ -100,7 +99,7 @@ export default {
     };
   },
   methods: {
-    isPlaying(){
+    isPlaying() {
       return this.audio.playing;
     },
     setControlList() {
@@ -127,6 +126,17 @@ export default {
       this.$refs.audio.currentTime = parseInt(
         (index / 100) * this.audio.maxTime
       );
+    },
+    origin() {
+      this.audio = {
+        currentTime: 0,
+        maxTime: 0,
+        playing: false,
+        muted: false,
+        speed: 1,
+        waiting: true,
+        preload: "auto",
+      };
     },
     startPlayOrPause() {
       return this.audio.playing ? this.pausePlay() : this.startPlay();
@@ -165,6 +175,24 @@ export default {
           item.pause();
         }
       });
+    },
+    setPrevSong() {
+      if (this.idx == 0) {
+        this.idx = this.urls.length - 1;
+      } else {
+        this.idx = this.idx - 1;
+      }
+      this.origin();
+      this.currentUrl = this.urls[this.idx];
+    },
+    setNextSong() {
+      if (this.idx == this.urls.length - 1) {
+        this.idx = 0;
+      } else {
+        this.idx = this.idx + 1;
+      }
+      this.origin();
+      this.currentUrl = this.urls[this.idx];
     },
     // 当timeupdate事件大概每秒一次，用来更新音频流的当前播放时间
     onTimeupdate(res) {
@@ -249,6 +277,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  color: #B2BABB;
+  color: #b2babb;
 }
 </style>
