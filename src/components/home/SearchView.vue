@@ -164,7 +164,7 @@
       <!-- 搜索历史 -->
       <div class="history-box">
         <div class="history-head">
-          <h3>搜索历史</h3>
+          <h4>搜索历史</h4>
           <div class="lcon-more" @click="clearHistory">
             <img src="../../assets/images/garbage.png" />
           </div>
@@ -764,7 +764,7 @@ export default {
     box-sizing: border-box;
     justify-content: space-between;
     padding: 5px 0;
-    h3 {
+    h4 {
       margin: 0;
     }
     .history-more {
@@ -803,6 +803,7 @@ export default {
         display: flex;
         flex-direction: row;
         max-height: 1.4em;
+        font-size: 13px;
         justify-content: center;
         align-items: center;
         padding: 5px 8px;

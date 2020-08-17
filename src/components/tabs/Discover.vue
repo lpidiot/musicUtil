@@ -16,9 +16,9 @@
       <!-- 歌单区域 -->
       <div class="musicList-box">
         <div class="musicList-head">
-          <h3>官方歌单</h3>
+          <h3 @click="musicUtil">官方歌单</h3>
           <div class="musicList-more">
-            <span>更多</span>
+            <span >更多</span>
             <div class="lcon-more">
               <img src="../../assets/images/more.png" />
             </div>
@@ -249,7 +249,6 @@ export default {
       if (result.status === 200) {
         hotKey = result.data.hotkey.data.vec_hotkey;
         window.localStorage.setItem("hotKey", JSON.stringify(hotKey));
-
         //console.log(hotKey);
       } else {
         if (hotKey.length > 0) {
@@ -295,7 +294,7 @@ export default {
         songList_gf = result.data.playlist.data.v_playlist;
         window.localStorage.setItem("songList_gf", JSON.stringify(songList_gf));
         this.songList_gf = songList_gf;
-        //console.log(songList_gf);
+        console.log(songList_gf);
       } else {
         if (songList_gf.length > 0) {
           this.songList_gf = songList_gf;
@@ -315,13 +314,13 @@ export default {
           utf8: 1,
           onlysong: 0,
           new_format: 1,
-          disstid: 7278059185,
+          disstid: 7270987435,
           needNewCode: 0,
           platform: 1,
           new_format: "yqq.json"
         }
       });
-      console.log(result);
+      console.log(result.data);
     }
   },
   filters: {

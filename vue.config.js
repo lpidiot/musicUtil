@@ -39,7 +39,7 @@ module.exports = {
         }
       },
       '/api': {
-        target: 'http://127.0.0.1/demo/api',
+        target: 'http://127.0.0.1:9900/music/api',
         // 允许跨域
         changeOrigin: true,
         ws: true,
