@@ -3,7 +3,7 @@
     <audio
       ref="audio"
       class="dn"
-      :src="currentUrl"
+      :src="url"
       :preload="audio.preload"
       @play="onPlay"
       @error="onError"
@@ -55,8 +55,8 @@ function realFormatSecond(second) {
 }
 export default {
   props: {
-    urls: {
-      type: Array,
+    url: {
+      type: String,
       required: true,
     },
     theSpeeds: {
@@ -73,8 +73,6 @@ export default {
   name: "VueAudio",
   data() {
     return {
-      currentUrl: this.urls[0],
-      idx: 0,
       audio: {
         currentTime: 0,
         maxTime: 0,
@@ -175,24 +173,6 @@ export default {
           item.pause();
         }
       });
-    },
-    setPrevSong() {
-      if (this.idx == 0) {
-        this.idx = this.urls.length - 1;
-      } else {
-        this.idx = this.idx - 1;
-      }
-      this.origin();
-      this.currentUrl = this.urls[this.idx];
-    },
-    setNextSong() {
-      if (this.idx == this.urls.length - 1) {
-        this.idx = 0;
-      } else {
-        this.idx = this.idx + 1;
-      }
-      this.origin();
-      this.currentUrl = this.urls[this.idx];
     },
     // 当timeupdate事件大概每秒一次，用来更新音频流的当前播放时间
     onTimeupdate(res) {

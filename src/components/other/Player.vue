@@ -1,6 +1,6 @@
 <template>
   <div
-  v-show="show"
+    v-show="show"
     class="backgroundBox"
     :style="[{'background-image':'url(https://qpic.y.qq.com/music_cover/Z89aLA93LOSOicz0QOnMbonRk9ySaEU2phYUYiajyZxCBvgOZrSPDswg/300?n=1)'}]"
   >
@@ -10,8 +10,8 @@
           <img src="@/assets/images/back.png" alt />
         </div>
         <div class="head-wyy-title">
-          song
-          <div class="head-wyy-title-subtit">Album</div>
+          {{songData[idx].songName}}
+          <div class="head-wyy-title-subtit">{{songData[idx].auther}}</div>
         </div>
         <div class="head-wyy-btn">
           <img src="@/assets/images/share.png" alt />
@@ -36,13 +36,13 @@
       </div>
 
       <div class="control-box">
-        <VueAudio ref="audio" :urls="audioUrl" theControlList="noDownload noSpeed onlyOnePlaying" />
+        <VueAudio ref="audio" :url="getCurrentUrl()" theControlList="noDownload noSpeed onlyOnePlaying" />
         <div class="toolbar-box">
           <div class="toolbar">
             <img src="@/assets/images/circle.png" style=" width: 25px;
           height: 25px;" alt />
           </div>
-          <div class="toolbar" @click="prev">
+          <div class="toolbar" @click="prevSong">
             <img src="@/assets/images/prev.png" style=" width: 25px;
           height: 25px;" alt />
           </div>
@@ -54,7 +54,7 @@
             <img src="@/assets/images/c_play.png" alt />
           </div>
 
-          <div class="toolbar" @click="next">
+          <div class="toolbar" @click="nextSong">
             <img src="@/assets/images/next.png" style=" width: 25px;
           height: 25px;" alt />
           </div>
@@ -78,36 +78,60 @@ export default {
   data() {
     return {
       isPlaying: false,
-      audioUrl: [
-        require("../../assets/music/aaa.mp3"),
-        require("../../assets/music/bbb.mp3"),
+      idx: 0,
+      songData: [
+        {
+          url: require("../../assets/music/aaa.mp3"),
+          songName: "幻想乡",
+          cover: "",
+          auther: "n反正不是我",
+        },
+        {
+          url: require("../../assets/music/bbb.mp3"),
+          songName: "lemon",
+          cover: "",
+          auther: "x柚子茶",
+        },
       ],
-      show:false
+      show: false,
     };
   },
   methods: {
+    getCurrentUrl(){
+      return this.songData[this.idx].url
+    },
     play() {
       this.isPlaying = !this.isPlaying;
       this.$refs.audio.startPlayOrPause();
     },
-    trigger(){
-      this.show=!this.show;
+    trigger() {
+      this.show = !this.show;
     },
-    setSongList(arr){
+    setSongList(arr) {
       console.log(arr);
     },
-    prev() {
+    prevSong() {
       const that = this;
       this.pausePlay();
-      this.$refs.audio.setPrevSong();
+      if(this.idx==0){
+        this.idx=this.songData.length-1;
+      }else{
+        this.idx=this.idx-1;
+      }
+      this.$refs.audio.origin();
       setTimeout(function () {
         that.play();
       }, 750);
     },
-    next() {
+    nextSong() {
       const that = this;
       this.pausePlay();
-      this.$refs.audio.setNextSong();
+      if(this.idx==this.songData.length-1){
+        this.idx=0;
+      }else{
+        this.idx=this.idx+1;
+      }
+      this.$refs.audio.origin();
       setTimeout(function () {
         that.play();
       }, 750);
@@ -212,7 +236,7 @@ export default {
   padding: 0 10px;
   box-sizing: border-box;
   padding-bottom: env(safe-area-inset-bottom);
-  
+
   .player-head-wyy {
     width: 100%;
     height: 50px;

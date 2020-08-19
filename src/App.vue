@@ -19,6 +19,8 @@ export default {
   methods: {
     playerTrigger() {
       this.$refs.player.trigger();
+    },
+    play(){
       this.$refs.player.play();
     }
   },
