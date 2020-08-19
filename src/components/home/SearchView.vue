@@ -282,9 +282,6 @@ export default {
     };
   },
   methods: {
-    aaa() {
-      alert("触发");
-    },
     //搜索框获得、失去焦点 改变样式
     changeFocus() {
       this.isFocus = !this.isFocus;

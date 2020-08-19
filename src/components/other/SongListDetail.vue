@@ -64,9 +64,7 @@
 </template>
 
 <script>
-import Head from "../other/Head";
 export default {
-  components: {},
   data() {
     return {
       isScroll: false,

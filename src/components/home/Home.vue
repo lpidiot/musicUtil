@@ -11,7 +11,7 @@
           <img src="../../assets/images/search.png" />
           搜索音乐
         </div>
-        <div class="bar">
+        <div class="bar" @click="ttt">
           <img src="@/assets/images/setting2.png" />
         </div>
       </div>
@@ -46,6 +46,9 @@ export default {
     //打开搜索页
     openSearchView() {
       this.$router.push("/search");
+    },
+    ttt(){
+      this.$parent.playerTrigger()
     }
   },
   watch: {

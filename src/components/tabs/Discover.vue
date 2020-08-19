@@ -16,7 +16,7 @@
       <!-- 歌单区域 -->
       <div class="musicList-box">
         <div class="musicList-head">
-          <h3 @click="musicUtil">官方歌单</h3>
+          <h3 @click="musicUtil(7259074257)">官方歌单</h3>
           <div class="musicList-more">
             <span >更多</span>
             <div class="lcon-more">
@@ -26,7 +26,7 @@
         </div>
 
         <ul class="musicList-content ul_h">
-          <p v-if="songList_gf.length==0">获取歌单失败惹QWQ 刷新试试8</p>
+          <p v-if="songList_gf.length==0">获取歌单失败惹 刷新试试8</p>
           <li class="musicList-item li_h" v-for="item in songList_gf" :key="item.tid">
             <div class="item-coverBox">
               <el-image
@@ -301,12 +301,12 @@ export default {
         }
       }
     },
-    //部分需要自定义header的操作交给服务器处理
-    async musicUtil() {
+    //部分需要自定义header的操作交给服务器处理7270987435
+    async musicUtil(disstid) {
       var result = await this.$axios.post("/api/musicUtil", {
         url: "https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg",
         header: {
-          referer: "https://y.qq.com/n/yqq/playlist/7278059185.html"
+          referer: "https://y.qq.com/n/yqq/playlist/"+disstid+".html"
         },
         params: {
           type: 1,
@@ -314,7 +314,7 @@ export default {
           utf8: 1,
           onlysong: 0,
           new_format: 1,
-          disstid: 7270987435,
+          disstid: disstid,
           needNewCode: 0,
           platform: 1,
           new_format: "yqq.json"

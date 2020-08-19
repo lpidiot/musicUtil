@@ -1,5 +1,6 @@
 <template>
   <div>
+   
     <!--  :class="['wrapper',isShow?'fade-in':'fade-out']" -->
     <div
       :class="['wrapper',isShow?'fade-in':'fade-out']"
@@ -77,7 +78,7 @@ export default {
   }
 }
 
-@keyframes moveTop {
+@-webkit-keyframes moveTop {
   0% {
     transform: translate3d(0, 100%, 0);
     opacity: 1;
@@ -87,6 +88,7 @@ export default {
     opacity: 1;
   }
 }
+
 
 @keyframes moveBottom {
   0% {
@@ -99,7 +101,7 @@ export default {
   }
 }
 
-@keyframes moveBottom {
+@-webkit-keyframes moveBottom {
   0% {
     transform: translate3d(0, 0, 0);
     opacity: 1;
@@ -147,9 +149,11 @@ export default {
   }
 }
 .fade-in {
-  animation: moveTop 0.5s ease;
+  animation: moveTop 0.5s forwards;
+  -webkit-animation:moveTop 0.5s forwards;
 }
 .fade-out {
-  animation: moveBottom 0.5s ease;
+  animation: moveBottom 0.5s forwards;
+  -webkit-animation: moveBottom 0.5s forwards;
 }
 </style>

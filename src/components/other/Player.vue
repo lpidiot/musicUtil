@@ -1,11 +1,12 @@
 <template>
   <div
+  v-show="show"
     class="backgroundBox"
     :style="[{'background-image':'url(https://qpic.y.qq.com/music_cover/Z89aLA93LOSOicz0QOnMbonRk9ySaEU2phYUYiajyZxCBvgOZrSPDswg/300?n=1)'}]"
   >
     <div :class="hg">
       <div class="player-head-wyy">
-        <div class="head-wyy-btn">
+        <div class="head-wyy-btn" @click="trigger">
           <img src="@/assets/images/back.png" alt />
         </div>
         <div class="head-wyy-title">
@@ -81,12 +82,19 @@ export default {
         require("../../assets/music/aaa.mp3"),
         require("../../assets/music/bbb.mp3"),
       ],
+      show:false
     };
   },
   methods: {
     play() {
       this.isPlaying = !this.isPlaying;
       this.$refs.audio.startPlayOrPause();
+    },
+    trigger(){
+      this.show=!this.show;
+    },
+    setSongList(arr){
+      console.log(arr);
     },
     prev() {
       const that = this;
@@ -189,6 +197,9 @@ export default {
   background-size: cover;
   box-sizing: border-box;
   width: 100%;
+  z-index: 999;
+  position: absolute;
+  top: 0;
 }
 .player-container {
   width: 100%;
@@ -200,6 +211,8 @@ export default {
   flex-direction: column;
   padding: 0 10px;
   box-sizing: border-box;
+  padding-bottom: env(safe-area-inset-bottom);
+  
   .player-head-wyy {
     width: 100%;
     height: 50px;
