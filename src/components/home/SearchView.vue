@@ -239,7 +239,7 @@ export default {
       isLoading: false, //是否正在刷新
       moveHeight: 0, //滚动条滑动距离
       barList: [
-          {
+        {
           id: 5,
           title: "歌手",
           imgUrl: require("@/assets/images/songer2.png"),
@@ -273,7 +273,7 @@ export default {
           imgUrl: require("@/assets/images/info.png"),
           fun: this.aaa,
         },
-      
+
         {
           id: 6,
           title: "设置",
@@ -311,7 +311,6 @@ export default {
         this.showTagBar = false;
       }
       this.historyTags = historyTags.splice(0, tagNum);
-     
     },
     //展开搜索内容详细
     openSearchDetail(val) {
@@ -490,8 +489,15 @@ export default {
       this.$refs.songDetail.sw();
     },
     //开始播放所选歌曲
-    startPlay(e) {
-      this.$router.push("/player");
+    startPlay(songId) {
+      this.getMusic(songId).then((e) => {
+        if (e) {
+          var originData = this.$util.localUtil("playingList");
+          originData.push(e);
+          this.$util.localUtil("playingList", originData);
+          this.$parent.updatePlayingList(null, true);
+        }
+      });
     },
   },
   watch: {

@@ -19,6 +19,8 @@ axios.defaults.headers.post['Content-Type'] = 'application/json; charset=utf-8'
 axios.defaults.crossDomain = true
 axios.defaults.withCredentials = true //设置cross跨域 并设置访问权限 允许跨域携带cookie信息
 Vue.prototype.$axios = axios
+
+
 //axios.defaults.baseURL='http://127.0.0.1/demo/api'
 
 // axios.interceptors.request.use(function (config) {
@@ -35,6 +37,49 @@ Vue.prototype.$axios = axios
 // }, function (error) {
 //   return Promise.reject(error);
 // });
+
+
+Vue.prototype.getMusic = async function (songId) {
+  var result = await axios.get(
+    "http://127.0.0.1:9900/music/api/getVipMusic", {
+      params: {
+        songId: songId,
+      },
+    }
+  ).catch((err) => {
+    console.log(err);
+  });
+  var goal = null;
+  console.log(result);
+  if (result.data.isok) {
+    var data = JSON.parse(result.data.data)[0];
+    try {
+      goal = {
+        songId: data.songmid,
+        songName: data.songname,
+        subtitle: data.subtitle,
+        singer: {
+          singerId: data.singer[0].mid,
+          singerName: data.singer[0].name
+        },
+        album: {
+          albumname: data.albumname,
+          albummId: data.albummid
+        },
+        cover: 'http:' + data.pic,
+        url: data.m4aUrl,
+        vid: data.vid
+      };
+    } catch (e) {
+      console.log(e);
+      //获取数据有问题 处理
+    }
+    return goal;
+
+  }
+}
+
+
 
 Vue.config.productionTip = false;
 

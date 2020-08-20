@@ -60,7 +60,53 @@ export default {
     }
     return realLength;
   },
+  typeObj: function (obj) {
+    var type = Object.prototype.toString.call(obj);
+    if (type == '[object Array]') {
+      return 'Array';
+    } else if (type == '[object  Object]') {
+      return 'Object';
+    } else {
+      return "obj is not object or array"
+    }
+  },
+  isRealNum:function isRealNum(val){
+    // isNaN()函数 把空串 空格 以及NUll 按照0来处理 所以先去除
+    if(val === "" || val ==null){
+        return false;
+    }
+    if(!isNaN(val)){
+        return true;
+    }else{
+        return false;
+    }
+},
+/**
+ * 判断是否存在
+ * @mark 详细对象路径
+ * @res 数据源
+ * @flag 要比对的于mark对应的数据
+ * @returns 
+ * -数组重复返回下标
+ * -对象重复返回重复的对象
+ * -无重复返回null
+ */
+isRepeat:function(mark,res,flag){
+  if(this.typeObj(res)=="Array"){
+    res.forEach(item,idx=>{
+      if(eval(item.mark)==flag){
+        return idx;
+      }
+    })
+  }
 
-  //歌曲json串解析
-  
+  if(this.typeObj(res)=="Object"){
+    for(var item in res){
+      if(eval(item.mark)==flag){
+        return item;
+      }
+    }
+  }
+  return null;
+}
 }

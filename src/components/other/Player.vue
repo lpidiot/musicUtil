@@ -2,16 +2,16 @@
   <div
     v-show="show"
     class="backgroundBox"
-    :style="[{'background-image':'url(https://qpic.y.qq.com/music_cover/Z89aLA93LOSOicz0QOnMbonRk9ySaEU2phYUYiajyZxCBvgOZrSPDswg/300?n=1)'}]"
+    :style="[{'background-image':'url('+playingList[idx].cover+')'}]"
   >
-    <div :class="hg">
+    <div :class="hg" v-show="playerListIsOk()">
       <div class="player-head-wyy">
         <div class="head-wyy-btn" @click="trigger">
           <img src="@/assets/images/back.png" alt />
         </div>
         <div class="head-wyy-title">
-          {{songData[idx].songName}}
-          <div class="head-wyy-title-subtit">{{songData[idx].auther}}</div>
+          {{playingList[idx].songName}}
+          <div class="head-wyy-title-subtit">{{playingList[idx].singer.singerName}}</div>
         </div>
         <div class="head-wyy-btn">
           <img src="@/assets/images/share.png" alt />
@@ -29,14 +29,18 @@
           <div :class="['msk','animation',isPlaying?'running':'stop']">
             <img
               class="cover"
-              src="http://p1.music.126.net/Nagysgn-c_pyLwHSTsFtXQ==/109951164514817375.jpg?param=130y130"
+              :src="playingList[idx].cover||'http://p1.music.126.net/Nagysgn-c_pyLwHSTsFtXQ==/109951164514817375.jpg?param=130y130'"
             />
           </div>
         </div>
       </div>
 
       <div class="control-box">
-        <VueAudio ref="audio" :url="getCurrentUrl()" theControlList="noDownload noSpeed onlyOnePlaying" />
+        <VueAudio
+          ref="audio"
+          :url="getCurrentUrl()"
+          theControlList="noDownload noSpeed onlyOnePlaying"
+        />
         <div class="toolbar-box">
           <div class="toolbar">
             <img src="@/assets/images/circle.png" style=" width: 25px;
@@ -79,26 +83,25 @@ export default {
     return {
       isPlaying: false,
       idx: 0,
-      songData: [
-        {
-          url: require("../../assets/music/aaa.mp3"),
-          songName: "幻想乡",
-          cover: "",
-          auther: "n反正不是我",
-        },
-        {
-          url: require("../../assets/music/bbb.mp3"),
-          songName: "lemon",
-          cover: "",
-          auther: "x柚子茶",
-        },
+      playingList: [
       ],
       show: false,
     };
   },
   methods: {
-    getCurrentUrl(){
-      return this.songData[this.idx].url
+    getCurrentUrl() {
+      if (this.playingList) {
+        if (this.playingList[this.idx]) {
+          return this.playingList[this.idx].url;
+        }
+      }
+      return "";
+    },
+    playerListIsOk() {
+      if (this.playingList.length > 0) {
+        return true;
+      }
+      return false;
     },
     play() {
       this.isPlaying = !this.isPlaying;
@@ -107,34 +110,61 @@ export default {
     trigger() {
       this.show = !this.show;
     },
-    setSongList(arr) {
-      console.log(arr);
+    /**
+     * 更新数据源
+     * @idx 播放
+     * @now 是否立即播放
+     */
+    updatePlayingList(idx, now) {
+      const that = this;
+      var localData = this.$util.localUtil("playingList");
+      this.playingList = localData;
+      if (
+        idx &&
+        idx != "current" &&
+        this.$util.isRealNum(idx) &&
+        idx < localData.length
+      ) {
+        this.idx = idx;
+      }
+      if (this.idx > localData.length) {
+        this.idx = 0;
+      }
+      if (now) {
+        setTimeout(function () {
+          that.play();
+        }, 750);
+      }
     },
     prevSong() {
       const that = this;
       this.pausePlay();
-      if(this.idx==0){
-        this.idx=this.songData.length-1;
-      }else{
-        this.idx=this.idx-1;
+      if (this.playingList.length > 0) {
+        if (this.idx == 0) {
+          this.idx = this.playingList.length - 1;
+        } else {
+          this.idx = this.idx - 1;
+        }
+        this.$refs.audio.origin();
+        setTimeout(function () {
+          that.play();
+        }, 750);
       }
-      this.$refs.audio.origin();
-      setTimeout(function () {
-        that.play();
-      }, 750);
     },
     nextSong() {
       const that = this;
       this.pausePlay();
-      if(this.idx==this.songData.length-1){
-        this.idx=0;
-      }else{
-        this.idx=this.idx+1;
+      if (this.playingList.length > 0) {
+        if (this.idx == this.playingList.length - 1) {
+          this.idx = 0;
+        } else {
+          this.idx = this.idx + 1;
+        }
+        this.$refs.audio.origin();
+        setTimeout(function () {
+          that.play();
+        }, 750);
       }
-      this.$refs.audio.origin();
-      setTimeout(function () {
-        that.play();
-      }, 750);
     },
     pausePlay() {
       this.isPlaying = false;
@@ -154,6 +184,9 @@ export default {
       return ["player-container"];
     },
   },
+  created(){
+    this.updatePlayingList();
+  }
 };
 </script>
 
@@ -223,6 +256,7 @@ export default {
   width: 100%;
   z-index: 999;
   position: absolute;
+  background-color: #c5c5c5;
   top: 0;
 }
 .player-container {

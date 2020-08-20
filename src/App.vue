@@ -21,6 +21,9 @@ export default {
     },
     play(){
       this.$refs.player.play();
+    },
+    updatePlayingList(idx,now){
+      this.$refs.player.updatePlayingList(idx,now);
     }
   },
 };
