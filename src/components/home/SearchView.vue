@@ -239,6 +239,16 @@ export default {
       isLoading: false, //是否正在刷新
       moveHeight: 0, //滚动条滑动距离
       barList: [
+          {
+          id: 5,
+          title: "歌手",
+          imgUrl: require("@/assets/images/songer2.png"),
+        },
+        {
+          id: 7,
+          title: "专辑",
+          imgUrl: require("@/assets/images/cd.png"),
+        },
         {
           id: 1,
           title: "下载",
@@ -263,16 +273,7 @@ export default {
           imgUrl: require("@/assets/images/info.png"),
           fun: this.aaa,
         },
-        {
-          id: 5,
-          title: "列表",
-          imgUrl: require("@/assets/images/list.png"),
-        },
-        {
-          id: 7,
-          title: "列表2",
-          imgUrl: require("@/assets/images/list2.png"),
-        },
+      
         {
           id: 6,
           title: "设置",

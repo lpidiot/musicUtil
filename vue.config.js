@@ -2,7 +2,7 @@ module.exports = {
   publicPath: './',
   devServer: {
     open: false,
-    port: 8800,
+    port: 8900,
     proxy: {
       '/musicApi': {
         target: 'https://u.y.qq.com/cgi-bin/musicu.fcg',

@@ -13,7 +13,6 @@ export default {
   },
   data() {
     return {
-      show: false,
     };
   },
   methods: {
@@ -28,9 +27,4 @@ export default {
 </script>
 
 <style lang="scss">
-.aaa {
-  z-index: 999999;
-  position: fixed;
-  bottom: 20px;
-}
 </style>

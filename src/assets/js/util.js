@@ -59,5 +59,8 @@ export default {
       else realLength += 2;
     }
     return realLength;
-  }
+  },
+
+  //歌曲json串解析
+  
 }

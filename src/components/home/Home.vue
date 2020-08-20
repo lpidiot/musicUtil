@@ -4,7 +4,7 @@
     <div class="head-box">
       <!-- 侧栏图标区 -->
       <div class="search-box">
-        <div class="bar">
+        <div class="bar" @click="test">
           <img src="@/assets/images/setting2.png" />
         </div>
         <div class="searchbar text-sub" @click="openSearchView">
@@ -36,7 +36,7 @@
 export default {
   data() {
     return {
-      activeName: ""
+      activeName: "",
     };
   },
   methods: {
@@ -47,19 +47,38 @@ export default {
     openSearchView() {
       this.$router.push("/search");
     },
-    ttt(){
-      this.$parent.playerTrigger()
-    }
+    ttt() {
+      this.$parent.playerTrigger();
+    },
+    async test() {
+      var result = await this.$axios.get(
+        "http://127.0.0.1:9900/music/api/getVipMusic",
+        {
+          params: {
+            songId: "0039MnYb0qxYhV",
+          },
+        }
+      );
+      // var result = await this.$axios.get(
+      //   "http://127.0.0.1:9900/music/api/updateCookie",
+      //   {
+      //     params: {
+      //       cookies: "pgv_pvi=3604777984; ptui_loginuin=1195188852; RK=W1A50mKnba; ptcz=10a5c3ab8c12805354941391922877396d4c117be9ad1ffa236518ebd1cf3803; _ga=GA1.2.381130229.1595132426; Qs_lvt_323937=1595132426; pgv_pvid=6685768246; Qs_pv_323937=1626433962389503500%2C399970611665177000; ts_uid=689002144; ts_uid=4610269616; euin=oK6q7K6FNeckoc**; tmeLoginType=2; yq_index=0; yqq_stat=0; pgv_info=ssid=s6875411590; pgv_si=s8150513664; ts_refer=www.baidu.com/link; psrf_access_token_expiresAt=1605621967; qm_keyst=Q_H_L_2ySCzy50euRKZZgCBXq98Owqpj4SMAbw_FtiKxN35yWjRG91xZgW9zjEZV7b062; psrf_qqunionid=; psrf_musickey_createtime=1597845967; psrf_qqrefresh_token=6CE28D629A55C5C3B2FA5201F9BBE76E; uin=1195188852; psrf_qqaccess_token=69454B3F0A42B668866D7C0603319016; psrf_qqopenid=2CC58CEAF778A2A3A8179F38E02DED0F; qqmusic_key=Q_H_L_2ySCzy50euRKZZgCBXq98Owqpj4SMAbw_FtiKxN35yWjRG91xZgW9zjEZV7b062; ts_last=y.qq.com/portal/search.html; ts_refer=ADTAGmyqq; ts_last=i.y.qq.com/v8/playsong.html",
+      //     },
+      //   }
+      // );
+      console.log(result.data);
+    },
   },
   watch: {
     activeName(val) {
       if (this.$route.path == val) return;
       this.$router.push(val);
-    }
+    },
   },
   created() {
     this.activeName = "/home/discover";
-  }
+  },
 };
 </script>
 
