@@ -492,9 +492,7 @@ export default {
     startPlay(songId) {
       this.getMusic(songId).then((e) => {
         if (e) {
-          var originData = this.$util.localUtil("playingList");
-          originData.push(e);
-          this.$util.localUtil("playingList", originData);
+          this.addMusic(e);
           this.$parent.updatePlayingList(null, true);
         }
       });

@@ -1,20 +1,18 @@
 <template>
-  <div
-    v-show="show"
-    class="backgroundBox"
-    :style="[{'background-image':'url('+playingList[idx].cover+')'}]"
-  >
+  <div v-show="show" class="backgroundBox" :style="bgi">
     <div :class="hg" v-show="playerListIsOk()">
       <div class="player-head-wyy">
         <div class="head-wyy-btn" @click="trigger">
           <img src="@/assets/images/back.png" alt />
         </div>
         <div class="head-wyy-title">
-          {{playingList[idx].songName}}
-          <div class="head-wyy-title-subtit">{{playingList[idx].singer.singerName}}</div>
+          {{playingList[idx]?playingList[idx].songName:''}}
+          <div
+            class="head-wyy-title-subtit"
+          >{{playingList[idx]?playingList[idx].singer.singerName:''}}</div>
         </div>
         <div class="head-wyy-btn">
-          <img src="@/assets/images/share.png" alt />
+          <img src="@/assets/images/option.png" alt />
         </div>
       </div>
       <div class="around-box">
@@ -29,7 +27,7 @@
           <div :class="['msk','animation',isPlaying?'running':'stop']">
             <img
               class="cover"
-              :src="playingList[idx].cover||'http://p1.music.126.net/Nagysgn-c_pyLwHSTsFtXQ==/109951164514817375.jpg?param=130y130'"
+              :src="playingList[idx]?playingList[idx].cover:'http://p1.music.126.net/Nagysgn-c_pyLwHSTsFtXQ==/109951164514817375.jpg?param=130y130'"
             />
           </div>
         </div>
@@ -40,6 +38,7 @@
           ref="audio"
           :url="getCurrentUrl()"
           theControlList="noDownload noSpeed onlyOnePlaying"
+          @onPause="onPause"
         />
         <div class="toolbar-box">
           <div class="toolbar">
@@ -83,15 +82,15 @@ export default {
     return {
       isPlaying: false,
       idx: 0,
-      playingList: [
-      ],
+      playingList: [],
       show: false,
     };
   },
   methods: {
     getCurrentUrl() {
-      if (this.playingList) {
+      if (this.playingList.length > 0) {
         if (this.playingList[this.idx]) {
+          //console.log(this.playingList[this.idx]);
           return this.playingList[this.idx].url;
         }
       }
@@ -118,18 +117,24 @@ export default {
     updatePlayingList(idx, now) {
       const that = this;
       var localData = this.$util.localUtil("playingList");
-      this.playingList = localData;
+      if (localData.index == undefined) {
+        return;
+      }
+      this.playingList = localData.songList;
+      this.idx = localData.index;
+      console.log('updatePlayingList=====');
+      console.log(localData);
       if (
         idx &&
         idx != "current" &&
         this.$util.isRealNum(idx) &&
-        idx < localData.length
+        idx < localData.songList.length
       ) {
         this.idx = idx;
+        localData.index = idx;
+        this.$util.localUtil("playingList", localData);
       }
-      if (this.idx > localData.length) {
-        this.idx = 0;
-      }
+
       if (now) {
         setTimeout(function () {
           that.play();
@@ -145,6 +150,9 @@ export default {
         } else {
           this.idx = this.idx - 1;
         }
+        var localData = this.$util.localUtil("playingList", "{}");
+        localData.index = this.idx;
+        this.$util.localUtil("playingList", localData);
         this.$refs.audio.origin();
         setTimeout(function () {
           that.play();
@@ -160,6 +168,9 @@ export default {
         } else {
           this.idx = this.idx + 1;
         }
+        var localData = this.$util.localUtil("playingList", "{}");
+        localData.index = this.idx;
+        this.$util.localUtil("playingList", localData);
         this.$refs.audio.origin();
         setTimeout(function () {
           that.play();
@@ -169,6 +180,10 @@ export default {
     pausePlay() {
       this.isPlaying = false;
       this.$refs.audio.pausePlay();
+    },
+    //歌曲暂停时
+    onPause() {
+      console.log("aa");
     },
   },
   computed: {
@@ -183,10 +198,19 @@ export default {
       }
       return ["player-container"];
     },
+    bgi() {
+      if (this.playingList[this.idx]) {
+        return {
+          "background-image": "url(" + this.playingList[this.idx].cover + ")",
+        };
+      } else {
+        return { "background-color": "#c6c6c6" };
+      }
+    },
   },
-  created(){
+  created() {
     this.updatePlayingList();
-  }
+  },
 };
 </script>
 
@@ -429,6 +453,11 @@ export default {
   border: none !important;
   width: 10px !important;
   height: 10px !important;
+}
+.el-slider__button-wrapper {
+  width: 10px !important;
+  height: 10px !important;
+  transform: translateY(8px) !important;
 }
 .el-slider__runway {
   height: 1.5px !important;

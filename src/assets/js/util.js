@@ -39,10 +39,14 @@ export default {
     if (type == undefined) {
       type = '[]';
     }
+    if(data=='{}'||'[]'){
+      type=data;
+    }
     var localData = JSON.parse(window.localStorage.getItem(key) || type);
-    if (data == undefined) {
+    if (data == undefined||data=='{}'||data=='[]') {
       return localData;
     }
+   
     localData = data;
     window.localStorage.setItem(key, JSON.stringify(localData));
     return localData;

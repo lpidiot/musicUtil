@@ -50,7 +50,7 @@ Vue.prototype.getMusic = async function (songId) {
     console.log(err);
   });
   var goal = null;
-  console.log(result);
+  //console.log(result);
   if (result.data.isok) {
     var data = JSON.parse(result.data.data)[0];
     try {
@@ -75,6 +75,30 @@ Vue.prototype.getMusic = async function (songId) {
       //获取数据有问题 处理
     }
     return goal;
+
+  }
+}
+
+
+Vue.prototype.addMusic = function (music) {
+  if (music) {
+    var originData = util.localUtil("playingList","{}");
+    if(originData.songList==undefined){
+      originData={
+        index:0,
+        songList:[]
+      }
+    }
+    var songList=originData.songList;
+    for(var i=0;i<songList.length;i++){
+      if(music.songId==songList[i].songId){
+        originData.index=i;
+        break;
+      }
+    }
+    originData.songList.unshift(music);
+    util.localUtil("playingList", originData);
+    console.log('ok');
 
   }
 }

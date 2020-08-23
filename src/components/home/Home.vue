@@ -7,7 +7,11 @@
         <div class="bar" @click="test">
           <img src="@/assets/images/setting2.png" />
         </div>
-        <div class="searchbar text-sub" @click="openSearchView" :style="playingListExist()?{}:{'margin-right':'15px'}">
+        <div
+          class="searchbar text-sub"
+          @click="openSearchView"
+          :style="playingListExist()?{}:{'margin-right':'15px'}"
+        >
           <img src="../../assets/images/search.png" />
           搜索音乐
         </div>
@@ -47,10 +51,12 @@ export default {
     openSearchView() {
       this.$router.push("/search");
     },
-    playingListExist(){
-      var playingList=this.$util.localUtil('playingList');
-      if(playingList.length>0){
-        return true;
+    playingListExist() {
+      var local = this.$util.localUtil("playingList", "{}");
+      if (local.songList) {
+        if (local.songList.length > 0) {
+          return true;
+        }
       }
       return false;
     },
@@ -58,19 +64,19 @@ export default {
       this.$parent.playerTrigger();
     },
     async test() {
-      // this.getMusic("0039MnYb0qxYhV").then((e) => {
-      //   console.log(e);
-      // });
+      this.getMusic("0039MnYb0qxYhV").then((e) => {
+        console.log(e);
+      });
 
-      var result = await this.$axios.get(
-        "http://127.0.0.1:9900/music/api/updateCookie",
-        {
-          params: {
-            cookies: "ts_uid=689002144; pgv_pvid=2273141038; ts_uid=285984560; pgv_pvi=7055907840; userAction=1; ptui_loginuin=1195188852; RK=A0A50EKnYa; ptcz=a8ea77d518573518ea4529ae95f6564a799ded970b8f71392cee78583e6c207d; uin=1195188852; psrf_access_token_expiresAt=1605684731; psrf_musickey_createtime=1597908731; psrf_qqrefresh_token=6CE28D629A55C5C3B2FA5201F9BBE76E; qqmusic_key=Q_H_L_2il9_y50eOJGO_BkyuvVqzFUNTrCcNdHRRZO84FAPGQWvN8rLqanxyuyeZkyxAA; qm_keyst=Q_H_L_2il9_y50eOJGO_BkyuvVqzFUNTrCcNdHRRZO84FAPGQWvN8rLqanxyuyeZkyxAA; euin=oK6q7K6FNeckoc**; psrf_qqaccess_token=69454B3F0A42B668866D7C0603319016; psrf_qqunionid=; tmeLoginType=2; psrf_qqopenid=2CC58CEAF778A2A3A8179F38E02DED0F; pgv_info=ssid=s4077436704; pgv_si=s8947619840; ts_refer=ADTAGmyqq; ts_refer=ADTAGmyqq; yq_playschange=0; yq_playdata=; player_exist=1; qqmusic_fromtag=66; yq_index=0; yplayer_open=0; yqq_stat=0; ts_last=y.qq.com/; ts_last=i.y.qq.com/v8/playsong.html",
-          },
-        }
-      );
-      console.log(result.data);
+      // var result = await this.$axios.get(
+      //   "http://127.0.0.1:9900/music/api/updateCookie",
+      //   {
+      //     params: {
+      //       cookies: "ts_uid=689002144; pgv_pvid=2273141038; ts_uid=285984560; pgv_pvi=7055907840; ptui_loginuin=1195188852; RK=A0A50EKnYa; ptcz=a8ea77d518573518ea4529ae95f6564a799ded970b8f71392cee78583e6c207d; uin=1195188852; psrf_qqrefresh_token=6CE28D629A55C5C3B2FA5201F9BBE76E; euin=oK6q7K6FNeckoc**; psrf_qqaccess_token=69454B3F0A42B668866D7C0603319016; psrf_qqunionid=; tmeLoginType=2; psrf_qqopenid=2CC58CEAF778A2A3A8179F38E02DED0F; ts_refer=ADTAGmyqq; yq_index=0; ts_refer=www.baidu.com/link; yqq_stat=0; pgv_info=ssid=s5371793841; ts_last=y.qq.com/; pgv_si=s9607367680; qqmusic_key=Q_H_L_2i692z50e8gcWB-Q1JOHR3b54iEHPl7F2vf-aRksm4IE1CV2ozt1mVuhbOyDP5E; psrf_access_token_expiresAt=1605946219; psrf_musickey_createtime=1598170219; qm_keyst=Q_H_L_2i692z50e8gcWB-Q1JOHR3b54iEHPl7F2vf-aRksm4IE1CV2ozt1mVuhbOyDP5E; userAction=1; ts_last=i.y.qq.com/v8/playsong.html",
+      //     },
+      //   }
+      // );
+      //console.log(result.data);
     },
   },
   watch: {

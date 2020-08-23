@@ -26,6 +26,7 @@
         :format-tooltip="formatProcessToolTip"
         @change="changeCurrentTime"
         class="slider"
+        :show-tooltip="false"
       ></el-slider>
       <div class="progBox">
         <div class="progress">
@@ -150,6 +151,11 @@ export default {
     // 当音频暂停
     onPause() {
       this.audio.playing = false;
+      //this.$parent.pausePlay();
+      if(this.$refs.audio.ended){
+        //下一首或者单曲循环a操作
+      //this.$emit('onPause');
+      }
     },
     // 当发生错误, 就出现loading状态
     onError() {
