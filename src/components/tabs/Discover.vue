@@ -16,7 +16,7 @@
       <!-- 歌单区域 -->
       <div class="musicList-box">
         <div class="musicList-head">
-          <h3 @click="musicUtil(7259074257)">官方歌单</h3>
+          <h3>官方歌单</h3>
           <div class="musicList-more">
             <span >更多</span>
             <div class="lcon-more">
@@ -28,7 +28,7 @@
         <ul class="musicList-content ul_h">
           <p v-if="songList_gf.length==0">获取歌单失败惹 刷新试试8</p>
           <li class="musicList-item li_h" v-for="item in songList_gf" :key="item.tid">
-            <div class="item-coverBox" @click="aaa">
+            <div class="item-coverBox" @click="openSongListDetail(item.tid)">
               <el-image
                 style="width: 100%; height: 100%;"
                 :src="item.cover_url_small"
@@ -99,19 +99,16 @@ export default {
     };
   },
   methods: {
-
-    aaa(){
-      this.$showSongList();
+     openSongListDetail(tid){
+      //var result=await this.$getSongList(tid);
+      //console.log(result);
+      this.$showSongList(tid);
 
     },
     //获取热门专辑封面及数据
     async getCover() {
-      var coverData = JSON.parse(
-        window.localStorage.getItem("coverData") || "{}"
-      );
-
-      var result = await this.$axios
-        .get("/musicApi", {
+      var coverData = this.$util.localUtil("coverData","{}");
+      var result = await this.$get("/musicApi", {
           headers: {
             accept: "application/json, text/javascript, */*; q=0.01"
           },
@@ -172,8 +169,9 @@ export default {
             this.focus = coverData.focus.data.conten;
           }
         });
+         
       if (result.status === 200) {
-        window.localStorage.setItem("coverData", JSON.stringify(result.data));
+        this.$util.localUtil("coverData",result.data);
         this.focus = result.data.focus.data.content;
       } else {
         if (Object.keys(coverData).length != 0) {
@@ -182,8 +180,7 @@ export default {
       }
     },
     async getCoverDetail(url) {
-      var result = await this.$axios
-        .get("/musicApi", {
+      var result = await this.$get("/musicApi", {
           headers: {},
           params: {
             ":": "recom9188477459130378",
@@ -210,7 +207,7 @@ export default {
         .catch(err => {
           console.log(err);
         });
-      console.log(result);
+      //console.log(result);
     },
     // 获取热门搜索信息(其中歌单数据不太行 放弃)
     async getHotKey() {
@@ -255,7 +252,7 @@ export default {
         });
       if (result.status === 200) {
         hotKey = result.data.hotkey.data.vec_hotkey;
-        window.localStorage.setItem("hotKey", JSON.stringify(hotKey));
+        this.$util.localUtil("hotKey",JSON.stringify(hotKey));
         //console.log(hotKey);
       } else {
         if (hotKey.length > 0) {
@@ -265,11 +262,9 @@ export default {
     },
     // 获取官方歌单信息
     async getGfSongList() {
-      var songList_gf = JSON.parse(
-        window.localStorage.getItem("songList_gf") || "[]"
-      );
-      var result = await this.$axios
-        .get("/musicApi", {
+      
+      var songList_gf = this.$util.localUtil("songList_gf");
+      var result = await this.$get("/musicApi", {
           headers: {},
           params: {
             format: "json",
@@ -299,36 +294,15 @@ export default {
         });
       if (result.status === 200) {
         songList_gf = result.data.playlist.data.v_playlist;
-        window.localStorage.setItem("songList_gf", JSON.stringify(songList_gf));
+        this.$util.localUtil("songList_gf",songList_gf);
         this.songList_gf = songList_gf;
-        console.log(songList_gf);
+        //console.log(songList_gf);
       } else {
         if (songList_gf.length > 0) {
           this.songList_gf = songList_gf;
         }
       }
     },
-    //部分需要自定义header的操作交给服务器处理7270987435
-    async musicUtil(disstid) {
-      var result = await this.$axios.post("/api/musicUtil", {
-        url: "https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg",
-        header: {
-          referer: "https://y.qq.com/n/yqq/playlist/"+disstid+".html"
-        },
-        params: {
-          type: 1,
-          json: 1,
-          utf8: 1,
-          onlysong: 0,
-          new_format: 1,
-          disstid: disstid,
-          needNewCode: 0,
-          platform: 1,
-          new_format: "yqq.json"
-        }
-      });
-      console.log(result.data);
-    }
   },
   filters: {
     toMillionFilter(text) {
@@ -344,9 +318,11 @@ export default {
     }
   },
   created() {
+    var loading=this.$getLoading();
     this.getCover();
     this.getGfSongList();
     this.getHotKey();
+    loading.close();
   }
 };
 </script>

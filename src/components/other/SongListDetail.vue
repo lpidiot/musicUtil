@@ -1,102 +1,132 @@
 <template>
-<transition>
-  <div  v-if="show" class="fixed">
-    <div :class="['headBox',isScroll?'border':'']">
-      <div class="bar" @click="back">
-        <img src="@/assets/images/back_blue.png" alt />返回
-      </div>
-      <div class="bar roundBar">
-        <img src="@/assets/images/more_blue.png" alt />
-      </div>
-    </div>
-
-    <div class="appear" v-if="!isSinger">
-      <div class="filterBox filter">
-        <div class="cover">
-          <img
-            src=" https://qpic.y.qq.com/music_cover/xCubmCUxl5icKI16GSM3EXzEGy5zIMr41cqzwBYhFciaKwMmwwLN2Y3w/300?n=1
-"
-            alt
-          />
-          
+  <transition>
+    <div v-if="show" class="fixed" ref="box">
+      <div :class="['headBox',isScroll?'border':'']">
+        <div class="bar" @click="back">
+          <img src="@/assets/images/back_blue.png" alt />返回
         </div>
-        <div class="infoBox">
-          <div class="info">aaaa的a歌单</div>
-          <div class="info">周杰伦</div>
-          <div
-            class="subInfo"
-          >介绍balabala介绍balabala介绍balabala介绍balabala介绍balabala介绍balabala介绍balabala介绍balabala介绍balabala</div>
+        <div class="tit" v-show="changeAppear">{{songListInfo.songListName}}</div>
+        <div class="bar roundBar">
+          <img src="@/assets/images/more_blue.png" alt />
         </div>
       </div>
-    </div>
 
-    <div class="appear" v-else>
-      <div class="filterBox">
+      <div
+        :class="['appear', changeAppear?'fixedTop':'']"
+        v-if="!isSinger"
+        :style="{backgroundImage:'url('+logo+')'}"
+      >
+        <div class="filterBox filter">
+          <div class="cover">
+            <img :src="logo" alt />
+          </div>
+          <div class="infoBox">
+            <div class="info">{{songListInfo.songListName}}</div>
+            <div class="info">{{songListInfo.songer}}</div>
+            <div class="subInfo">{{songListInfo.describe}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="appear" v-else>
+        <div class="filterBox">
           <div class="singer">周杰伦</div>
-      </div>
-    </div>
-
-    <div class="list-box">
-      <div class="list-item">
-        <div class="content">
-          <div class="info">aaa</div>
-          <div class="subInfo">vvv</div>
-        </div>
-
-        <div class="toolbar-box">
-          <div class="toolbar">
-            <img src="@/assets/images/play_operation.png" />
-          </div>
-          <div class="toolbar">
-            <img src="@/assets/images/more_option.png" />
-          </div>
         </div>
       </div>
 
-      <div class="list-item">
-        <div class="content">
-          <div class="info">七里香</div>
-          <div class="subInfo">vvv</div>
-        </div>
-
-        <div class="toolbar-box">
-          <div class="toolbar">
-            <img src="@/assets/images/play_operation.png" />
+      <div :class="['list-box', changeAppear?'distance':'']">
+        <div class="list-item" v-for="item in songList" :key="item.id" @click="prin(item)">
+          <div class="content">
+            <div class="info">{{item.name}}</div>
+            <div class="subInfo">{{item.singer[0].name+" - "+item.album.name}}</div>
           </div>
-          <div class="toolbar">
-            <img src="@/assets/images/more_option.png" />
+
+          <div class="toolbar-box">
+            <div class="toolbar">
+              <img src="@/assets/images/play_operation.png" />
+            </div>
+            <div class="toolbar">
+              <img src="@/assets/images/more_option.png" />
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</transition>
+  </transition>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      isSinger:false,
+      isSinger: false,
+      changeAppear: false, //是否改变信息栏显示状态
+      songerInfo: {},
+      logo: require("@/assets/images/m.jpg"),
+      songList: [],
+      songListInfo: {
+        songListName: "歌单名",
+        songer: "拥有者",
+        describe: "描述",
+      },
       show: false,
       isScroll: false,
     };
   },
 
   methods: {
+    prin(val) {
+      console.log(val);
+    },
     handleScroll() {
       const self = this;
-      var scrolltopTemp =
-        document.documentElement.scrollTop || document.body.scrollTop;
-      if (scrolltopTemp != 0) {
-        this.isScroll = true;
+      // var scrolltopTemp =
+      //   document.documentElement.scrollTop || document.body.scrollTop;
+      //   console.log(scrolltopTemp);
+      // if (scrolltopTemp != 0) {
+      //   this.isScroll = true;
+      // } else {
+      //   this.isScroll = false;
+      // }
+      var moveHeight;
+      try {
+        moveHeight = this.$refs.box.scrollTop;
+      } catch (e) {
+        return;
+      }
+
+      // if (moveHeight != 0) {
+      //   this.isScroll = true;
+      // } else {
+      //   this.isScroll = false;
+      // }
+      if (moveHeight >= 210) {
+        this.changeAppear = true;
       } else {
-        this.isScroll = false;
+        this.changeAppear = false;
       }
     },
-    back(){
-      this.show=false;
-    }
+    //显示回调 用来刷新数据
+    async onShow(tid) {
+      var result = await this.$getSongList(tid);
+      console.log(result);
+      if (result.cdlist) {
+        var data = result.cdlist[0];
+        if (data) {
+          this.songListInfo = {
+            songListName: data.dissname,
+            songer: data.nickname,
+            describe: data.desc,
+          };
+
+          this.songList = data.songlist;
+          this.logo = data.logo;
+        }
+      }
+    },
+    back() {
+      this.show = false;
+    },
   },
   mounted() {
     window.addEventListener("scroll", this.handleScroll, true);
@@ -105,7 +135,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.v-enter,.v-leave-to{
+.v-enter,
+.v-leave-to {
   opacity: 0;
   transform: translateX(100%);
 }
@@ -127,7 +158,7 @@ export default {
   border-bottom: 1px solid #c5c5c5;
   box-shadow: none;
 }
-.fixed{
+.fixed {
   position: fixed;
   top: 0;
   left: 0;
@@ -135,6 +166,7 @@ export default {
   bottom: 0;
   z-index: 999;
   background-color: #f5f5f5;
+  overflow-y: auto;
 }
 .headBox {
   position: fixed;
@@ -149,7 +181,18 @@ export default {
   height: 40px;
   box-sizing: border-box;
   z-index: 100;
+  color: #f5f5f5;
   // background-color: #f5f5f5;
+  .tit {
+    font-size: 15px;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    max-width: calc(100%-80px);
+  }
   .bar {
     display: flex;
     align-items: center;
@@ -175,20 +218,27 @@ export default {
   -webkit-backdrop-filter: blur(10px);
 }
 
+.fixedTop {
+  position: fixed;
+  transform: translateY(-210px);
+}
+.distance {
+  margin-top: 40px !important;
+}
+
 .appear {
-  background-image: url(https://qpic.y.qq.com/music_cover/xCubmCUxl5icKI16GSM3EXzEGy5zIMr41cqzwBYhFciaKwMmwwLN2Y3w/300?n=1);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   //height: 220px;
   height: 250px;
-    .singer {
-      color: white;
-      font-size: 17px;
-      font-weight: 700;
-      transform: translateY(50px);
-    }
+  .singer {
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+    transform: translateY(50px);
+  }
   .filterBox {
-    height: 250px;
+    height: 220px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -231,9 +281,10 @@ export default {
 // rgb(230, 236, 240);
 
 .list-box {
-  margin-top: 40px;
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
+  padding-bottom: 100px;
   .list-item {
     width: 100%;
     display: flex;

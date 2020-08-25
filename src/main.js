@@ -40,22 +40,83 @@ Vue.prototype.$axios = axios
 // }, function (error) {
 //   return Promise.reject(error);
 // });
+Vue.prototype.$getLoading=function(){
+  var loading = this.$loading({
+    // 声明一个loading对象
+    lock: true, // 是否锁屏
+    text: "正在加载...", // 加载动画的文字
+    //spinner: "el-icon-loading", // 引入的loading图标
+    //background: "rgba(0, 0, 0, 0.3)", // 背景颜色
+    target: ".sub-main", // 需要遮罩的区域
+    body: true,
+    customClass: "mask", // 遮罩层新增类名
+  });
 
+  setTimeout(function () {
+    // 设定定时器，超时5S后自动关闭遮罩层，避免请求失败时，遮罩层一直存在的问题
+    loading.close(); // 关闭遮罩层
+  }, 5000);
+  return loading;
+}
 
-Vue.prototype.getMusic = async function (songId) {
-  var result = await axios.get(
+Vue.prototype.$get = function (url, data,load) {
+  var loading=null;
+  if(load){
+    loading = this.$getLoading();
+  }
+  
+  return new Promise(function (resolve, reject) {
+    axios.get(url, JSON.parse(JSON.stringify(data))).then(res => {
+      if(loading){
+        loading.close()
+      }
+      resolve(res);
+    }).catch(err => {
+      if(loading){
+        loading.close()
+      }
+      reject(err.data)
+    })
+  })
+}
+
+Vue.prototype.$post = function post(url, params,load) {
+  var loading =null;
+  if(load){
+    loading=this.$getLoading();
+  }
+  return new Promise((resolve, reject) => {
+    axios.post(url, params)
+      .then(res => {
+        if(loading){
+          loading.close()
+        }
+        resolve(res.data);
+      })
+      .catch(err => {
+        if(loading){
+          loading.close()
+        }
+        reject(err.data)
+      })
+  })
+}
+Vue.prototype.$getMusic =async function (songId) {
+  var result = await this.$get(
     "http://127.0.0.1:9900/music/api/getVipMusic", {
       params: {
         songId: songId,
       },
-    }
+    },true
   ).catch((err) => {
     console.log(err);
-  });
+  })
   var goal = null;
-  //console.log(result);
+
   if (result.data.isok) {
+    console.log('aa');
     var data = JSON.parse(result.data.data)[0];
+
     try {
       goal = {
         songId: data.songmid,
@@ -77,25 +138,26 @@ Vue.prototype.getMusic = async function (songId) {
       console.log(e);
       //获取数据有问题 处理
     }
+
     return goal;
 
   }
 }
 
 
-Vue.prototype.addMusic = function (music) {
+Vue.prototype.$addMusic = function (music) {
   if (music) {
-    var originData = util.localUtil("playingList","{}");
-    if(originData.songList==undefined){
-      originData={
-        index:0,
-        songList:[]
+    var originData = util.localUtil("playingList", "{}");
+    if (originData.songList == undefined) {
+      originData = {
+        index: 0,
+        songList: []
       }
     }
-    var songList=originData.songList;
-    for(var i=0;i<songList.length;i++){
-      if(music.songId==songList[i].songId){
-        originData.index=i;
+    var songList = originData.songList;
+    for (var i = 0; i < songList.length; i++) {
+      if (music.songId == songList[i].songId) {
+        originData.index = i;
         break;
       }
     }
@@ -106,6 +168,36 @@ Vue.prototype.addMusic = function (music) {
   }
 }
 
+Vue.prototype.$getSongList = function (tid) {
+  return this.$post(
+    "http://127.0.0.1:9900/music/api/getWebData", {
+      url: 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg',
+      header: {
+        "origin": "https://y.qq.com",
+        "referer": "https://y.qq.com/n/yqq/playlist/" + tid + ".html",
+      },
+      params: {
+        type: '1',
+        json: '1',
+        utf8: '1',
+        onlysong: '0',
+        new_format: '1',
+        disstid: tid,
+        loginUin: '1195188852',
+        hostUin: '0',
+        format: 'json',
+        inCharset: 'utf8',
+        outCharset: 'utf-8',
+        notice: '0',
+        platform: 'yqq.json',
+        needNewCode: '0'
+      }
+    },true
+  ).catch((err) => {
+    console.log(err);
+    return null;
+  });
+}
 
 
 Vue.config.productionTip = false;

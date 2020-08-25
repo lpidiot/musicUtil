@@ -71,7 +71,7 @@
                 style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
                 v-if="isLoading"
               >正在加载中</li>
-               <li
+              <li
                 style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
                 v-if="isEnded"
               >数据全部加载完毕</li>
@@ -223,7 +223,6 @@ export default {
   },
   data() {
     return {
-      test: "",
       searchText: "", //搜索框绑定对象
       isFocus: false, //搜索框是否获得焦点
       isShowTagBtn: false, //搜索历史相关
@@ -253,7 +252,7 @@ export default {
           imgUrl: require("@/assets/images/share2.png"),
           fun: this.aaa,
         },
-         {
+        {
           id: 1,
           title: "收藏到歌单",
           imgUrl: require("@/assets/images/download.png"),
@@ -264,10 +263,9 @@ export default {
           title: "下载",
           imgUrl: require("@/assets/images/download.png"),
           fun: this.aaa,
-        }
-    
+        },
       ],
-      barList2:[
+      barList2: [
         {
           id: 5,
           title: "歌手",
@@ -278,27 +276,26 @@ export default {
           title: "专辑",
           imgUrl: require("@/assets/images/cd.png"),
         },
-          {
+        {
           id: 4,
           title: "信息",
           imgUrl: require("@/assets/images/info.png"),
           fun: this.aaa,
         },
-       
+
         // {
         //   id: 3,
         //   title: "订阅",
         //   imgUrl: require("@/assets/images/dinyue.png"),
         //   fun: this.aaa,
         // },
-      
 
         // {
         //   id: 6,
         //   title: "设置",
         //   imgUrl: require("@/assets/images/setting.png"),
         // },
-      ]
+      ],
     };
   },
   methods: {
@@ -393,7 +390,7 @@ export default {
     },
     //获取官方联想数据
     async getThinkData(val) {
-      var result = await this.$axios.get("/searchApi", {
+      var result = await this.$get("/searchApi", {
         params: {
           is_xml: 0,
           key: val,
@@ -458,18 +455,20 @@ export default {
       if (this.page == 0) {
         this.searchResult = [];
       }
-      var result = await this.$axios
-        .get("/searchMusicApi", {
+      var result = await this.$get(
+        "/searchMusicApi",
+        {
           params: {
             p: self.page++, //页数
             n: 15, //每页数据数量
             w: val,
             format: "json",
           },
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        },
+        true
+      ).catch((err) => {
+        console.log(err);
+      });
       if (result.status == 200) {
         var goalData = result.data.data.song.list;
         if (goalData.length == 0) {
@@ -501,7 +500,9 @@ export default {
         totalHeight = this.$refs.test.scrollHeight;
         clientHeight = this.$refs.test.clientHeight;
         moveHeight = this.$refs.test.scrollTop;
-      } catch (e) {}
+      } catch (e) {
+        return;
+      }
 
       //window.scroll(0,30);
       // console.log(totalHeight);
@@ -524,13 +525,12 @@ export default {
       this.$refs.songDetail.sw();
     },
     //开始播放所选歌曲
-    startPlay(songId) {
-      this.getMusic(songId).then((e) => {
-        if (e) {
-          this.addMusic(e);
-          this.$parent.updatePlayingList(null, true);
-        }
-      });
+    async startPlay(songId) {
+      var result =await this.$getMusic(songId);
+      if (result) {
+        this.$addMusic(result);
+        this.$parent.updatePlayingList(null, true);
+      }
     },
   },
   watch: {
