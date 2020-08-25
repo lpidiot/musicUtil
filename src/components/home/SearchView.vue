@@ -2,6 +2,7 @@
   <div>
     <!-- <div class="container"> -->
     <!-- head栏 -->
+
     <div class="head-box">
       <!-- 侧栏图标区 -->
       <div class="search-box">
@@ -46,7 +47,7 @@
                 </div>
               </li>
 
-              <li v-for="song in searchResult" :key="song.songmid" @click="startPlay(song.songmid)">
+              <li v-for="song in searchResult" :key="song.docid" @click="startPlay(song.songmid)">
                 <div class="musicInfo">
                   <div class="musicName">{{song.songname}}</div>
                   <div class="subName">
@@ -67,9 +68,13 @@
               </li>
 
               <li
-                style="display:flex; justify-content: center;align-items: center;height:2em;"
+                style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
                 v-if="isLoading"
               >正在加载中</li>
+               <li
+                style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
+                v-if="isEnded"
+              >数据全部加载完毕</li>
             </ul>
           </div>
         </el-tab-pane>
@@ -201,6 +206,7 @@
 
     <wrapper ref="songDetail" :filter="true">
       <ListGroup :barList="barList"></ListGroup>
+      <ListGroup :barList="barList2"></ListGroup>
     </wrapper>
 
     <!-- /底部弹框 -->
@@ -217,6 +223,7 @@ export default {
   },
   data() {
     return {
+      test: "",
       searchText: "", //搜索框绑定对象
       isFocus: false, //搜索框是否获得焦点
       isShowTagBtn: false, //搜索历史相关
@@ -237,8 +244,30 @@ export default {
       page: 1, //搜索结果页数
       overFlowTimeout: null, //滚动条定时器
       isLoading: false, //是否正在刷新
+      isEnded: false, //数据是到末尾
       moveHeight: 0, //滚动条滑动距离
       barList: [
+        {
+          id: 2,
+          title: "下一首播放",
+          imgUrl: require("@/assets/images/share2.png"),
+          fun: this.aaa,
+        },
+         {
+          id: 1,
+          title: "收藏到歌单",
+          imgUrl: require("@/assets/images/download.png"),
+          fun: this.aaa,
+        },
+        {
+          id: 1,
+          title: "下载",
+          imgUrl: require("@/assets/images/download.png"),
+          fun: this.aaa,
+        }
+    
+      ],
+      barList2:[
         {
           id: 5,
           title: "歌手",
@@ -249,37 +278,27 @@ export default {
           title: "专辑",
           imgUrl: require("@/assets/images/cd.png"),
         },
-        {
-          id: 1,
-          title: "下载",
-          imgUrl: require("@/assets/images/download.png"),
-          fun: this.aaa,
-        },
-        {
-          id: 2,
-          title: "分享",
-          imgUrl: require("@/assets/images/share2.png"),
-          fun: this.aaa,
-        },
-        {
-          id: 3,
-          title: "订阅",
-          imgUrl: require("@/assets/images/dinyue.png"),
-          fun: this.aaa,
-        },
-        {
+          {
           id: 4,
           title: "信息",
           imgUrl: require("@/assets/images/info.png"),
           fun: this.aaa,
         },
+       
+        // {
+        //   id: 3,
+        //   title: "订阅",
+        //   imgUrl: require("@/assets/images/dinyue.png"),
+        //   fun: this.aaa,
+        // },
+      
 
-        {
-          id: 6,
-          title: "设置",
-          imgUrl: require("@/assets/images/setting.png"),
-        },
-      ],
+        // {
+        //   id: 6,
+        //   title: "设置",
+        //   imgUrl: require("@/assets/images/setting.png"),
+        // },
+      ]
     };
   },
   methods: {
@@ -322,6 +341,7 @@ export default {
       this.initHistoryData();
       //========
       //展开搜索页面
+
       this.page = 0;
       this.moveHeight = 0;
       this.currentContent = "search";
@@ -434,6 +454,7 @@ export default {
     //获取搜索结果
     async getSearchResult(val) {
       const self = this;
+      this.isEnded = false;
       if (this.page == 0) {
         this.searchResult = [];
       }
@@ -451,9 +472,13 @@ export default {
         });
       if (result.status == 200) {
         var goalData = result.data.data.song.list;
-
+        if (goalData.length == 0) {
+          self.isEnded = true;
+          self.isLoading = false;
+          return;
+        }
         for (var item of goalData) {
-          this.searchResult.push(item);
+          self.searchResult.push(item);
         }
         console.log(this.searchResult);
         self.isLoading = false;
@@ -469,17 +494,27 @@ export default {
         return;
       }
       const self = this;
-      var totalHeight = this.$refs.test.scrollHeight;
-      var clientHeight = this.$refs.test.clientHeight;
-      var moveHeight = this.$refs.test.scrollTop;
+      var totalHeight;
+      var clientHeight;
+      var moveHeight;
+      try {
+        totalHeight = this.$refs.test.scrollHeight;
+        clientHeight = this.$refs.test.clientHeight;
+        moveHeight = this.$refs.test.scrollTop;
+      } catch (e) {}
+
       //window.scroll(0,30);
       // console.log(totalHeight);
       // console.log(clientHeight);
       // console.log(moveHeight);
-      if (moveHeight + clientHeight >= totalHeight - 20 && !this.isLoading) {
+      if (
+        moveHeight + clientHeight >= totalHeight - 20 &&
+        !this.isLoading &&
+        !this.isEnded
+      ) {
         //   设置为正在加载中
         this.isLoading = true;
-        console.log("Refresh");
+        //console.log("Refresh");
         setTimeout(() => {
           this.getSearchResult(self.searchText);
         }, 200);
@@ -913,11 +948,13 @@ export default {
     overflow-x: hidden; //设置Y轴出现滚动条，X轴隐藏
     overflow-y: overlay;
     max-height: 700px;
-    padding-bottom: 100px;
     .disable {
       font-size: 15px;
       font-weight: 600;
       justify-content: stretch;
+    }
+    li:last-child {
+      margin-bottom: 100px;
     }
     li {
       margin: 0;

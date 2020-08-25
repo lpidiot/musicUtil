@@ -1,4 +1,5 @@
 <template>
+<transition mode="in-out">
   <div v-show="show" class="backgroundBox" :style="bgi">
     <div :class="hg" v-show="playerListIsOk()">
       <div class="player-head-wyy">
@@ -70,6 +71,7 @@
       </div>
     </div>
   </div>
+</transition>
 </template>
 
 <script>
@@ -215,6 +217,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.v-enter,.v-leave-to{
+  opacity: 0;
+  transform: translateX(100%);
+}
+// .v-leave-to {
+//   opacity: 0;
+//   transform: translateX(-100%);
+//   position: absolute;
+// }
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.5s ease;
+}
+
+
 @keyframes around {
   from {
     transform: rotate(0deg);

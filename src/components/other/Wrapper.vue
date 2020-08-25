@@ -1,9 +1,9 @@
 <template>
   <div>
-   
     <!--  :class="['wrapper',isShow?'fade-in':'fade-out']" -->
+<transition>
     <div
-      :class="['wrapper',isShow?'fade-in':'fade-out']"
+      class="wrapper"
       v-if="isShow"
       :style="{
         'width': width,
@@ -17,8 +17,10 @@
         <slot></slot>
       </div>
     </div>
+    </transition>
     <div class="cover" v-if="isShow&&showMask" @click="sw" />
   </div>
+
 </template>
 
 <script>
@@ -67,6 +69,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.v-enter,.v-leave-to{
+  opacity: 0;
+  transform: translateY(100%);
+}
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.5s ease;
+}
 @keyframes moveTop {
   0% {
     transform: translate3d(0, 100%, 0);

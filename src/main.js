@@ -13,6 +13,9 @@ Vue.use(Meta)
 import util from './assets/js/util' // 引入
 Vue.prototype.$util = util
 
+import songListDeatil from './plugins/songListDetail.js'
+Vue.use(songListDeatil)
+
 //配置axios及根路径
 import axios from 'axios'
 axios.defaults.headers.post['Content-Type'] = 'application/json; charset=utf-8'

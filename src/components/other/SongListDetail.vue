@@ -1,7 +1,8 @@
 <template>
-  <div>
+<transition>
+  <div  v-if="show" class="fixed">
     <div :class="['headBox',isScroll?'border':'']">
-      <div class="bar">
+      <div class="bar" @click="back">
         <img src="@/assets/images/back_blue.png" alt />返回
       </div>
       <div class="bar roundBar">
@@ -9,21 +10,29 @@
       </div>
     </div>
 
-    <div class="appear">
-      <div class="filter">
+    <div class="appear" v-if="!isSinger">
+      <div class="filterBox filter">
         <div class="cover">
           <img
             src=" https://qpic.y.qq.com/music_cover/xCubmCUxl5icKI16GSM3EXzEGy5zIMr41cqzwBYhFciaKwMmwwLN2Y3w/300?n=1
 "
             alt
           />
+          
         </div>
         <div class="infoBox">
           <div class="info">aaaa的a歌单</div>
+          <div class="info">周杰伦</div>
           <div
             class="subInfo"
           >介绍balabala介绍balabala介绍balabala介绍balabala介绍balabala介绍balabala介绍balabala介绍balabala介绍balabala</div>
         </div>
+      </div>
+    </div>
+
+    <div class="appear" v-else>
+      <div class="filterBox">
+          <div class="singer">周杰伦</div>
       </div>
     </div>
 
@@ -61,12 +70,15 @@
       </div>
     </div>
   </div>
+</transition>
 </template>
 
 <script>
 export default {
   data() {
     return {
+      isSinger:false,
+      show: false,
       isScroll: false,
     };
   },
@@ -81,6 +93,9 @@ export default {
       } else {
         this.isScroll = false;
       }
+    },
+    back(){
+      this.show=false;
     }
   },
   mounted() {
@@ -90,6 +105,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.v-enter,.v-leave-to{
+  opacity: 0;
+  transform: translateX(100%);
+}
+// .v-leave-to {
+//   opacity: 0;
+//   transform: translateX(-100%);
+//   position: absolute;
+// }
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.5s ease;
+}
 .interval {
   margin: 0;
   padding: 0;
@@ -98,6 +126,15 @@ export default {
 .border {
   border-bottom: 1px solid #c5c5c5;
   box-shadow: none;
+}
+.fixed{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background-color: #f5f5f5;
 }
 .headBox {
   position: fixed;
@@ -133,16 +170,25 @@ export default {
     }
   }
 }
+.filter {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
 
 .appear {
   background-image: url(https://qpic.y.qq.com/music_cover/xCubmCUxl5icKI16GSM3EXzEGy5zIMr41cqzwBYhFciaKwMmwwLN2Y3w/300?n=1);
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  height: 220px;
-  .filter {
-    height: 220px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+  //height: 220px;
+  height: 250px;
+    .singer {
+      color: white;
+      font-size: 17px;
+      font-weight: 700;
+      transform: translateY(50px);
+    }
+  .filterBox {
+    height: 250px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -156,26 +202,26 @@ export default {
         height: 100%;
       }
     }
+
     .infoBox {
       flex: 1;
-
       height: 100px;
       div {
         width: 100%;
       }
       .info {
-        font-size: 16px;
-        color: #f0efec;
+        font-size: 15px;
+        color: white;
       }
       .subInfo {
-        font-size: 14px;
+        font-size: 13px;
         color: #f0efec;
         margin-top: 10px;
         word-break: break-all;
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 2;
         overflow: hidden;
       }
     }

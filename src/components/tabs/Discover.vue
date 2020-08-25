@@ -28,7 +28,7 @@
         <ul class="musicList-content ul_h">
           <p v-if="songList_gf.length==0">获取歌单失败惹 刷新试试8</p>
           <li class="musicList-item li_h" v-for="item in songList_gf" :key="item.tid">
-            <div class="item-coverBox">
+            <div class="item-coverBox" @click="aaa">
               <el-image
                 style="width: 100%; height: 100%;"
                 :src="item.cover_url_small"
@@ -54,6 +54,8 @@
             </div>
           </li>
         </ul>
+       
+        <div style="background-color:#325423; padding:50px;">asdsds</div>
       </div>
       <!-- /歌单区域 -->
     </div>
@@ -97,6 +99,11 @@ export default {
     };
   },
   methods: {
+
+    aaa(){
+      this.$showSongList();
+
+    },
     //获取热门专辑封面及数据
     async getCover() {
       var coverData = JSON.parse(
@@ -350,6 +357,7 @@ export default {
   border-radius: 50% !important;
   background-color: rgba(0, 0, 0, 0.3) !important;
 }
+
 </style>
 <style lang="scss" scoped>
 .mint-swipe {

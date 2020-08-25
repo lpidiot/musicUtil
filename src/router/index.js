@@ -19,6 +19,7 @@ const routes = [{
     children: [{
       path: 'discover',
       component: Discover,
+    keepAlive: false, //此组件不需要被缓
       meta: {
         title: '推荐'
       }
@@ -30,10 +31,6 @@ const routes = [{
     meta: {
       title: '搜索'
     }
-  },
-  {
-    path: '/songListDetail/:id',
-    component: SongListDetail
   }, {
     path: '/player',
     component: Player

@@ -36,14 +36,14 @@ export default {
   //data 储存的内容 无则返回存储的key 有则覆写并返回
   //type 为空时的内容类型 数组'[]'或对象'{}' 默认[]
   localUtil: function (key, data, type) {
-    if (type == undefined) {
+    if (typeof(type) == 'undefined') {
       type = '[]';
     }
-    if(data=='{}'||'[]'){
-      type=data;
+    if(data=='{}'){
+      type='{}';
     }
     var localData = JSON.parse(window.localStorage.getItem(key) || type);
-    if (data == undefined||data=='{}'||data=='[]') {
+    if (typeof(data) == 'undefined'||data=='{}'||data=='[]') {
       return localData;
     }
    

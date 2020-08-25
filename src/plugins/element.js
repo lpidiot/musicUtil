@@ -5,15 +5,16 @@ import {
   Image,
   Button,
   Slider,
-  Tag
+  Tag,
+  InfiniteScroll
 } from 'element-ui'
-
 Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Image)
 Vue.use(Button)
 Vue.use(Slider)
 Vue.use(Tag)
+Vue.use(InfiniteScroll)
 
 import {Swipe,SwipeItem } from 'mint-ui'
 import 'mint-ui/lib/swipe/style.css'
