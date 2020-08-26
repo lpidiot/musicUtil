@@ -61,7 +61,7 @@
                   <div class="bar" v-if="song.vid">
                     <img src="@/assets/images/play_operation.png" />
                   </div>
-                  <div class="bar" @click.stop="songDetailSwitch">
+                  <div class="bar" @click.stop="songDetailSwitch(song)">
                     <img src="@/assets/images/more_option.png" />
                   </div>
                 </div>
@@ -206,7 +206,6 @@
 
     <wrapper ref="songDetail" :filter="true">
       <ListGroup :barList="barList"></ListGroup>
-      <ListGroup :barList="barList2"></ListGroup>
     </wrapper>
 
     <!-- /底部弹框 -->
@@ -245,57 +244,7 @@ export default {
       isLoading: false, //是否正在刷新
       isEnded: false, //数据是到末尾
       moveHeight: 0, //滚动条滑动距离
-      barList: [
-        {
-          id: 2,
-          title: "下一首播放",
-          imgUrl: require("@/assets/images/share2.png"),
-          fun: this.aaa,
-        },
-        {
-          id: 1,
-          title: "收藏到歌单",
-          imgUrl: require("@/assets/images/download.png"),
-          fun: this.aaa,
-        },
-        {
-          id: 1,
-          title: "下载",
-          imgUrl: require("@/assets/images/download.png"),
-          fun: this.aaa,
-        },
-      ],
-      barList2: [
-        {
-          id: 5,
-          title: "歌手",
-          imgUrl: require("@/assets/images/songer2.png"),
-        },
-        {
-          id: 7,
-          title: "专辑",
-          imgUrl: require("@/assets/images/cd.png"),
-        },
-        {
-          id: 4,
-          title: "信息",
-          imgUrl: require("@/assets/images/info.png"),
-          fun: this.aaa,
-        },
-
-        // {
-        //   id: 3,
-        //   title: "订阅",
-        //   imgUrl: require("@/assets/images/dinyue.png"),
-        //   fun: this.aaa,
-        // },
-
-        // {
-        //   id: 6,
-        //   title: "设置",
-        //   imgUrl: require("@/assets/images/setting.png"),
-        // },
-      ],
+      barList: [],
     };
   },
   methods: {
@@ -390,47 +339,49 @@ export default {
     },
     //获取官方联想数据
     async getThinkData(val) {
-      var result = await this.$get("/searchApi", {
-        params: {
-          is_xml: 0,
-          key: val,
-          g_tk: 5381,
-          loginUin: 0,
-          hostUin: 0,
-          format: "json",
-          inCharset: "utf8",
-          outCharset: "utf-8",
-          notice: 0,
-          platform: "yqq.json",
-          needNewCode: 0,
-        },
-      });
-      if (result.status == 200) {
-        if (result.data.data != undefined) {
-          var album = result.data.data.album.itemlist;
-          var singer = result.data.data.singer.itemlist;
-          var mv = result.data.data.mv.itemlist;
-          var song = result.data.data.album.itemlist;
-          if (album.length > 5) {
-            album = album.splice(0, 5);
-          }
-          if (album.length > 5) {
-            singer = album.splice(0, 5);
-          }
-          if (album.length > 5) {
-            mv = album.splice(0, 5);
-          }
-          if (album.length > 5) {
-            song = album.splice(0, 5);
-          }
-          var goal = {
-            album: album,
-            singer: singer,
-            mv: mv,
-            song: song,
-          };
-          this.thinks = goal;
+      var result = await this.$getData(
+        "https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg",
+        {
+          params: {
+            is_xml: 0,
+            key: val,
+            g_tk: 5381,
+            loginUin: 0,
+            hostUin: 0,
+            format: "json",
+            inCharset: "utf8",
+            outCharset: "utf-8",
+            notice: 0,
+            platform: "yqq.json",
+            needNewCode: 0,
+          },
         }
+      );
+      if (result) {
+        var data = result.data;
+        var album = data.album.itemlist;
+        var singer = data.singer.itemlist;
+        var mv = data.mv.itemlist;
+        var song = data.album.itemlist;
+        if (album.length > 5) {
+          album = album.splice(0, 5);
+        }
+        if (album.length > 5) {
+          singer = album.splice(0, 5);
+        }
+        if (album.length > 5) {
+          mv = album.splice(0, 5);
+        }
+        if (album.length > 5) {
+          song = album.splice(0, 5);
+        }
+        var goal = {
+          album: album,
+          singer: singer,
+          mv: mv,
+          song: song,
+        };
+        this.thinks = goal;
       }
     },
     //标签/热门点击事件
@@ -455,8 +406,8 @@ export default {
       if (this.page == 0) {
         this.searchResult = [];
       }
-      var result = await this.$get(
-        "/searchMusicApi",
+      var result = await this.$getData(
+        "https://c.y.qq.com/soso/fcgi-bin/client_search_cp",
         {
           params: {
             p: self.page++, //页数
@@ -466,11 +417,9 @@ export default {
           },
         },
         true
-      ).catch((err) => {
-        console.log(err);
-      });
-      if (result.status == 200) {
-        var goalData = result.data.data.song.list;
+      )
+      if (result) {
+        var goalData = result.data.song.list;
         if (goalData.length == 0) {
           self.isEnded = true;
           self.isLoading = false;
@@ -521,12 +470,60 @@ export default {
         }, 200);
       }
     },
-    songDetailSwitch() {
+    songDetailSwitch(info) {
+      console.log(info);
+      var bars = [
+        [
+          {
+            id: 1,
+            title: "下一首播放",
+            imgUrl: require("@/assets/images/share2.png"),
+            fun: this.aaa,
+          },
+          {
+            id: 2,
+            title: "收藏到歌单",
+            imgUrl: require("@/assets/images/download.png"),
+            fun: this.aaa,
+          },
+          {
+            id: 3,
+            title: "下载",
+            imgUrl: require("@/assets/images/download.png"),
+            fun: this.aaa,
+          },
+        ],
+        [
+          {
+            id: 1,
+            title: "歌手" + " (" + info.singer[0].name + ")",
+            imgUrl: require("@/assets/images/songer2.png"),
+            fun: function () {
+              console.log(info.singer[0].mid);
+            },
+          },
+          {
+            id: 2,
+            title: "专辑" + " (" + info.albumname + ")",
+            imgUrl: require("@/assets/images/cd.png"),
+            fun: function () {
+              this.$showSongList(info.albummid);
+            },
+          },
+          {
+            id: 3,
+            title: "信息",
+            imgUrl: require("@/assets/images/info.png"),
+            fun: this.aaa,
+          },
+        ],
+      ];
+      this.barList = bars;
       this.$refs.songDetail.sw();
     },
     //开始播放所选歌曲
     async startPlay(songId) {
-      var result =await this.$getMusic(songId);
+      var result = await this.$getMusic(songId);
       if (result) {
         this.$addMusic(result);
         this.$parent.updatePlayingList(null, true);

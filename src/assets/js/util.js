@@ -1,8 +1,15 @@
 export default {
+  apiInfo: {
+    musicApi: 'https://u.y.qq.com/cgi-bin/musicu.fcg',
+    songListApi:'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg',
+    //搜索联想
+    searchThink: 'https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg',
+    searchMusicApi: 'https://c.y.qq.com/soso/fcgi-bin/client_search_cp'
+  },
   //生成uiid
   //len 位数
   //radix 进制
-  createUuid: function uuid(len, radix) {
+  createUuid(len, radix) {
     var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
     var uuid = [],
       i;
@@ -35,25 +42,25 @@ export default {
   //key key值
   //data 储存的内容 无则返回存储的key 有则覆写并返回
   //type 为空时的内容类型 数组'[]'或对象'{}' 默认[]
-  localUtil: function (key, data, type) {
-    if (typeof(type) == 'undefined') {
+  localUtil(key, data, type) {
+    if (typeof (type) == 'undefined') {
       type = '[]';
     }
-    if(data=='{}'){
-      type='{}';
+    if (data == '{}') {
+      type = '{}';
     }
     var localData = JSON.parse(window.localStorage.getItem(key) || type);
-    if (typeof(data) == 'undefined'||data=='{}'||data=='[]') {
+    if (typeof (data) == 'undefined' || data == '{}' || data == '[]') {
       return localData;
     }
-   
+
     localData = data;
     window.localStorage.setItem(key, JSON.stringify(localData));
     return localData;
   },
   //获得字符串实际长度，中文2，英文1
   //要获得长度的字符串
-  getLength: function (str) {
+  getLength(str) {
     var realLength = 0,
       len = str.length,
       charCode = -1;
@@ -64,7 +71,7 @@ export default {
     }
     return realLength;
   },
-  typeObj: function (obj) {
+  typeObj(obj) {
     var type = Object.prototype.toString.call(obj);
     if (type == '[object Array]') {
       return 'Array';
@@ -74,43 +81,43 @@ export default {
       return "obj is not object or array"
     }
   },
-  isRealNum:function isRealNum(val){
+  isRealNum(val) {
     // isNaN()函数 把空串 空格 以及NUll 按照0来处理 所以先去除
-    if(val === "" || val ==null){
-        return false;
+    if (val === "" || val == null) {
+      return false;
     }
-    if(!isNaN(val)){
-        return true;
-    }else{
-        return false;
+    if (!isNaN(val)) {
+      return true;
+    } else {
+      return false;
     }
-},
-/**
- * 判断是否存在
- * @mark 详细对象路径
- * @res 数据源
- * @flag 要比对的于mark对应的数据
- * @returns 
- * -数组重复返回下标
- * -对象重复返回重复的对象
- * -无重复返回null
- */
-isRepeat:function(mark,res,flag){
-  if(this.typeObj(res)=="Array"){
-    res.forEach(item,idx=>{
-      if(eval(item.mark)==flag){
-        return idx;
-      }
-    })
-  }
+  },
+  /**
+   * 判断是否存在
+   * @mark 详细对象路径
+   * @res 数据源
+   * @flag 要比对的于mark对应的数据
+   * @returns 
+   * -数组重复返回下标
+   * -对象重复返回重复的对象
+   * -无重复返回null
+   */
+  isRepeat(mark, res, flag) {
+    if (this.typeObj(res) == "Array") {
+      res.forEach(item, idx => {
+        if (eval(item.mark) == flag) {
+          return idx;
+        }
+      })
+    }
 
-  if(this.typeObj(res)=="Object"){
-    for(var item in res){
-      if(eval(item.mark)==flag){
-        return item;
+    if (this.typeObj(res) == "Object") {
+      for (var item in res) {
+        if (eval(item.mark) == flag) {
+          return item;
+        }
       }
     }
+    return null;
   }
-  return null;
-}
 }

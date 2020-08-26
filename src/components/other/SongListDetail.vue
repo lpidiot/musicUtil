@@ -108,9 +108,34 @@ export default {
     },
     //显示回调 用来刷新数据
     async freshSongList_tid(tid) {
-      var result = await this.$getSongList(tid);
-      console.log(result);
-      if (result.cdlist) {
+      var result = await this.$getData(
+        "https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg",
+        {
+          header: {
+            origin: "https://y.qq.com",
+            referer: "https://y.qq.com/n/yqq/playlist/" + tid + ".html",
+          },
+          params: {
+            type: "1",
+            json: "1",
+            utf8: "1",
+            onlysong: "0",
+            new_format: "1",
+            disstid: tid,
+            loginUin: "1195188852",
+            hostUin: "0",
+            format: "json",
+            inCharset: "utf8",
+            outCharset: "utf-8",
+            notice: "0",
+            platform: "yqq.json",
+            needNewCode: "0",
+          },
+        },
+        true
+      )
+      //console.log(result);
+      if (result) {
         var data = result.cdlist[0];
         if (data) {
           this.songListInfo = {
@@ -148,12 +173,10 @@ export default {
             },
           },
         },
-      }).catch((err) => {
-        console.log(err);
-      });
-      if (result.data.albumSonglist) {
-        var songarr = result.data.albumSonglist.data.songList;
-        console.log(songarr);
+      })
+      if (result.albumSonglist) {
+        var songarr = result.albumSonglist.data.songList;
+        //console.log(songarr);
         if (songarr) {
           this.songListInfo = {
             songListName: songarr[0].songInfo.title,
@@ -172,6 +195,54 @@ export default {
         }
       }
     },
+
+    async freshSongList_album(albumid) {
+      var result = await this.$getData("/https://u.y.qq.com/cgi-bin/musicu.fcg", {
+        headers: {},
+        params: {
+          ":": "recom9188477459130378",
+          g_tk: "5381",
+          loginUin: 0,
+          hostUin: 0,
+          needNewCode: 0,
+          data: {
+            comm: { ct: 24, cv: 10000 },
+            albumSonglist: {
+              method: "GetAlbumSongList",
+              param: {
+                albumMid: url,
+                albumID: 0,
+                begin: 0,
+                num: 10,
+                order: 2,
+              },
+              module: "music.musichallAlbum.AlbumSongList",
+            },
+          },
+        },
+      })
+      if (result) {
+        var songarr = result.albumSonglist.data.songList;
+        //console.log(songarr);
+        if (songarr) {
+          this.songListInfo = {
+            songListName: songarr[0].songInfo.title,
+            songer: songarr[0].songInfo.singer[0].name,
+            describe: songarr[0].songInfo.subtitle,
+          };
+          var goal = [];
+          for (var item of songarr) {
+            goal.push(item.songInfo);
+          }
+          this.songList = goal;
+          this.logo =
+            "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
+            url +
+            "_1.jpg?max_age=2592000";
+        }
+      }
+    },
+
     back() {
       this.isSinger = false;
       this.changeAppear = false; //是否改变信息栏显示状态
@@ -367,6 +438,12 @@ export default {
         color: rgba(0, 0, 0, 1);
       }
       .subInfo {
+        word-break: break-all;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
         color: rgb(101, 119, 134);
       }
     }

@@ -40,7 +40,43 @@ Vue.prototype.$axios = axios
 // }, function (error) {
 //   return Promise.reject(error);
 // });
-Vue.prototype.$getLoading=function(){
+
+axios.interceptors.response.use(
+  (response) => {
+    //console.log(response);
+    if (response.data.isok) {
+      try{
+        var goal=JSON.parse(response.data.data);
+        return goal;
+      }catch(e){
+          //json解析出差 处理
+          //url response.config.url
+          //status response.config.status
+          return null;
+      }
+      return response.data.data;
+    } else if (typeof (response.data.isok) == 'boolean') {
+      //处理
+      console.log('error');
+      return null;
+    }
+    return response.data;
+  }, error => {
+    if (error.response) {
+      if (error.response.status === 404) {
+        //处理
+        return new Promise(() => {}) // pending的promise，中止promise链
+      } else if (error.response.status === 500) {
+        //处理
+        return new Promise(() => {}) // pending的promise，中止promise链
+      }
+      return Promise.reject(error.response)
+    }
+
+  }
+)
+
+Vue.prototype.$getLoading = function () {
   var loading = this.$loading({
     // 声明一个loading对象
     lock: true, // 是否锁屏
@@ -59,60 +95,60 @@ Vue.prototype.$getLoading=function(){
   return loading;
 }
 
-Vue.prototype.$get = function (url, data,load) {
-  var loading=null;
-  if(load){
+Vue.prototype.$get = function (url, data, load) {
+  var loading = null;
+  if (load) {
     loading = this.$getLoading();
   }
-  
+
   return new Promise(function (resolve, reject) {
     axios.get(url, JSON.parse(JSON.stringify(data))).then(res => {
-      if(loading){
+      if (loading) {
         loading.close()
       }
       resolve(res);
     }).catch(err => {
-      if(loading){
+      if (loading) {
         loading.close()
       }
-      reject(err.data)
+      reject(err)
     })
   })
 }
 
-Vue.prototype.$post = function post(url, params,load) {
-  var loading =null;
-  if(load){
-    loading=this.$getLoading();
+Vue.prototype.$post = function post(url, params, load) {
+  var loading = null;
+  if (load) {
+    loading = this.$getLoading();
   }
   return new Promise((resolve, reject) => {
     axios.post(url, params)
       .then(res => {
-        if(loading){
+        if (loading) {
           loading.close()
         }
-        resolve(res.data);
+        resolve(res);
       })
       .catch(err => {
-        if(loading){
+        if (loading) {
           loading.close()
         }
-        reject(err.data)
+        reject(err)
       })
   })
 }
-Vue.prototype.$getMusic =async function (songId) {
+Vue.prototype.$getMusic = async function (songId) {
   var result = await this.$get(
     "http://127.0.0.1:9900/music/api/getVipMusic", {
       params: {
         songId: songId,
       },
-    },true
+    }, true
   ).catch((err) => {
     console.log(err);
   })
   var goal = null;
-
+  console.log(result);
   if (result.data.isok) {
     console.log('aa');
     var data = JSON.parse(result.data.data)[0];
@@ -163,15 +199,25 @@ Vue.prototype.$addMusic = function (music) {
     }
     originData.songList.unshift(music);
     util.localUtil("playingList", originData);
-    console.log('ok');
-
   }
 }
-
-Vue.prototype.$getSongList = function (tid) {
+Vue.prototype.$getData = function (url, params, load) {
+  params.url = url;
+  if (!load) {
+    load = false;
+  }
+  console.log('ok');
   return this.$post(
-    "http://127.0.0.1:9900/music/api/getWebData", {
-      url: 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg',
+    "http://127.0.0.1:9900/music/api/getWebData", params, load
+  ).catch((err) => {
+    console.log(err);
+    return null;
+  });
+}
+
+Vue.prototype.$getSongList_tid = function (tid) {
+  return this.$getData(
+    "https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg", {
       header: {
         "origin": "https://y.qq.com",
         "referer": "https://y.qq.com/n/yqq/playlist/" + tid + ".html",
@@ -192,10 +238,9 @@ Vue.prototype.$getSongList = function (tid) {
         platform: 'yqq.json',
         needNewCode: '0'
       }
-    },true
+    }, true
   ).catch((err) => {
     console.log(err);
-    return null;
   });
 }
 

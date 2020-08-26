@@ -1,19 +1,29 @@
 <template>
-  <div class="listGroup">
-    <div v-for="item in barList" :key="item.id" class="list" @click.prevent="item.fun?item.fun():''">
-      <div>{{item.title}}</div>
-      <div class="list-img" :style="{width:width,height:height}">
-        <img :src="item.imgUrl" />
+  <div>
+    <div class="listGroup" v-if="isSingle">
+      <div v-for="item in barList" :key="item.id" class="list" @click.prevent="item.fun?item.fun():''">
+        <div>{{item.title}}</div>
+        <div class="list-img" :style="{width:width,height:height}">
+          <img :src="item.imgUrl" />
+        </div>
       </div>
     </div>
-    
+
+    <div class="listGroup" v-else v-for="(arr,idx) in barList" :key="idx">
+      <div v-for="item in arr" :key="item.id" class="list" @click.prevent="item.fun?item.fun():''">
+        <div>{{item.title}}</div>
+        <div class="list-img" :style="{width:width,height:height}">
+          <img :src="item.imgUrl" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   data() {
-    return {    };
+    return {};
   },
   props: {
     width: {
@@ -24,22 +34,19 @@ export default {
       type: String,
       default: "22px",
     },
-    backgroundColor:{
+    backgroundColor: {
       type: String,
       default: "#ffffff",
     },
-    barList:{
-      type:Array
-    }
+    barList: {
+      type: Array,
+    },
   },
-  methods: {
-    qqq(e){
-      if(e){
-        console.log('111');
-      }else{
-        console.log('000');
-      }
-    }
+  methods: {},
+  computed: {
+    isSingle() {
+      return this.$util.typeObj(this.barList[0]) == "Array" ? false : true;
+    },
   },
 };
 </script>
@@ -76,8 +83,8 @@ export default {
     border-radius: 0 0 12px 12px;
     margin-bottom: 0;
   }
-  .list:hover{
-    background-color: #DADADF;
+  .list:hover {
+    background-color: #dadadf;
   }
 }
 .listGroup:last-child {

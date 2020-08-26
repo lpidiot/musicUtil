@@ -2,7 +2,11 @@
   <div>
     <mt-swipe :auto="4000" height="150px">
       <mt-swipe-item v-for="item in focus" :key="item.id">
-        <img @click="openSongListDetail(item.jump_info.url)" class="cover" :src="item.pic_info.url" />
+        <img
+          @click="openSongListDetail('url',item.jump_info.url)"
+          class="cover"
+          :src="item.pic_info.url"
+        />
       </mt-swipe-item>
     </mt-swipe>
 
@@ -12,7 +16,7 @@
         <div class="musicList-head">
           <h3>官方歌单</h3>
           <div class="musicList-more">
-            <span >更多</span>
+            <span>更多</span>
             <div class="lcon-more">
               <img src="../../assets/images/more.png" />
             </div>
@@ -22,7 +26,7 @@
         <ul class="musicList-content ul_h">
           <p v-if="songList_gf.length==0">获取歌单失败惹 刷新试试8</p>
           <li class="musicList-item li_h" v-for="item in songList_gf" :key="item.tid">
-            <div class="item-coverBox" @click="openSongListDetail(item.tid)">
+            <div class="item-coverBox" @click="openSongListDetail('tid',item.tid)">
               <el-image
                 style="width: 100%; height: 100%;"
                 :src="item.cover_url_small"
@@ -48,7 +52,7 @@
             </div>
           </li>
         </ul>
-       
+
         <div style="background-color:#325423; padding:50px;">asdsds</div>
       </div>
       <!-- /歌单区域 -->
@@ -57,16 +61,16 @@
 </template>
 
 <script>
-window.onload = function() {
+window.onload = function () {
   var lastTouchEnd = 0;
-  document.addEventListener("touchstart", function(event) {
+  document.addEventListener("touchstart", function (event) {
     if (event.touches.length > 1) {
       event.preventDefault();
     }
   });
   document.addEventListener(
     "touchend",
-    function(event) {
+    function (event) {
       var now = new Date().getTime();
       if (now - lastTouchEnd <= 300) {
         event.preventDefault();
@@ -75,10 +79,10 @@ window.onload = function() {
     },
     false
   );
-  document.addEventListener("gesturestart", function(event) {
+  document.addEventListener("gesturestart", function (event) {
     event.preventDefault();
   });
-  document.addEventListener("dblclick", function(event) {
+  document.addEventListener("dblclick", function (event) {
     event.preventDefault();
   });
 };
@@ -89,22 +93,23 @@ export default {
       //轮播图数据
       focus: [],
       //官方歌单数据
-      songList_gf: []
+      songList_gf: [],
     };
   },
   methods: {
-     openSongListDetail(tid){
+    openSongListDetail(mark, val) {
       //var result=await this.$getSongList(tid);
       //console.log(result);
-      this.$showSongList(tid);
-
+      this.$showSongList(mark, val);
     },
     //获取热门专辑封面及数据
     async getCover() {
-      var coverData = this.$util.localUtil("coverData","{}");
-      var result = await this.$get("/musicApi", {
+      var coverData = this.$util.localUtil("coverData", "{}");
+      var result = await this.$getData(
+        "https://u.y.qq.com/cgi-bin/musicu.fcg",
+        {
           headers: {
-            accept: "application/json, text/javascript, */*; q=0.01"
+            accept: "application/json, text/javascript, */*; q=0.01",
           },
           params: {
             "-": "recom9188477459130378",
@@ -117,68 +122,63 @@ export default {
               category: {
                 method: "get_hot_category",
                 param: { qq: "" },
-                module: "music.web_category_svr"
+                module: "music.web_category_svr",
               },
               recomPlaylist: {
                 method: "get_hot_recommend",
                 param: { async: 1, cmd: 2 },
-                module: "playlist.HotRecommendServer"
+                module: "playlist.HotRecommendServer",
               },
               playlist: {
                 method: "get_playlist_by_category",
                 param: { id: 8, curPage: 1, size: 40, order: 5, titleid: 8 },
-                module: "playlist.PlayListPlazaServer"
+                module: "playlist.PlayListPlazaServer",
               },
               new_song: {
                 module: "newsong.NewSongServer",
                 method: "get_new_song_info",
-                param: { type: 5 }
+                param: { type: 5 },
               },
               new_album: {
                 module: "newalbum.NewAlbumServer",
                 method: "get_new_album_info",
-                param: { area: 1, sin: 0, num: 10 }
+                param: { area: 1, sin: 0, num: 10 },
               },
               new_album_tag: {
                 module: "newalbum.NewAlbumServer",
                 method: "get_new_album_area",
-                param: {}
+                param: {},
               },
               toplist: {
                 module: "musicToplist.ToplistInfoServer",
                 method: "GetAll",
-                param: {}
+                param: {},
               },
               focus: {
                 module: "QQMusic.MusichallServer",
                 method: "GetFocus",
-                param: {}
-              }
-            }
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          if (Object.keys(coverData).length != 0) {
-            this.focus = coverData.focus.data.conten;
-          }
-        });
-         
-      if (result.status === 200) {
-        this.$util.localUtil("coverData",result.data);
-        this.focus = result.data.focus.data.content;
-      } else {
-        if (Object.keys(coverData).length != 0) {
-          this.focus = coverData.focus.data.conten;
+                param: {},
+              },
+            },
+          },
         }
+      );
+      //console.log(result);
+      if (result) {
+        this.$util.localUtil("coverData", result);
+        this.focus = result.focus.data.content;
       }
+
+      // if (Object.keys(coverData).length != 0) {
+      //   this.focus = coverData.focus.data.conten;
+      // }
     },
     // 获取热门搜索信息(其中歌单数据不太行 放弃)
     async getHotKey() {
       var hotKey = this.$util.localUtil("hotKey");
-      var result = await this.$axios
-        .get("/musicApi", {
-          headers: {},
+      var result = await this.$getData(
+        "https://u.y.qq.com/cgi-bin/musicu.fcg",
+        {
           params: {
             cgiKey: "GetHomePage",
             data: {
@@ -190,82 +190,65 @@ export default {
                 outCharset: "utf-8",
                 notice: 0,
                 platform: "h5",
-                needNewCode: 1
+                needNewCode: 1,
               },
               MusicHallHomePage: {
                 module: "music.musicHall.MusicHallPlatform",
                 method: "MobileWebHome",
-                param: { ShelfId: [101, 102, 161] }
+                param: { ShelfId: [101, 102, 161] },
               },
               hotkey: {
                 module: "tencent_musicsoso_hotkey.HotkeyService",
                 method: "GetHotkeyForQQMusicMobile",
                 param: {
                   remoteplace: "txt.miniapp.wxada7aab80ba27074",
-                  searchid: "1559616839293"
-                }
-              }
-            }
-          }
-        })
-        .catch(err => {
-          //console.log(err);
-          if (hotKey.length > 0) {
-            //this.hotKey = songList;
-          }
-        });
-      if (result.status === 200) {
-        hotKey = result.data.hotkey.data.vec_hotkey;
-        this.$util.localUtil("hotKey",JSON.stringify(hotKey));
-        //console.log(hotKey);
-      } else {
-        if (hotKey.length > 0) {
-          // this.songList_gf = songList;
+                  searchid: "1559616839293",
+                },
+              },
+            },
+          },
         }
+      );
+      //console.log(result);
+      if (result) {
+        hotKey = result.hotkey.data.vec_hotkey;
+        this.$util.localUtil("hotKey", JSON.stringify(hotKey));
       }
     },
     // 获取官方歌单信息
     async getGfSongList() {
-      
       var songList_gf = this.$util.localUtil("songList_gf");
-      var result = await this.$get("/musicApi", {
-          headers: {},
-          params: {
-            format: "json",
-            notice: 0,
-            needNewCode: 0,
-            platform: "yqq.json",
-            data: {
-              playlist: {
-                method: "get_playlist_by_category",
-                param: {
-                  id: 3317,
-                  curPage: 1,
-                  size: 40,
-                  order: 5,
-                  titleid: 3317
-                },
-                module: "playlist.PlayListPlazaServer"
-              }
-            }
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          if (songList_gf.length > 0) {
-            this.songList_gf = songList_gf;
-          }
-        });
-      if (result.status === 200) {
-        songList_gf = result.data.playlist.data.v_playlist;
-        this.$util.localUtil("songList_gf",songList_gf);
+      var result = await this.$getData("https://u.y.qq.com/cgi-bin/musicu.fcg", {
+        params: {
+          format: "json",
+          notice: 0,
+          needNewCode: 0,
+          platform: "yqq.json",
+          data: {
+            playlist: {
+              method: "get_playlist_by_category",
+              param: {
+                id: 3317,
+                curPage: 1,
+                size: 40,
+                order: 5,
+                titleid: 3317,
+              },
+              module: "playlist.PlayListPlazaServer",
+            },
+          },
+        },
+      })
+      console.log(result);
+      if (result) {
+        songList_gf = result.playlist.data.v_playlist;
+        this.$util.localUtil("songList_gf", songList_gf);
         this.songList_gf = songList_gf;
         //console.log(songList_gf);
-      } else {
-        if (songList_gf.length > 0) {
-          this.songList_gf = songList_gf;
-        }
-      }
+      } 
+        // if (songList_gf.length > 0) {
+        //   this.songList_gf = songList_gf;
+        // }
     },
   },
   filters: {
@@ -279,15 +262,15 @@ export default {
           "w";
       }
       return text;
-    }
+    },
   },
   created() {
-    var loading=this.$getLoading();
+    var loading = this.$getLoading();
     this.getCover();
     this.getGfSongList();
     this.getHotKey();
     loading.close();
-  }
+  },
 };
 </script>
 <style>
@@ -297,12 +280,11 @@ export default {
   border-radius: 50% !important;
   background-color: rgba(0, 0, 0, 0.3) !important;
 }
-
 </style>
 <style lang="scss" scoped>
 .mint-swipe {
   height: 150px !important;
-  margin-bottom: 20px !important; 
+  margin-bottom: 20px !important;
 }
 .cover {
   width: 100%;
