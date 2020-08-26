@@ -479,7 +479,7 @@ export default {
         for (var item of goalData) {
           self.searchResult.push(item);
         }
-        console.log(this.searchResult);
+        //console.log(this.searchResult);
         self.isLoading = false;
       }
     },

@@ -107,7 +107,7 @@ export default {
       }
     },
     //显示回调 用来刷新数据
-    async onShow(tid) {
+    async freshSongList_tid(tid) {
       var result = await this.$getSongList(tid);
       console.log(result);
       if (result.cdlist) {
@@ -124,8 +124,68 @@ export default {
         }
       }
     },
+    async freshSongList_url(url) {
+      var result = await this.$get("/musicApi", {
+        headers: {},
+        params: {
+          ":": "recom9188477459130378",
+          g_tk: "5381",
+          loginUin: 0,
+          hostUin: 0,
+          needNewCode: 0,
+          data: {
+            comm: { ct: 24, cv: 10000 },
+            albumSonglist: {
+              method: "GetAlbumSongList",
+              param: {
+                albumMid: url,
+                albumID: 0,
+                begin: 0,
+                num: 10,
+                order: 2,
+              },
+              module: "music.musichallAlbum.AlbumSongList",
+            },
+          },
+        },
+      }).catch((err) => {
+        console.log(err);
+      });
+      if (result.data.albumSonglist) {
+        var songarr = result.data.albumSonglist.data.songList;
+        console.log(songarr);
+        if (songarr) {
+          this.songListInfo = {
+            songListName: songarr[0].songInfo.title,
+            songer: songarr[0].songInfo.singer[0].name,
+            describe: songarr[0].songInfo.subtitle,
+          };
+          var goal = [];
+          for (var item of songarr) {
+            goal.push(item.songInfo);
+          }
+          this.songList = goal;
+          this.logo =
+            "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
+            url +
+            "_1.jpg?max_age=2592000";
+        }
+      }
+    },
     back() {
+      this.isSinger = false;
+      this.changeAppear = false; //是否改变信息栏显示状态
+      this.songerInfo = {};
+      this.logo = require("@/assets/images/m.jpg");
+      this.songList = [];
+      this.songListInfo = {
+        songer: "拥有者",
+        describe: "描述",
+      };
+      this.songListName = "歌单名";
       this.show = false;
+      this.isScroll = false;
+      this.$forceUpdate();
     },
   },
   mounted() {
@@ -221,6 +281,7 @@ export default {
 .fixedTop {
   position: fixed;
   transform: translateY(-210px);
+  width: 100%;
 }
 .distance {
   margin-top: 40px !important;

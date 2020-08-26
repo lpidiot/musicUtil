@@ -1,14 +1,8 @@
 <template>
   <div>
-    <!-- <el-carousel height="150px" :interval="4000" indicator-position="outside" arrow="always">
-      <el-carousel-item v-for="item in focus" :key="item.id">
-        <img @click="getCoverDetail(item.jump_info.url)" class="cover" :src="item.pic_info.url" />
-      </el-carousel-item>
-    </el-carousel>-->
-
     <mt-swipe :auto="4000" height="150px">
       <mt-swipe-item v-for="item in focus" :key="item.id">
-        <img @click="getCoverDetail(item.jump_info.url)" class="cover" :src="item.pic_info.url" />
+        <img @click="openSongListDetail(item.jump_info.url)" class="cover" :src="item.pic_info.url" />
       </mt-swipe-item>
     </mt-swipe>
 
@@ -178,36 +172,6 @@ export default {
           this.focus = coverData.focus.data.conten;
         }
       }
-    },
-    async getCoverDetail(url) {
-      var result = await this.$get("/musicApi", {
-          headers: {},
-          params: {
-            ":": "recom9188477459130378",
-            g_tk: "5381",
-            loginUin: 0,
-            hostUin: 0,
-            needNewCode: 0,
-            data: {
-              comm: { ct: 24, cv: 10000 },
-              albumSonglist: {
-                method: "GetAlbumSongList",
-                param: {
-                  albumMid: url,
-                  albumID: 0,
-                  begin: 0,
-                  num: 10,
-                  order: 2
-                },
-                module: "music.musichallAlbum.AlbumSongList"
-              }
-            }
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
-      //console.log(result);
     },
     // 获取热门搜索信息(其中歌单数据不太行 放弃)
     async getHotKey() {
