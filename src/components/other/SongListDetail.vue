@@ -22,15 +22,15 @@
           </div>
           <div class="infoBox">
             <div class="info">{{songListInfo.songListName}}</div>
-            <div class="info">{{songListInfo.songer}}</div>
+            <div class="info_songer">{{songListInfo.songer}}</div>
             <div class="subInfo">{{songListInfo.describe}}</div>
           </div>
         </div>
       </div>
 
-      <div class="appear" v-else>
+      <div class="appear_songer" v-else :style="{backgroundImage:'url('+logo+')'}">
         <div class="filterBox">
-          <div class="singer">周杰伦</div>
+          <div class="singer">{{songListInfo.songer}}</div>
         </div>
       </div>
 
@@ -54,7 +54,6 @@
     </div>
   </transition>
 </template>
-
 <script>
 export default {
   data() {
@@ -133,7 +132,7 @@ export default {
           },
         },
         true
-      )
+      );
       //console.log(result);
       if (result) {
         var data = result.cdlist[0];
@@ -150,36 +149,38 @@ export default {
       }
     },
     async freshSongList_url(url) {
-      var result = await this.$get("/musicApi", {
-        headers: {},
-        params: {
-          ":": "recom9188477459130378",
-          g_tk: "5381",
-          loginUin: 0,
-          hostUin: 0,
-          needNewCode: 0,
-          data: {
-            comm: { ct: 24, cv: 10000 },
-            albumSonglist: {
-              method: "GetAlbumSongList",
-              param: {
-                albumMid: url,
-                albumID: 0,
-                begin: 0,
-                num: 10,
-                order: 2,
+      var result = await this.$getData(
+        "https://u.y.qq.com/cgi-bin/musicu.fcg",
+        {
+          params: {
+            ":": "recom9188477459130378",
+            g_tk: "5381",
+            loginUin: 0,
+            hostUin: 0,
+            needNewCode: 0,
+            data: {
+              comm: { ct: 24, cv: 10000 },
+              albumSonglist: {
+                method: "GetAlbumSongList",
+                param: {
+                  albumMid: url,
+                  albumID: 0,
+                  begin: 0,
+                  num: 10,
+                  order: 2,
+                },
+                module: "music.musichallAlbum.AlbumSongList",
               },
-              module: "music.musichallAlbum.AlbumSongList",
             },
           },
-        },
-      })
-      if (result.albumSonglist) {
+        }
+      );
+      if (result) {
         var songarr = result.albumSonglist.data.songList;
         //console.log(songarr);
         if (songarr) {
           this.songListInfo = {
-            songListName: songarr[0].songInfo.title,
+            songListName: songarr[0].songInfo.album.name,
             songer: songarr[0].songInfo.singer[0].name,
             describe: songarr[0].songInfo.subtitle,
           };
@@ -196,34 +197,46 @@ export default {
       }
     },
 
-    async freshSongList_album(albumid) {
-      var result = await this.$getData("/https://u.y.qq.com/cgi-bin/musicu.fcg", {
-        headers: {},
-        params: {
-          ":": "recom9188477459130378",
-          g_tk: "5381",
-          loginUin: 0,
-          hostUin: 0,
-          needNewCode: 0,
-          data: {
-            comm: { ct: 24, cv: 10000 },
-            albumSonglist: {
-              method: "GetAlbumSongList",
-              param: {
-                albumMid: url,
-                albumID: 0,
-                begin: 0,
-                num: 10,
-                order: 2,
-              },
-              module: "music.musichallAlbum.AlbumSongList",
-            },
+    async freshSongList_songer(songerId) {
+      var data={
+              comm: { ct: 24, cv: 0 },
+              singerSongList: {
+                method: "GetSingerSongList",
+                param: {
+                  order: 1,
+                  singerMid: songerId,
+                  begin: 0,
+                  num: 10,
+                },
+                module: "musichall.song_list_server",
+              }
+            };
+      var sign=this.$util.getSign(data);
+      console.log(sign);
+      return;
+      var result = await this.$getData(
+        "https://u.y.qq.com/cgi-bin/musics.fcg",
+        {
+          headers: {},
+          params: {
+            "-": "getSingerSong42397207500114176",
+            g_tk: 5381,
+            sign: "zzavu36pqnyz6ldf6be8abd941f9f2b62c18f39dd6266e6",
+            loginUin: 0,
+            hostUin: 0,
+            format: "json",
+            inCharset: "utf8",
+            outCharset: "utf-8",
+            notice: 0,
+            platform: "yqq.json",
+            needNewCode: 0,
+            data: data,
           },
-        },
-      })
+        }
+      );
+      console.log(songerId);
       if (result) {
-        var songarr = result.albumSonglist.data.songList;
-        //console.log(songarr);
+        var songarr = result.singerSongList.data.songList;
         if (songarr) {
           this.songListInfo = {
             songListName: songarr[0].songInfo.title,
@@ -236,9 +249,9 @@ export default {
           }
           this.songList = goal;
           this.logo =
-            "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
-            url +
-            "_1.jpg?max_age=2592000";
+            "https://y.gtimg.cn/music/photo_new/T001R300x300M000" +
+            songerId +
+            ".jpg?max_age=2592000";
         }
       }
     },
@@ -261,6 +274,7 @@ export default {
   },
   mounted() {
     window.addEventListener("scroll", this.handleScroll, true);
+    this.$util.sign_main(this,this.$util.sign_pram2());
   },
 };
 </script>
@@ -357,18 +371,23 @@ export default {
 .distance {
   margin-top: 40px !important;
 }
-
-.appear {
+.appear_songer {
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  //height: 220px;
-  height: 250px;
+  height: 280px;
   .singer {
     color: white;
     font-size: 17px;
     font-weight: 700;
-    transform: translateY(50px);
   }
+  .filterBox {
+    height: 280px;
+  }
+}
+.appear {
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  height: 250px;
   .filterBox {
     height: 220px;
     display: flex;
@@ -394,6 +413,11 @@ export default {
       .info {
         font-size: 15px;
         color: white;
+      }
+      .info_songer {
+        font-size: 13px;
+        color: #f0efec;
+        font-weight: 600;
       }
       .subInfo {
         font-size: 13px;

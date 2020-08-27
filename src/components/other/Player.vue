@@ -28,7 +28,7 @@
           <div :class="['msk','animation',isPlaying?'running':'stop']">
             <img
               class="cover"
-              :src="playingList[idx]?playingList[idx].cover:'http://p1.music.126.net/Nagysgn-c_pyLwHSTsFtXQ==/109951164514817375.jpg?param=130y130'"
+              :src="playingList[idx]?playingList[idx].cover:'@/assets/images/m.jpg'"
             />
           </div>
         </div>

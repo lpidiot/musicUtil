@@ -72,12 +72,54 @@ export default {
       //   "http://127.0.0.1:9900/music/api/updateCookie",
       //   {
       //     params: {
-      //       cookies: "ts_uid=689002144; pgv_pvid=2273141038; ts_uid=285984560; pgv_pvi=7055907840; ptui_loginuin=1195188852; RK=A0A50EKnYa; ptcz=a8ea77d518573518ea4529ae95f6564a799ded970b8f71392cee78583e6c207d; uin=1195188852; psrf_qqrefresh_token=6CE28D629A55C5C3B2FA5201F9BBE76E; euin=oK6q7K6FNeckoc**; psrf_qqaccess_token=69454B3F0A42B668866D7C0603319016; psrf_qqunionid=; tmeLoginType=2; psrf_qqopenid=2CC58CEAF778A2A3A8179F38E02DED0F; ts_refer=ADTAGmyqq; yq_index=0; ts_refer=www.baidu.com/link; yqq_stat=0; pgv_info=ssid=s5371793841; ts_last=y.qq.com/; pgv_si=s9607367680; qqmusic_key=Q_H_L_2i692z50e8gcWB-Q1JOHR3b54iEHPl7F2vf-aRksm4IE1CV2ozt1mVuhbOyDP5E; psrf_access_token_expiresAt=1605946219; psrf_musickey_createtime=1598170219; qm_keyst=Q_H_L_2i692z50e8gcWB-Q1JOHR3b54iEHPl7F2vf-aRksm4IE1CV2ozt1mVuhbOyDP5E; userAction=1; ts_last=i.y.qq.com/v8/playsong.html",
+      //      cookies:"pgv_pvi=8605431808; pgv_si=s5542136832; pgv_info=ssid=s902520674; pgv_pvid=6605262745; ptui_loginuin=1195188852; RK=I0AxlGKHba; ptcz=77e89dcb9d3223f38300285f48686d04900f5a28c10b8479d0557016bd643683; psrf_qqrefresh_token=6CE28D629A55C5C3B2FA5201F9BBE76E; psrf_qqaccess_token=69454B3F0A42B668866D7C0603319016; euin=oK6q7K6FNeckoc**; psrf_qqunionid=; psrf_musickey_createtime=1598512072; tmeLoginType=2; psrf_access_token_expiresAt=1606288072; qqmusic_key=Q_H_L_2WyM7z50euDDAFiN5nSbKdiTtLy1uaYZzeU4riQQSaBoyQEFE69D9AZ-gV_6wJ6; uin=1195188852; qm_keyst=Q_H_L_2WyM7z50euDDAFiN5nSbKdiTtLy1uaYZzeU4riQQSaBoyQEFE69D9AZ-gV_6wJ6; psrf_qqopenid=2CC58CEAF778A2A3A8179F38E02DED0F; qqmusic_fromtag=66"
       //     },
       //   }
       // );
       //console.log(result.data);
-      
+      var data = {
+        req: {
+          module: "CDN.SrfCdnDispatchServer",
+          method: "GetCdnDispatch",
+          param: { guid: "6605262745", calltype: 0, userip: "" },
+        },
+        req_0: {
+          module: "vkey.GetVkeyServer",
+          method: "CgiGetVkey",
+          param: {
+            guid: "6605262745",
+            songmid: ["004Z8Ihr0JIu5s"],
+            songtype: [0],
+            uin: "1195188852",
+            loginflag: 1,
+            platform: "20",
+          },
+        },
+        comm: { uin: 1195188852, format: "json", ct: 24, cv: 0 },
+      };
+      var sign=this.$util.getSign(data);
+
+      // var result = await this.$getData("https://u.y.qq.com/cgi-bin/musics.fcg", {
+      //   header:{
+      //     Cookie:"pgv_pvi=8605431808; pgv_si=s5542136832; pgv_info=ssid=s902520674; pgv_pvid=6605262745; ptui_loginuin=1195188852; RK=I0AxlGKHba; ptcz=77e89dcb9d3223f38300285f48686d04900f5a28c10b8479d0557016bd643683; psrf_qqrefresh_token=6CE28D629A55C5C3B2FA5201F9BBE76E; psrf_qqaccess_token=69454B3F0A42B668866D7C0603319016; euin=oK6q7K6FNeckoc**; psrf_qqunionid=; psrf_musickey_createtime=1598512072; tmeLoginType=2; psrf_access_token_expiresAt=1606288072; qqmusic_key=Q_H_L_2WyM7z50euDDAFiN5nSbKdiTtLy1uaYZzeU4riQQSaBoyQEFE69D9AZ-gV_6wJ6; uin=1195188852; qm_keyst=Q_H_L_2WyM7z50euDDAFiN5nSbKdiTtLy1uaYZzeU4riQQSaBoyQEFE69D9AZ-gV_6wJ6; psrf_qqopenid=2CC58CEAF778A2A3A8179F38E02DED0F; qqmusic_fromtag=66"
+      //   },
+      //   params: {
+      //     "-": "getplaysongvkey734640045891823",
+      //     g_tk: 2099400196,
+      //     sign: sign,
+      //     loginUin: "1195188852",
+      //     hostUin: 0,
+      //     format: "json",
+      //     inCharset: "utf8",
+      //     outCharset: "utf-8",
+      //     notice: 0,
+      //     platform: "yqq.json",
+      //     needNewCode: 0,
+      //     data: data,
+      //   },
+      // });
+      this.$getMusic('002jD2Q83NmcPJ');
+      //console.log(result);
     },
   },
   watch: {
@@ -111,7 +153,6 @@ export default {
     margin-bottom: 0 !important;
     margin: 0 !important;
   }
-  
 
   .el-tabs__nav-wrap::after {
     color: #e4e7ed;
@@ -121,8 +162,6 @@ export default {
   .el-tabs__content {
     display: none !important;
   }
-
-
 
   .search-box {
     width: 100%;

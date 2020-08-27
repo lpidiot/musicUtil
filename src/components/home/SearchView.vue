@@ -47,7 +47,7 @@
                 </div>
               </li>
 
-              <li v-for="song in searchResult" :key="song.docid" @click="startPlay(song.songmid)">
+              <li v-for="song in searchResult" :key="song.docid" @click="startPlay(song)">
                 <div class="musicInfo">
                   <div class="musicName">{{song.songname}}</div>
                   <div class="subName">
@@ -417,7 +417,7 @@ export default {
           },
         },
         true
-      )
+      );
       if (result) {
         var goalData = result.data.song.list;
         if (goalData.length == 0) {
@@ -470,8 +470,13 @@ export default {
         }, 200);
       }
     },
+    openSongListDetail(mark, val) {
+      //console.log(e);
+      this.$showSongList(mark, val);
+    },
     songDetailSwitch(info) {
       console.log(info);
+      const that = this;
       var bars = [
         [
           {
@@ -499,7 +504,8 @@ export default {
             title: "歌手" + " (" + info.singer[0].name + ")",
             imgUrl: require("@/assets/images/songer2.png"),
             fun: function () {
-              console.log(info.singer[0].mid);
+              console.log(info);
+              that.openSongListDetail("songer", info.singer[0].mid);
             },
           },
           {
@@ -507,7 +513,8 @@ export default {
             title: "专辑" + " (" + info.albumname + ")",
             imgUrl: require("@/assets/images/cd.png"),
             fun: function () {
-              this.$showSongList(info.albummid);
+              that.openSongListDetail(null, info.albummid);
+              //this.$showSongList(info.albummid);
             },
           },
           {
@@ -522,12 +529,33 @@ export default {
       this.$refs.songDetail.sw();
     },
     //开始播放所选歌曲
-    async startPlay(songId) {
-      var result = await this.$getMusic(songId);
-      if (result) {
-        this.$addMusic(result);
+    async startPlay(song) {
+      console.log(song);
+      var url = await this.$getMusic(song.songmid);
+      console.log(url);
+      if (url) {
+        var coverImg = this.$util.getAlbumImg(song.albummid);
+        var goal = {
+          songId: song.songmid,
+          songName: song.songname,
+          singer: song.singer[0],
+          album: {
+            albumname: song.albumname,
+            albummId: song.albummid,
+          },
+          cover: coverImg,
+          url: url,
+          vid: song.vid,
+        };
+        this.$addMusic(goal);
         this.$parent.updatePlayingList(null, true);
       }
+
+      // var result = await this.$getMusic(songId);
+      // if (result) {
+      //   this.$addMusic(result);
+      //   this.$parent.updatePlayingList(null, true);
+      // }
     },
   },
   watch: {

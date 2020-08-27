@@ -45,19 +45,19 @@ axios.interceptors.response.use(
   (response) => {
     //console.log(response);
     if (response.data.isok) {
-      try{
-        var goal=JSON.parse(response.data.data);
+      try {
+        var goal = JSON.parse(response.data.data);
         return goal;
-      }catch(e){
-          //json解析出差 处理
-          //url response.config.url
-          //status response.config.status
-          return null;
+      } catch (e) {
+        //json解析出差 处理
+        //url response.config.url
+        //status response.config.status
+        return null;
       }
-      return response.data.data;
     } else if (typeof (response.data.isok) == 'boolean') {
       //处理
       console.log('error');
+      console.log(response.data);
       return null;
     }
     return response.data;
@@ -137,46 +137,113 @@ Vue.prototype.$post = function post(url, params, load) {
       })
   })
 }
+// Vue.prototype.$getMusic = async function (songId) {
+//   var result = await this.$get(
+//     "http://127.0.0.1:9900/music/api/getVipMusic", {
+//       params: {
+//         songId: songId,
+//       },
+//     }, true
+//   ).catch((err) => {
+//     console.log(err);
+//   })
+//   var goal = null;
+//   console.log(result);
+//   if (result.data.isok) {
+//     console.log('aa');
+//     var data = JSON.parse(result.data.data)[0];
+
+//     try {
+//       goal = {
+//         songId: data.songmid,
+//         songName: data.songname,
+//         subtitle: data.subtitle,
+//         singer: {
+//           singerId: data.singer[0].mid,
+//           singerName: data.singer[0].name
+//         },
+//         album: {
+//           albumname: data.albumname,
+//           albummId: data.albummid
+//         },
+//         cover: 'http:' + data.pic,
+//         url: data.m4aUrl,
+//         vid: data.vid
+//       };
+//     } catch (e) {
+//       console.log(e);
+//       //获取数据有问题 处理
+//     }
+
+//     return goal;
+
+//   }
+// }
+
 Vue.prototype.$getMusic = async function (songId) {
-  var result = await this.$get(
-    "http://127.0.0.1:9900/music/api/getVipMusic", {
+  var data = {
+    req: {
+      module: "CDN.SrfCdnDispatchServer",
+      method: "GetCdnDispatch",
+      param: {
+        guid: "6605262745",
+        calltype: 0,
+        userip: ""
+      },
+    },
+    req_0: {
+      module: "vkey.GetVkeyServer",
+      method: "CgiGetVkey",
+      param: {
+        guid: "6605262745",
+        songmid: [songId],
+        songtype: [0],
+        uin: "1195188852",
+        loginflag: 1,
+        platform: "20",
+      },
+    },
+    comm: {
+      uin: 1195188852,
+      format: "json",
+      ct: 24,
+      cv: 0
+    },
+  }
+  var sign = util.getSign(data);
+  var result = await this.$post(
+    "http://127.0.0.1:9900/music/api/getMusic", {
+      url:'https://u.y.qq.com/cgi-bin/musics.fcg',
       params: {
-        songId: songId,
+        "-": "getplaysongvkey734640045891823",
+        g_tk: 2099400196,
+        sign: sign,
+        loginUin: "1195188852",
+        hostUin: 0,
+        format: "json",
+        inCharset: "utf8",
+        outCharset: "utf-8",
+        notice: 0,
+        platform: "yqq.json",
+        needNewCode: 0,
+        data: data,
       },
     }, true
-  ).catch((err) => {
-    console.log(err);
-  })
+  )
   var goal = null;
-  console.log(result);
-  if (result.data.isok) {
-    console.log('aa');
-    var data = JSON.parse(result.data.data)[0];
+ // console.log(result);
 
-    try {
-      goal = {
-        songId: data.songmid,
-        songName: data.songname,
-        subtitle: data.subtitle,
-        singer: {
-          singerId: data.singer[0].mid,
-          singerName: data.singer[0].name
-        },
-        album: {
-          albumname: data.albumname,
-          albummId: data.albummid
-        },
-        cover: 'http:' + data.pic,
-        url: data.m4aUrl,
-        vid: data.vid
-      };
-    } catch (e) {
+  if (result) {
+    try{
+      var midurlinfo=result.req_0.data.midurlinfo[0];
+      var prev=result.req_0.data.sip[0];
+      console.log(prev+midurlinfo.purl);
+      return prev+midurlinfo.purl;
+    }catch(e){
       console.log(e);
       //获取数据有问题 处理
+      return null;
     }
-
-    return goal;
-
   }
 }
 
@@ -206,7 +273,7 @@ Vue.prototype.$getData = function (url, params, load) {
   if (!load) {
     load = false;
   }
-  console.log('ok');
+  //console.log('ok');
   return this.$post(
     "http://127.0.0.1:9900/music/api/getWebData", params, load
   ).catch((err) => {

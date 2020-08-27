@@ -3,7 +3,7 @@
     <mt-swipe :auto="4000" height="150px">
       <mt-swipe-item v-for="item in focus" :key="item.id">
         <img
-          @click="openSongListDetail('url',item.jump_info.url)"
+          @click="openSongListDetail(null,item.jump_info.url)"
           class="cover"
           :src="item.pic_info.url"
         />
@@ -26,7 +26,7 @@
         <ul class="musicList-content ul_h">
           <p v-if="songList_gf.length==0">获取歌单失败惹 刷新试试8</p>
           <li class="musicList-item li_h" v-for="item in songList_gf" :key="item.tid">
-            <div class="item-coverBox" @click="openSongListDetail('tid',item.tid)">
+            <div class="item-coverBox" @click="openSongListDetail(null,item.tid)">
               <el-image
                 style="width: 100%; height: 100%;"
                 :src="item.cover_url_small"
@@ -98,9 +98,14 @@ export default {
   },
   methods: {
     openSongListDetail(mark, val) {
-      //var result=await this.$getSongList(tid);
-      //console.log(result);
-      this.$showSongList(mark, val);
+      if (typeof (val) == "string") {
+        var first = val.substring(0, 1);
+        if (/^[a-zA-Z]/.test(first)) {
+          alert('不是歌单');
+          return;
+        }
+      }
+      this.$showSongList(mark,val);
     },
     //获取热门专辑封面及数据
     async getCover() {
@@ -218,37 +223,40 @@ export default {
     // 获取官方歌单信息
     async getGfSongList() {
       var songList_gf = this.$util.localUtil("songList_gf");
-      var result = await this.$getData("https://u.y.qq.com/cgi-bin/musicu.fcg", {
-        params: {
-          format: "json",
-          notice: 0,
-          needNewCode: 0,
-          platform: "yqq.json",
-          data: {
-            playlist: {
-              method: "get_playlist_by_category",
-              param: {
-                id: 3317,
-                curPage: 1,
-                size: 40,
-                order: 5,
-                titleid: 3317,
+      var result = await this.$getData(
+        "https://u.y.qq.com/cgi-bin/musicu.fcg",
+        {
+          params: {
+            format: "json",
+            notice: 0,
+            needNewCode: 0,
+            platform: "yqq.json",
+            data: {
+              playlist: {
+                method: "get_playlist_by_category",
+                param: {
+                  id: 3317,
+                  curPage: 1,
+                  size: 40,
+                  order: 5,
+                  titleid: 3317,
+                },
+                module: "playlist.PlayListPlazaServer",
               },
-              module: "playlist.PlayListPlazaServer",
             },
           },
-        },
-      })
-      console.log(result);
+        }
+      );
+      //console.log(result);
       if (result) {
         songList_gf = result.playlist.data.v_playlist;
         this.$util.localUtil("songList_gf", songList_gf);
         this.songList_gf = songList_gf;
         //console.log(songList_gf);
-      } 
-        // if (songList_gf.length > 0) {
-        //   this.songList_gf = songList_gf;
-        // }
+      }
+      // if (songList_gf.length > 0) {
+      //   this.songList_gf = songList_gf;
+      // }
     },
   },
   filters: {
