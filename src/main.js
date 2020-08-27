@@ -49,9 +49,12 @@ axios.interceptors.response.use(
         var goal = JSON.parse(response.data.data);
         return goal;
       } catch (e) {
-        //json解析出差 处理
+        //json解析出错 结果可能为字符串
         //url response.config.url
         //status response.config.status
+        if(typeof(response.data.data)=='string'){
+          return response.data.data;
+        }
         return null;
       }
     } else if (typeof (response.data.isok) == 'boolean') {
@@ -231,20 +234,8 @@ Vue.prototype.$getMusic = async function (songId) {
     }, true
   )
   var goal = null;
- // console.log(result);
-
-  if (result) {
-    try{
-      var midurlinfo=result.req_0.data.midurlinfo[0];
-      var prev=result.req_0.data.sip[0];
-      console.log(prev+midurlinfo.purl);
-      return prev+midurlinfo.purl;
-    }catch(e){
-      console.log(e);
-      //获取数据有问题 处理
-      return null;
-    }
-  }
+  //console.log(result);
+  return result;
 }
 
 
@@ -279,35 +270,6 @@ Vue.prototype.$getData = function (url, params, load) {
   ).catch((err) => {
     console.log(err);
     return null;
-  });
-}
-
-Vue.prototype.$getSongList_tid = function (tid) {
-  return this.$getData(
-    "https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg", {
-      header: {
-        "origin": "https://y.qq.com",
-        "referer": "https://y.qq.com/n/yqq/playlist/" + tid + ".html",
-      },
-      params: {
-        type: '1',
-        json: '1',
-        utf8: '1',
-        onlysong: '0',
-        new_format: '1',
-        disstid: tid,
-        loginUin: '1195188852',
-        hostUin: '0',
-        format: 'json',
-        inCharset: 'utf8',
-        outCharset: 'utf-8',
-        notice: '0',
-        platform: 'yqq.json',
-        needNewCode: '0'
-      }
-    }, true
-  ).catch((err) => {
-    console.log(err);
   });
 }
 

@@ -37,9 +37,9 @@
     >-->
     <div class="headTopMargin" v-if="currentContent=='search'">
       <el-tabs stretch v-model="activeName">
-        <el-tab-pane label="综合" name="first">
+        <el-tab-pane label="综合" name="all">
           <div class="music-box">
-            <ul ref="test">
+            <ul ref="tab_all">
               <li class="disable text-black">
                 <div class="content">单曲</div>
                 <div class="icon">
@@ -47,7 +47,7 @@
                 </div>
               </li>
 
-              <li v-for="song in searchResult" :key="song.docid" @click="startPlay(song)">
+              <li v-for="(song,idx) in searchResult" :key="page*15+idx" @click="startPlay(song)">
                 <div class="musicInfo">
                   <div class="musicName">{{song.songname}}</div>
                   <div class="subName">
@@ -71,17 +71,147 @@
                 style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
                 v-if="isLoading"
               >正在加载中</li>
-              <li
-                style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
-                v-if="isEnded"
-              >数据全部加载完毕</li>
+              <div v-else>
+                <li
+                  style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
+                  v-if="isEnded"
+                >数据全部加载完毕</li>
+              </div>fourth
             </ul>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="单曲" name="second">bbb</el-tab-pane>
-        <el-tab-pane label="歌单" name="third">ccc</el-tab-pane>
-        <el-tab-pane label="专辑" name="fourth">ddd</el-tab-pane>
-        <el-tab-pane label="歌词" name="fifth">eee</el-tab-pane>
+        <el-tab-pane label="单曲" name="single">
+          <div class="music-box">
+            <ul ref="tab_single">
+              <li class="disable text-black">
+                <div class="content">单曲</div>
+                <div class="icon">
+                  <img src="@/assets/images/play_blue_32.png" alt />
+                </div>
+              </li>
+
+              <li v-for="(song,idx) in searchResult" :key="page*15+idx" @click="startPlay(song)">
+                <div class="musicInfo">
+                  <div class="musicName">{{song.songname}}</div>
+                  <div class="subName">
+                    <div class="subName-icon" v-if="song.pay.paydownload">
+                      <img src="@/assets/images/vip.png" />
+                    </div>
+                    <div class="subName-content">{{song.singer[0].name}}</div>
+                  </div>
+                </div>
+                <div class="toolBar">
+                  <div class="bar" v-if="song.vid">
+                    <img src="@/assets/images/play_operation.png" />
+                  </div>
+                  <div class="bar" @click.stop="songDetailSwitch(song)">
+                    <img src="@/assets/images/more_option.png" />
+                  </div>
+                </div>
+              </li>
+
+              <li
+                style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
+                v-if="isLoading"
+              >正在加载中</li>
+              <div v-else>
+                <li
+                  style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
+                  v-if="isEnded"
+                >数据全部加载完毕</li>
+              </div>
+            </ul>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="歌单" name="songlist">
+          <div class="music-box">
+            <ul ref="tab_singer">
+              <li class="disable text-black">
+                <div class="content">单曲</div>
+                <div class="icon">
+                  <img src="@/assets/images/play_blue_32.png" alt />
+                </div>
+              </li>
+
+              <li v-for="(song,idx) in searchResult" :key="page*15+idx" @click="startPlay(song)">
+                <div class="musicInfo">
+                  <div class="musicName">{{song.songname}}</div>
+                  <div class="subName">
+                    <div class="subName-icon" v-if="song.pay.paydownload">
+                      <img src="@/assets/images/vip.png" />
+                    </div>
+                    <div class="subName-content">{{song.singer[0].name}}</div>
+                  </div>
+                </div>
+                <div class="toolBar">
+                  <div class="bar" v-if="song.vid">
+                    <img src="@/assets/images/play_operation.png" />
+                  </div>
+                  <div class="bar" @click.stop="songDetailSwitch(song)">
+                    <img src="@/assets/images/more_option.png" />
+                  </div>
+                </div>
+              </li>
+
+              <li
+                style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
+                v-if="isLoading"
+              >正在加载中</li>
+              <div v-else>
+                <li
+                  style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
+                  v-if="isEnded"
+                >数据全部加载完毕</li>
+              </div>
+            </ul>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="专辑" name="album">
+          <div class="music-box">
+            <ul ref="tab_album">
+              <li class="disable text-black">
+                <div class="content">专辑</div>
+                <div class="icon">
+                  <img src="@/assets/images/play_blue_32.png" alt />
+                </div>
+              </li>
+
+              <li>
+                <div class="station">
+                  <div class="covarBox">
+                    <img src="@/assets/images/m.jpg" alt />
+                  </div>
+                  <div class="albumInfo">
+                    <div class="name">aaaa</div>
+                    <div class="subName">
+                      <!-- <div class="subName-icon" v-if="song.pay.paydownload">
+                      <img src="@/assets/images/vip.png" />
+                      </div>-->
+                      <div class="subName-content">dsdsad 2012-05</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="toolBar">
+                  <div class="bar" style="width: 16px;height: 16px;">
+                    <img src="@/assets/images/more.png" />
+                  </div>
+                </div>
+              </li>
+
+              <li
+                style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
+                v-if="isLoading"
+              >正在加载中</li>
+              <div v-else>
+                <li
+                  style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
+                  v-if="isEnded"
+                >数据全部加载完毕</li>
+              </div>
+            </ul>
+          </div>
+        </el-tab-pane>
+        <!-- <el-tab-pane label="歌词" name="fifth">eee</el-tab-pane> -->
       </el-tabs>
     </div>
     <!-- </transition> -->
@@ -124,19 +254,27 @@
           <div class="content">单曲</div>
         </li>
 
-        <li v-for="song in thinks.song" :key="song.id" @click="openSearchDetail(song.name)">
+        <li
+          v-for="song in thinks.song"
+          :key="song.id"
+          @click="openSearchDetail('single',song.name)"
+        >
           <div class="icon"></div>
           <div class="content">{{song.name}}</div>
         </li>
 
         <li class="disable" v-if="thinks.singer.length>0">
           <div class="icon">
-            <img src="@/assets/images/songer.png" alt />
+            <img src="@/assets/images/singer.png" alt />
           </div>
           <div class="content">歌手</div>
         </li>
 
-        <li v-for="singer in thinks.singer" :key="singer.id" @click="openSearchDetail(singer.name)">
+        <li
+          v-for="singer in thinks.singer"
+          :key="singer.id"
+          @click="openSearchDetail('singer',singer.name,singer)"
+        >
           <div class="icon"></div>
           <div class="content">{{singer.name}}</div>
         </li>
@@ -148,7 +286,11 @@
           <div class="content">专辑</div>
         </li>
 
-        <li v-for="album in thinks.album" :key="album.mid" @click="openSearchDetail(album.name)">
+        <li
+          v-for="album in thinks.album"
+          :key="album.mid"
+          @click="openSearchDetail('album',album.name,album)"
+        >
           <div class="icon"></div>
           <div class="content">{{album.name}}</div>
         </li>
@@ -236,10 +378,10 @@ export default {
         history: [],
       }, //联想数据
       currentContent: "default", //选项卡值
-      activeName: "first",
+      activeName: "", //选项卡标示 默认不给值触发watch
       flag: false, //点击历史/热门标签后为watch监听作判断
       searchResult: [], //搜索结果
-      page: 1, //搜索结果页数
+      page: 0, //搜索结果页数
       overFlowTimeout: null, //滚动条定时器
       isLoading: false, //是否正在刷新
       isEnded: false, //数据是到末尾
@@ -278,21 +420,22 @@ export default {
       this.historyTags = historyTags.splice(0, tagNum);
     },
     //展开搜索内容详细
-    openSearchDetail(val) {
+    openSearchDetail(mark, val, e) {
+      // console.log(e);
+      // return;
       //为obj就是从keyup
-      if (typeof val == "object") {
+      if (typeof mark == "object") {
         val = this.searchText.trim();
+        mark = "single";
       }
-      //this.searchText = val;
+
+      this.activeName = mark;
+      this.searchText = val;
       this.initHistoryData();
       //========
       //展开搜索页面
 
-      this.page = 0;
-      this.moveHeight = 0;
-      this.currentContent = "search";
-      this.getSearchResult(val);
-
+      //this.getSearchResult(val);
       //添加搜索历史
 
       //排除已经存在的一致的标签 用flag来记录
@@ -308,6 +451,7 @@ export default {
         var data = {
           id: this.$util.createUuid(8, 10),
           name: val,
+          type: mark,
         };
         tagData.push(data);
         this.$util.localUtil("historyTags", tagData);
@@ -358,30 +502,34 @@ export default {
         }
       );
       if (result) {
-        var data = result.data;
-        var album = data.album.itemlist;
-        var singer = data.singer.itemlist;
-        var mv = data.mv.itemlist;
-        var song = data.album.itemlist;
-        if (album.length > 5) {
-          album = album.splice(0, 5);
+        try {
+          var data = result.data;
+          var album = data.album.itemlist;
+          var singer = data.singer.itemlist;
+          var mv = data.mv.itemlist;
+          var song = data.album.itemlist;
+          if (album.length > 5) {
+            album = album.splice(0, 5);
+          }
+          if (album.length > 5) {
+            singer = album.splice(0, 5);
+          }
+          if (album.length > 5) {
+            mv = album.splice(0, 5);
+          }
+          if (album.length > 5) {
+            song = album.splice(0, 5);
+          }
+          var goal = {
+            album: album,
+            singer: singer,
+            mv: mv,
+            song: song,
+          };
+          this.thinks = goal;
+        } catch (e) {
+          return;
         }
-        if (album.length > 5) {
-          singer = album.splice(0, 5);
-        }
-        if (album.length > 5) {
-          mv = album.splice(0, 5);
-        }
-        if (album.length > 5) {
-          song = album.splice(0, 5);
-        }
-        var goal = {
-          album: album,
-          singer: singer,
-          mv: mv,
-          song: song,
-        };
-        this.thinks = goal;
       }
     },
     //标签/热门点击事件
@@ -403,8 +551,16 @@ export default {
     async getSearchResult(val) {
       const self = this;
       this.isEnded = false;
+      var remoteplace = "txt.yqq.song";
       if (this.page == 0) {
         this.searchResult = [];
+      }
+      if (this.activeName == "single") {
+        //remoteplace='txt.yqq.song';
+      } else if (this.activeName == "songlist") {
+        remoteplace = "txt.yqq.playlist";
+      } else if (this.activeName == "album") {
+        remoteplace = "txt.yqq.album";
       }
       var result = await this.$getData(
         "https://c.y.qq.com/soso/fcgi-bin/client_search_cp",
@@ -414,22 +570,33 @@ export default {
             n: 15, //每页数据数量
             w: val,
             format: "json",
+            remoteplace: "", //获取类型 单曲/专辑...
           },
         },
         true
       );
+
       if (result) {
-        var goalData = result.data.song.list;
-        if (goalData.length == 0) {
-          self.isEnded = true;
+        if (this.activeName == "single") {
+          if (typeof result == "string") {
+            console.log("aaaaaa");
+            return;
+          }
+          console.log(result);
+          var goalData = result.data.song.list;
+          if (goalData.length == 0) {
+            self.isEnded = true;
+            self.isLoading = false;
+            return;
+          }
+          for (var item of goalData) {
+            self.searchResult.push(item);
+          }
+          console.log(this.searchResult);
           self.isLoading = false;
-          return;
+        } else if (this.activeName == "album") {
+          console.log("sssss");
         }
-        for (var item of goalData) {
-          self.searchResult.push(item);
-        }
-        //console.log(this.searchResult);
-        self.isLoading = false;
       }
     },
     /*  搜索结果滚动条改变事件
@@ -446,9 +613,9 @@ export default {
       var clientHeight;
       var moveHeight;
       try {
-        totalHeight = this.$refs.test.scrollHeight;
-        clientHeight = this.$refs.test.clientHeight;
-        moveHeight = this.$refs.test.scrollTop;
+        totalHeight = this.$refs.tab_single.scrollHeight;
+        clientHeight = this.$refs.tab_single.clientHeight;
+        moveHeight = this.$refs.tab_single.scrollTop;
       } catch (e) {
         return;
       }
@@ -475,7 +642,7 @@ export default {
       this.$showSongList(mark, val);
     },
     songDetailSwitch(info) {
-      console.log(info);
+      //console.log(info);
       const that = this;
       var bars = [
         [
@@ -502,10 +669,10 @@ export default {
           {
             id: 1,
             title: "歌手" + " (" + info.singer[0].name + ")",
-            imgUrl: require("@/assets/images/songer2.png"),
+            imgUrl: require("@/assets/images/singer2.png"),
             fun: function () {
-              console.log(info);
-              that.openSongListDetail("songer", info.singer[0].mid);
+              //console.log(info);
+              that.openSongListDetail("singer", info.singer[0].mid);
             },
           },
           {
@@ -580,6 +747,22 @@ export default {
       }
       this.goalHistory = goal;
       this.initHistoryData();
+    },
+    activeName(val) {
+      if (val == "all") {
+        console.log("all");
+      } else if (val == "single") {
+        console.log("single");
+        this.page = 0;
+        this.moveHeight = 0;
+        this.getSearchResult(this.searchText);
+      } else if (val == "songlist") {
+        console.log("songlist");
+      } else if (val == "album") {
+        this.page == 0;
+        this.getSearchResult(this.searchText);
+      }
+      this.currentContent = "search";
     },
   },
   created() {
@@ -1029,6 +1212,62 @@ export default {
         }
       }
 
+      .station {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        .covarBox {
+          width: 60px;
+          height: 60px;
+          margin-right: 20px;
+          img {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+          }
+        }
+        .albumInfo {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          .name {
+            width: 100%;
+            color: #1c1c1c;
+            font-size: 14px;
+            font-weight: 500;
+          }
+          .subName {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            .subName-content {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              -ms-text-overflow: ellipsis;
+              display: box;
+              display: -webkit-box;
+              line-clamp: 1;
+              -webkit-line-clamp: 1;
+              -webkit-box-orient: vertical;
+              color: #707070;
+              font-size: 12px;
+            }
+            .subName-icon {
+              width: 20px;
+              height: 18px;
+              img {
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+              }
+            }
+          }
+        }
+      }
+
       .toolBar {
         display: flex;
         flex-direction: row;
@@ -1056,6 +1295,9 @@ export default {
       }
       .content {
         margin-right: 10px;
+      }
+
+      .albumInfo {
       }
     }
     li:hover {

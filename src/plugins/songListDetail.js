@@ -13,9 +13,10 @@ export default {
 
       if (patt.test(val)) {
         instance.freshSongList_tid(val)
-      } else if (mark == 'songer') {
+      } else if (mark == 'singer') {
         instance.isSinger = true;
-        instance.freshSongList_songer(val)
+        instance.singerId = val; //歌手歌单可能会上拉加载 记下id
+        instance.freshSongList_singer(val)
       } else if (!patt.test(val)) {
         instance.freshSongList_url(val)
       }

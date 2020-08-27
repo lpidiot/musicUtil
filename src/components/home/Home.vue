@@ -77,27 +77,6 @@ export default {
       //   }
       // );
       //console.log(result.data);
-      var data = {
-        req: {
-          module: "CDN.SrfCdnDispatchServer",
-          method: "GetCdnDispatch",
-          param: { guid: "6605262745", calltype: 0, userip: "" },
-        },
-        req_0: {
-          module: "vkey.GetVkeyServer",
-          method: "CgiGetVkey",
-          param: {
-            guid: "6605262745",
-            songmid: ["004Z8Ihr0JIu5s"],
-            songtype: [0],
-            uin: "1195188852",
-            loginflag: 1,
-            platform: "20",
-          },
-        },
-        comm: { uin: 1195188852, format: "json", ct: 24, cv: 0 },
-      };
-      var sign=this.$util.getSign(data);
 
       // var result = await this.$getData("https://u.y.qq.com/cgi-bin/musics.fcg", {
       //   header:{
@@ -118,8 +97,8 @@ export default {
       //     data: data,
       //   },
       // });
-      this.$getMusic('002jD2Q83NmcPJ');
-      //console.log(result);
+      var result = await this.$getMusic('002jD2Q83NmcPJ');
+      console.log(result);
     },
   },
   watch: {
