@@ -14,7 +14,7 @@ export default {
     albumId +
     "_1.jpg?max_age=2592000";
   },
-  getSongerImg(songId){
+  getSingerImg(songId){
     return "https://y.gtimg.cn/music/photo_new/T001R300x300M000" +
     songId +
     ".jpg?max_age=2592000";

@@ -37,49 +37,6 @@
     >-->
     <div class="headTopMargin" v-if="currentContent=='search'">
       <el-tabs stretch v-model="activeName">
-        <el-tab-pane label="综合" name="all">
-          <div class="music-box">
-            <ul ref="tab_all">
-              <li class="disable text-black">
-                <div class="content">单曲</div>
-                <div class="icon">
-                  <img src="@/assets/images/play_blue_32.png" alt />
-                </div>
-              </li>
-
-              <li v-for="(song,idx) in searchResult" :key="page*15+idx" @click="startPlay(song)">
-                <div class="musicInfo">
-                  <div class="musicName">{{song.songname}}</div>
-                  <div class="subName">
-                    <div class="subName-icon" v-if="song.pay.paydownload">
-                      <img src="@/assets/images/vip.png" />
-                    </div>
-                    <div class="subName-content">{{song.singer[0].name}}</div>
-                  </div>
-                </div>
-                <div class="toolBar">
-                  <div class="bar" v-if="song.vid">
-                    <img src="@/assets/images/play_operation.png" />
-                  </div>
-                  <div class="bar" @click.stop="songDetailSwitch(song)">
-                    <img src="@/assets/images/more_option.png" />
-                  </div>
-                </div>
-              </li>
-
-              <li
-                style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
-                v-if="isLoading"
-              >正在加载中</li>
-              <div v-else>
-                <li
-                  style="display:flex; justify-content: center;align-items: center;height:2em;margin-bottom:50px"
-                  v-if="isEnded"
-                >数据全部加载完毕</li>
-              </div>fourth
-            </ul>
-          </div>
-        </el-tab-pane>
         <el-tab-pane label="单曲" name="single">
           <div class="music-box">
             <ul ref="tab_single">
@@ -125,30 +82,32 @@
         </el-tab-pane>
         <el-tab-pane label="歌单" name="songlist">
           <div class="music-box">
-            <ul ref="tab_singer">
+            <ul ref="tab_songlist">
               <li class="disable text-black">
-                <div class="content">单曲</div>
+                <div class="content">歌单</div>
                 <div class="icon">
                   <img src="@/assets/images/play_blue_32.png" alt />
                 </div>
               </li>
 
-              <li v-for="(song,idx) in searchResult" :key="page*15+idx" @click="startPlay(song)">
-                <div class="musicInfo">
-                  <div class="musicName">{{song.songname}}</div>
-                  <div class="subName">
-                    <div class="subName-icon" v-if="song.pay.paydownload">
+              <li v-for="(item,idx) in searchResult_songList" :key="page*15+idx" @click="openSongListDetail('tid',item.dissid)">
+                <div class="station">
+                  <div class="covarBox">
+                    <img :src="item.imgurl?item.imgurl:'@/assets/images/m.jpg'" alt />
+                  </div>
+                  <div class="albumInfo">
+                    <div class="name">{{item.dissname}}</div>
+                    <div class="subName">
+                      <!-- <div class="subName-icon" v-if="song.pay.paydownload">
                       <img src="@/assets/images/vip.png" />
+                      </div>-->
+                      <div class="subName-content">{{item.creator.name+" "+item.createtime}}</div>
                     </div>
-                    <div class="subName-content">{{song.singer[0].name}}</div>
                   </div>
                 </div>
                 <div class="toolBar">
-                  <div class="bar" v-if="song.vid">
-                    <img src="@/assets/images/play_operation.png" />
-                  </div>
-                  <div class="bar" @click.stop="songDetailSwitch(song)">
-                    <img src="@/assets/images/more_option.png" />
+                  <div class="bar" style="width: 16px;height: 16px;">
+                    <img src="@/assets/images/more.png" />
                   </div>
                 </div>
               </li>
@@ -176,18 +135,18 @@
                 </div>
               </li>
 
-              <li>
+              <li v-for="(album,idx) in searchResult_album" :key="page*15+idx" @click="openSongListDetail('album',album.albumMID)">
                 <div class="station">
                   <div class="covarBox">
-                    <img src="@/assets/images/m.jpg" alt />
+                    <img :src="album.albumPic?album.albumPic:'@/assets/images/m.jpg'" alt />
                   </div>
                   <div class="albumInfo">
-                    <div class="name">aaaa</div>
+                    <div class="name">{{album.albumName}}</div>
                     <div class="subName">
                       <!-- <div class="subName-icon" v-if="song.pay.paydownload">
                       <img src="@/assets/images/vip.png" />
                       </div>-->
-                      <div class="subName-content">dsdsad 2012-05</div>
+                      <div class="subName-content">{{album.singerName+" "+album.publicTime}}</div>
                     </div>
                   </div>
                 </div>
@@ -273,7 +232,7 @@
         <li
           v-for="singer in thinks.singer"
           :key="singer.id"
-          @click="openSearchDetail('singer',singer.name,singer)"
+          @click="openSongListDetail('singer',singer.mid)"
         >
           <div class="icon"></div>
           <div class="content">{{singer.name}}</div>
@@ -328,7 +287,7 @@
                 class="tag"
                 v-for="item in historyTags"
                 :key="item.id"
-                @click="tagTouchHander(item.name)"
+                @click="tagTouchHander(item)"
               >{{item.name}}</div>
             </transition-group>
 
@@ -380,12 +339,13 @@ export default {
       currentContent: "default", //选项卡值
       activeName: "", //选项卡标示 默认不给值触发watch
       flag: false, //点击历史/热门标签后为watch监听作判断
-      searchResult: [], //搜索结果
+      searchResult: [], //搜索结果 单曲
+      searchResult_album: [], //专辑搜索结果
+      searchResult_songList: [], //歌单搜索结果
       page: 0, //搜索结果页数
       overFlowTimeout: null, //滚动条定时器
       isLoading: false, //是否正在刷新
       isEnded: false, //数据是到末尾
-      moveHeight: 0, //滚动条滑动距离
       barList: [],
     };
   },
@@ -453,7 +413,7 @@ export default {
           name: val,
           type: mark,
         };
-        tagData.push(data);
+        tagData.unshift(data);
         this.$util.localUtil("historyTags", tagData);
       }
     },
@@ -537,10 +497,8 @@ export default {
       //事先写了watch事件 这里用变量flag简单处理下...处理下算了
       this.flag = true;
       this.currentContent = "search";
-      this.searchText = val;
-      self.page = 0;
-      self.moveHeight = 0;
-      this.getSearchResult(val);
+      this.searchText = val.name;
+      this.activeName = val.type ? val.type : "single";
     },
     //清空历史搜索
     clearHistory() {
@@ -552,37 +510,36 @@ export default {
       const self = this;
       this.isEnded = false;
       var remoteplace = "txt.yqq.song";
+      var result;
       if (this.page == 0) {
         this.searchResult = [];
+        this.searchResult_album = [];
+        this.searchResult_songList = [];
       }
       if (this.activeName == "single") {
         //remoteplace='txt.yqq.song';
-      } else if (this.activeName == "songlist") {
-        remoteplace = "txt.yqq.playlist";
-      } else if (this.activeName == "album") {
-        remoteplace = "txt.yqq.album";
-      }
-      var result = await this.$getData(
-        "https://c.y.qq.com/soso/fcgi-bin/client_search_cp",
-        {
-          params: {
-            p: self.page++, //页数
-            n: 15, //每页数据数量
-            w: val,
-            format: "json",
-            remoteplace: "", //获取类型 单曲/专辑...
+        result = await this.$getData(
+          "https://c.y.qq.com/soso/fcgi-bin/client_search_cp",
+          {
+            params: {
+              p: self.page++, //页数
+              n: 15, //每页数据数量
+              w: val,
+              format: "json",
+              remoteplace: "", //获取类型 单曲/专辑...
+            },
           },
-        },
-        true
-      );
-
-      if (result) {
-        if (this.activeName == "single") {
+          true
+        );
+        if (result) {
           if (typeof result == "string") {
-            console.log("aaaaaa");
-            return;
+            if (result.substring(0, 9).indexOf("call")) {
+              result = result.substring(9, result.length - 1);
+              result = JSON.parse(result);
+            }
+            // console.dir(result);
           }
-          console.log(result);
+
           var goalData = result.data.song.list;
           if (goalData.length == 0) {
             self.isEnded = true;
@@ -592,12 +549,82 @@ export default {
           for (var item of goalData) {
             self.searchResult.push(item);
           }
-          console.log(this.searchResult);
-          self.isLoading = false;
-        } else if (this.activeName == "album") {
-          console.log("sssss");
+          //console.log(this.searchResult);
+        }
+      } else if (this.activeName == "songlist") {
+        result = await this.$getData(
+          "https://c.y.qq.com/soso/fcgi-bin/client_music_search_songlist",
+          {
+            header: {
+              origin: "https://y.qq.com",
+              referer: "https://y.qq.com/portal/search.html",
+            },
+            params: {
+              num_per_page: 10,
+              page_no: self.page++, //页数
+              platform: "yqq.json",
+              query: val,
+              format: "json",
+            },
+          },
+          true
+        );
+        if (result) {
+          console.dir(result);
+          if (typeof result == "string") {
+            if (result.substring(0, 9).indexOf("call")) {
+              result = result.substring(9, result.length - 1);
+              result = JSON.parse(result);
+            }
+            // console.dir(result);
+          }
+
+          var goalData = result.data.list;
+          if (goalData.length == 0) {
+            self.isEnded = true;
+            self.isLoading = false;
+            return;
+          }
+          for (var item of goalData) {
+            self.searchResult_songList.push(item);
+          }
+        }
+      } else if (this.activeName == "album") {
+        result = await this.$getData(
+          "https://c.y.qq.com/soso/fcgi-bin/client_search_cp",
+          {
+            params: {
+              p: self.page++, //页数
+              n: 15, //每页数据数量
+              w: val,
+              format: "json",
+              remoteplace: "txt.yqq.album",
+              t: 8,
+            },
+          },
+          true
+        );
+        if (result) {
+          if (typeof result == "string") {
+            if (result.substring(0, 9).indexOf("call")) {
+              result = result.substring(9, result.length - 1);
+              result = JSON.parse(result);
+            }
+            // console.dir(result);
+          }
+
+          var goalData = result.data.album.list;
+          if (goalData.length == 0) {
+            self.isEnded = true;
+            self.isLoading = false;
+            return;
+          }
+          for (var item of goalData) {
+            self.searchResult_album.push(item);
+          }
         }
       }
+      self.isLoading = false;
     },
     /*  搜索结果滚动条改变事件
      *  上拉加载新的词条
@@ -613,9 +640,19 @@ export default {
       var clientHeight;
       var moveHeight;
       try {
-        totalHeight = this.$refs.tab_single.scrollHeight;
-        clientHeight = this.$refs.tab_single.clientHeight;
-        moveHeight = this.$refs.tab_single.scrollTop;
+        if (this.activeName == "single") {
+          totalHeight = this.$refs.tab_single.scrollHeight;
+          clientHeight = this.$refs.tab_single.clientHeight;
+          moveHeight = this.$refs.tab_single.scrollTop;
+        } else if (this.activeName == "album") {
+          totalHeight = this.$refs.tab_album.scrollHeight;
+          clientHeight = this.$refs.tab_album.clientHeight;
+          moveHeight = this.$refs.tab_album.scrollTop;
+        } else if (this.activeName == "songlist") {
+          totalHeight = this.$refs.tab_songlist.scrollHeight;
+          clientHeight = this.$refs.tab_songlist.clientHeight;
+          moveHeight = this.$refs.tab_songlist.scrollTop;
+        }
       } catch (e) {
         return;
       }
@@ -638,7 +675,6 @@ export default {
       }
     },
     openSongListDetail(mark, val) {
-      //console.log(e);
       this.$showSongList(mark, val);
     },
     songDetailSwitch(info) {
@@ -749,19 +785,18 @@ export default {
       this.initHistoryData();
     },
     activeName(val) {
-      if (val == "all") {
-        console.log("all");
-      } else if (val == "single") {
-        console.log("single");
-        this.page = 0;
-        this.moveHeight = 0;
-        this.getSearchResult(this.searchText);
-      } else if (val == "songlist") {
-        console.log("songlist");
-      } else if (val == "album") {
-        this.page == 0;
-        this.getSearchResult(this.searchText);
-      }
+      this.isEnded = false;
+      this.page = 0;
+      this.getSearchResult(this.searchText);
+
+      // if (val == "single") {
+      //   console.log("single");
+      //   //this.$refs.tab_single.scrollTop=0;
+      // } else if (val == "songlist") {
+      //   console.log("songlist");
+      // } else if (val == "album") {
+      //   //this.$refs.tab_single.scrollTop=0;
+      // }
       this.currentContent = "search";
     },
   },

@@ -29,7 +29,7 @@
       </div>
 
       <div
-        :class="['appear_singer',changeAppear?'fixedTop':'']"
+        :class="['appear_singer',changeAppear?'fixedTop_singer':'']"
         v-else
         :style="{backgroundImage:'url('+logo+')'}"
       >
@@ -56,14 +56,12 @@
         </div>
         <div
           style="display:flex; justify-content: center;align-items: center;height:2em;padding:30px 0px"
-          v-if="isLoading"
+          v-if="isSinger"
         >只能查看10条数据===自己搜吧还是</div>
-        <div v-else>
-          <div
-            style="display:flex; justify-content: center;align-items: center;height:2em;padding:30px 0px"
-            v-if="isEnded"
-          >数据全部加载完毕</div>
-        </div>
+        <div
+          style="display:flex; justify-content: center;align-items: center;height:2em;padding:30px 0px"
+          v-if="isEnded&&isSinger"
+        >数据全部加载完毕</div>
       </div>
     </div>
   </transition>
@@ -91,9 +89,6 @@ export default {
   },
 
   methods: {
-    prin(val) {
-      console.log(val);
-    },
     handleScroll() {
       const self = this;
       //下滑head加上下边框线 已弃用
@@ -126,14 +121,20 @@ export default {
         !this.isEnded
       ) {
         //   设置为正在加载中
-        this.isLoading = true;
-        console.log("Refresh");
+        //this.isLoading = true;
+        //console.log("Refresh");
         // setTimeout(() => {
         //   this.freshSongList_singer(self.singerId);
         // }, 200);
       }
-
-      if (moveHeight >= 210) {
+      if (this.isSinger) {
+        //console.log(moveHeight);
+        if (moveHeight >= 240) {
+          this.changeAppear = true;
+        } else {
+          this.changeAppear = false;
+        }
+      } else if (moveHeight >= 210) {
         this.changeAppear = true;
       } else {
         this.changeAppear = false;
@@ -255,7 +256,7 @@ export default {
           params: {
             "-": "getSingerSong42397207500114176",
             g_tk: 5381,
-            sign: "zzavu36pqnyz6ldf6be8abd941f9f2b62c18f39dd6266e6",
+            sign: sign,
             loginUin: 0,
             hostUin: 0,
             format: "json",
@@ -405,6 +406,11 @@ export default {
 .fixedTop {
   position: fixed;
   transform: translateY(-210px);
+  width: 100%;
+}
+.fixedTop_singer {
+  position: fixed;
+  transform: translateY(-240px);
   width: 100%;
 }
 .distance {

@@ -168,7 +168,6 @@ export default {
           },
         }
       );
-      //console.log(result);
       if (result) {
         this.$util.localUtil("coverData", result);
         this.focus = result.focus.data.content;
