@@ -272,7 +272,8 @@
         <div class="history-head">
           <h4>搜索历史</h4>
           <div class="lcon-more" @click="clearHistory">
-            <img src="../../assets/images/garbage.png" />
+            <!-- <img src="../../assets/images/garbage.png" /> -->
+            <i class="el-icon-milk-tea"></i>
           </div>
         </div>
         <div class="content">

@@ -29,7 +29,7 @@
       </div>
 
       <div
-        :class="['appear_singer',changeAppear?'fixedTop_singer':'']"
+        class="appear_singer"
         v-else
         :style="{backgroundImage:'url('+logo+')'}"
       >
@@ -38,7 +38,7 @@
         </div>
       </div>
 
-      <div :class="['list-box', changeAppear?'distance':'']">
+      <div :class="['list-box', changeAppear&&!isSinger?'distance':'']">
         <div class="list-item" v-for="item in songList" :key="item.id" @click="prin(item)">
           <div class="content">
             <div class="info">{{item.name}}</div>
@@ -115,29 +115,32 @@ export default {
       // console.log(clientHeight);
       // console.log(moveHeight);
 
-      if (
-        moveHeight + clientHeight >= totalHeight - 20 &&
-        !this.isLoading &&
-        !this.isEnded
-      ) {
+      // if (
+      //   moveHeight + clientHeight >= totalHeight - 20 &&
+      //   !this.isLoading &&
+      //   !this.isEnded
+      // ) {
         //   设置为正在加载中
         //this.isLoading = true;
         //console.log("Refresh");
         // setTimeout(() => {
         //   this.freshSongList_singer(self.singerId);
         // }, 200);
-      }
+      //}
+     // console.log(moveHeight);
       if (this.isSinger) {
         //console.log(moveHeight);
-        if (moveHeight >= 240) {
+        // if (moveHeight >= 230) {
+        //   this.changeAppear = true;
+        // } else {
+        //   this.changeAppear = false;
+        // }
+      } else {
+        if (moveHeight >= 210) {
           this.changeAppear = true;
         } else {
           this.changeAppear = false;
         }
-      } else if (moveHeight >= 210) {
-        this.changeAppear = true;
-      } else {
-        this.changeAppear = false;
       }
     },
     //显示回调 用来刷新数据
@@ -432,6 +435,10 @@ export default {
   }
   .filterBox {
     height: 280px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px 20px 10px 20px;
   }
 }
 .appear {

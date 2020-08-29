@@ -61,6 +61,7 @@ axios.interceptors.response.use(
       //处理
       console.log('error');
       console.log(response.data);
+      this.$message('服务器可能维护中');
       return null;
     }
     return response.data;
@@ -68,8 +69,10 @@ axios.interceptors.response.use(
     if (error.response) {
       if (error.response.status === 404) {
         //处理
+        this.$message('没有找到该资源');
         return new Promise(() => {}) // pending的promise，中止promise链
       } else if (error.response.status === 500) {
+        this.$message('后台方法失效 忘了我吧');
         //处理
         return new Promise(() => {}) // pending的promise，中止promise链
       }

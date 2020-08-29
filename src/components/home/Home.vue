@@ -22,8 +22,8 @@
 
       <el-tabs @tab-click="handleClick" stretch v-model="activeName">
         <el-tab-pane label="推荐" name="/home/discover"></el-tab-pane>
-        <el-tab-pane label="排行" name="second"></el-tab-pane>
-        <el-tab-pane label="我的" name="third"></el-tab-pane>
+        <el-tab-pane label="排行" name="www"></el-tab-pane>
+        <el-tab-pane label="我的" name="/home/mine"></el-tab-pane>
       </el-tabs>
     </div>
     <!-- /head栏 -->
@@ -97,7 +97,7 @@ export default {
       //     data: data,
       //   },
       // });
-      var result = await this.$getMusic('002jD2Q83NmcPJ');
+      var result = await this.$getMusic("002jD2Q83NmcPJ");
       console.log(result);
     },
   },
@@ -108,10 +108,27 @@ export default {
     },
   },
   created() {
+    //this.activeName = "/home/mine";
     this.activeName = "/home/discover";
   },
 };
 </script>
+<style>
+.el-tabs__header {
+  margin-bottom: 0 !important;
+}
+.el-tabs__nav-wrap::after {
+  color: #e4e7ed;
+  display: none !important;
+}
+
+.el-tabs__content {
+  display: none !important;
+}
+.el-tabs {
+  width: 100%;
+}
+</style>
 
 <style lang="scss" scoped>
 .head-box {
@@ -128,19 +145,6 @@ export default {
   margin: 0;
   background-color: #f5f5f5;
   z-index: 500;
-  .el-tabs__header {
-    margin-bottom: 0 !important;
-    margin: 0 !important;
-  }
-
-  .el-tabs__nav-wrap::after {
-    color: #e4e7ed;
-    display: none !important;
-  }
-
-  .el-tabs__content {
-    display: none !important;
-  }
 
   .search-box {
     width: 100%;
@@ -176,9 +180,6 @@ export default {
         margin-right: 5px;
       }
     }
-  }
-  .el-tabs {
-    width: 100%;
   }
 }
 

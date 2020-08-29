@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../components/home/Home.vue'
 import SearchView from '../components/home/SearchView.vue'
 import Discover from '../components/tabs/Discover.vue'
+import Mine from '../components/tabs/Mine.vue'
 Vue.use(VueRouter)
 
 const routes = [{
@@ -19,6 +20,13 @@ const routes = [{
       component: Discover,
       meta: {
         title: '推荐'
+      }
+    },
+    {
+      path: 'mine',
+      component: Mine,
+      meta: {
+        title: '我的'
       }
     }]
   },

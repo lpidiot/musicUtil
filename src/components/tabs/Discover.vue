@@ -17,9 +17,7 @@
           <h3>官方歌单</h3>
           <div class="musicList-more">
             <span>更多</span>
-            <div class="lcon-more">
-              <img src="../../assets/images/more.png" />
-            </div>
+            <i class="el-icon-arrow-right"></i>
           </div>
         </div>
 
