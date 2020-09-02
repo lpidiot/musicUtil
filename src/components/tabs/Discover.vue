@@ -270,12 +270,16 @@ export default {
     },
   },
   created() {
+    
+  },
+  mounted(){
     var loading = this.$getLoading();
     this.getCover();
     this.getGfSongList();
     this.getHotKey();
+    console.log(this.songList_gf);
     loading.close();
-  },
+  }
 };
 </script>
 <style>

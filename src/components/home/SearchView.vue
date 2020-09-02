@@ -90,7 +90,11 @@
                 </div>
               </li>
 
-              <li v-for="(item,idx) in searchResult_songList" :key="page*15+idx" @click="openSongListDetail('tid',item.dissid)">
+              <li
+                v-for="(item,idx) in searchResult_songList"
+                :key="page*15+idx"
+                @click="openSongListDetail('tid',item.dissid)"
+              >
                 <div class="station">
                   <div class="covarBox">
                     <img :src="item.imgurl?item.imgurl:'@/assets/images/m.jpg'" alt />
@@ -135,7 +139,11 @@
                 </div>
               </li>
 
-              <li v-for="(album,idx) in searchResult_album" :key="page*15+idx" @click="openSongListDetail('album',album.albumMID)">
+              <li
+                v-for="(album,idx) in searchResult_album"
+                :key="page*15+idx"
+                @click="openSongListDetail('album',album.albumMID)"
+              >
                 <div class="station">
                   <div class="covarBox">
                     <img :src="album.albumPic?album.albumPic:'@/assets/images/m.jpg'" alt />
@@ -532,6 +540,7 @@ export default {
           },
           true
         );
+        //console.dir(result);
         if (result) {
           if (typeof result == "string") {
             if (result.substring(0, 9).indexOf("call")) {
@@ -550,7 +559,7 @@ export default {
           for (var item of goalData) {
             self.searchResult.push(item);
           }
-          //console.log(this.searchResult);
+          console.log(this.searchResult);
         }
       } else if (this.activeName == "songlist") {
         result = await this.$getData(
@@ -678,6 +687,12 @@ export default {
     openSongListDetail(mark, val) {
       this.$showSongList(mark, val);
     },
+    async downloadSong(songmid) {
+      var result = await this.$getMusic(songmid);
+      if (result) {
+        window.open(result);
+      }
+    },
     songDetailSwitch(info) {
       //console.log(info);
       const that = this;
@@ -699,7 +714,9 @@ export default {
             id: 3,
             title: "下载",
             imgUrl: require("@/assets/images/download.png"),
-            fun: this.aaa,
+            fun: function () {
+              that.downloadSong(info.songmid);
+            },
           },
         ],
         [
@@ -753,13 +770,8 @@ export default {
         };
         this.$addMusic(goal);
         this.$parent.updatePlayingList(null, true);
+        this.$parent.playerTrigger();
       }
-
-      // var result = await this.$getMusic(songId);
-      // if (result) {
-      //   this.$addMusic(result);
-      //   this.$parent.updatePlayingList(null, true);
-      // }
     },
   },
   watch: {

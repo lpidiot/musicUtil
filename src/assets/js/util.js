@@ -1,23 +1,23 @@
 export default {
-  getSign(data){
+  getSign(data) {
     let str = 'abcdefghijklmnopqrstuvwxyz0123456789';
     let count = Math.floor(Math.random() * 7 + 10);
     let sign = 'zza';
-    for(let i = 0; i < count ; i++){
-        sign += str[Math.floor(Math.random() * 36)];
+    for (let i = 0; i < count; i++) {
+      sign += str[Math.floor(Math.random() * 36)];
     }
-    sign += window.__sign_hash_20200305('CJBPACrRuNy7'+JSON.stringify(data));
+    sign += window.__sign_hash_20200305('CJBPACrRuNy7' + JSON.stringify(data));
     return sign;
   },
-  getAlbumImg(albumId){
+  getAlbumImg(albumId) {
     return "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
-    albumId +
-    "_1.jpg?max_age=2592000";
+      albumId +
+      "_1.jpg?max_age=2592000";
   },
-  getSingerImg(songId){
+  getSingerImg(songId) {
     return "https://y.gtimg.cn/music/photo_new/T001R300x300M000" +
-    songId +
-    ".jpg?max_age=2592000";
+      songId +
+      ".jpg?max_age=2592000";
   },
   //生成uiid
   //len 位数
@@ -112,32 +112,21 @@ export default {
    * @flag 要比对的于mark对应的数据
    * @returns 
    * -数组重复返回下标
-   * -对象重复返回重复的对象
    * -无重复返回null
    */
-  isRepeat(mark, res, flag) {
-    if (this.typeObj(res) == "Array") {
-      res.forEach(item, idx => {
-        if (eval(item.mark) == flag) {
-          return idx;
-        }
-      })
-    }
-
-    if (this.typeObj(res) == "Object") {
-      for (var item in res) {
-        if (eval(item.mark) == flag) {
-          return item;
-        }
+  isRepeat(res, mark, flag) {
+    res.forEach(item, idx => {
+      if (eval(item.mark) == flag) {
+        return idx;
       }
-    }
+    })
     return null;
   },
 
   sign_main(n, t) {
     "object" == typeof exports && "undefined" != typeof module ? module.exports = t() : "function" == typeof define && define.amd ? define(t) : (n = n || self).getSecuritySign = t()
   },
-  sign_pram2 () {
+  sign_pram2() {
     "use strict";
     var n = function () {
       if ("undefined" != typeof self) return self;
@@ -150,28 +139,28 @@ export default {
           var o = (65535 & n) + (65535 & t);
           return (n >> 16) + (t >> 16) + (o >> 16) << 16 | 65535 & o
         }
-  
+
         function r(n, t, o, e, u, p) {
           return l((i = l(l(t, n), l(e, p))) << (r = u) | i >>> 32 - r, o);
           var i, r
         }
-  
+
         function g(n, t, o, e, u, p, i) {
           return r(t & o | ~t & e, n, t, u, p, i)
         }
-  
+
         function a(n, t, o, e, u, p, i) {
           return r(t & e | o & ~e, n, t, u, p, i)
         }
-  
+
         function s(n, t, o, e, u, p, i) {
           return r(t ^ o ^ e, n, t, u, p, i)
         }
-  
+
         function v(n, t, o, e, u, p, i) {
           return r(o ^ (t | ~e), n, t, u, p, i)
         }
-  
+
         function t(n) {
           return function (n) {
             var t, o = "";
@@ -192,7 +181,7 @@ export default {
             return o
           }(n), 8 * n.length))
         }
-  
+
         function o(n) {
           return t(unescape(encodeURIComponent(n)))
         }

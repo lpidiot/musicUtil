@@ -13,7 +13,7 @@
         'opacity':filter?'0.9':'1'
       }"
     >
-      <div class="wrapper-content">
+      <div class="wrapper-content" :style="{'padding':padding}">
         <slot></slot>
       </div>
     </div>
@@ -55,6 +55,10 @@ export default {
       type: String,
       default: "#F0EFEC",
     },
+    padding:{
+      type:String,
+      default:"10px"
+    }
   },
   methods: {
     sw() {
@@ -129,7 +133,7 @@ export default {
   right: 0;
   bottom: 0;
   top: 0;
-  background-color: rgba(#000, 0.75);
+  background-color: rgba(#000, 0.3);
   z-index: 900;
   transition: all 0.6s ease;
   transition: background 0.6s ease-in-out;
@@ -150,7 +154,6 @@ export default {
   .wrapper-content {
     width: 100%;
     height: 100%;
-    padding: 12px;
     display: flex;
     justify-content: end;
     flex-direction: column;

@@ -9,6 +9,11 @@ import 'lib-flexible'
 import Meta from 'vue-meta'
 Vue.use(Meta)
 
+
+import { Message } from 'element-ui';
+Vue.component(Message.name, Message)
+
+
 //引入可能用到的方法
 import util from './assets/js/util' // 引入
 Vue.prototype.$util = util
@@ -52,7 +57,7 @@ axios.interceptors.response.use(
         //json解析出错 结果可能为字符串
         //url response.config.url
         //status response.config.status
-        if(typeof(response.data.data)=='string'){
+        if (typeof (response.data.data) == 'string') {
           return response.data.data;
         }
         return null;
@@ -61,7 +66,11 @@ axios.interceptors.response.use(
       //处理
       console.log('error');
       console.log(response.data);
-      this.$message('服务器可能维护中');
+      if (response.data.data) {
+        Message(response.data.data);
+      } else {
+        Message('服务器可能维护中');
+      }
       return null;
     }
     return response.data;
@@ -69,10 +78,10 @@ axios.interceptors.response.use(
     if (error.response) {
       if (error.response.status === 404) {
         //处理
-        this.$message('没有找到该资源');
+        Message('没有找到该资源');
         return new Promise(() => {}) // pending的promise，中止promise链
       } else if (error.response.status === 500) {
-        this.$message('后台方法失效 忘了我吧');
+        Message('后台方法失效 忘了我吧');
         //处理
         return new Promise(() => {}) // pending的promise，中止promise链
       }
@@ -219,7 +228,7 @@ Vue.prototype.$getMusic = async function (songId) {
   var sign = util.getSign(data);
   var result = await this.$post(
     "http://127.0.0.1:9900/music/api/getMusic", {
-      url:'https://u.y.qq.com/cgi-bin/musics.fcg',
+      url: 'https://u.y.qq.com/cgi-bin/musics.fcg',
       params: {
         "-": "getplaysongvkey734640045891823",
         g_tk: 2099400196,
@@ -236,7 +245,6 @@ Vue.prototype.$getMusic = async function (songId) {
       },
     }, true
   )
-  var goal = null;
   //console.log(result);
   return result;
 }
@@ -255,7 +263,8 @@ Vue.prototype.$addMusic = function (music) {
     for (var i = 0; i < songList.length; i++) {
       if (music.songId == songList[i].songId) {
         originData.index = i;
-        break;
+        util.localUtil("playingList", originData);
+        return;
       }
     }
     originData.songList.unshift(music);

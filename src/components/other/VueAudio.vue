@@ -69,7 +69,7 @@ export default {
     theControlList: {
       type: String,
       default: "",
-    },
+    }
   },
   name: "VueAudio",
   data() {
@@ -141,7 +141,7 @@ export default {
       return this.audio.playing ? this.pausePlay() : this.startPlay();
     },
     // 开始播放
-    startPlay() {
+    async startPlay() {
       this.$refs.audio.play();
     },
     // 暂停
@@ -152,13 +152,27 @@ export default {
     onPause() {
       this.audio.playing = false;
       //this.$parent.pausePlay();
-      if(this.$refs.audio.ended){
+      if (this.$refs.audio.ended) {
         //下一首或者单曲循环a操作
-      //this.$emit('onPause');
+        console.log("下一首");
+        //this.$parent.pausePlay();
+        this.$parent.nextSong();
       }
     },
     // 当发生错误, 就出现loading状态
-    onError() {
+    async onError() {
+      console.log("error");
+      //链接失效 重新获取当前音乐链接
+      var localData = this.$util.localUtil("playingList", "{}");
+      if (localData.songList) {
+        var result = await this.$getMusic(
+          localData.songList[localData.index].songId
+        );
+        if (result) {
+          localData.songList[localData.index].url = result;
+          this.$util.localUtil("playingList", localData);
+        }
+      }
       this.audio.waiting = true;
     },
     // 当音频开始等待
@@ -167,8 +181,11 @@ export default {
     },
     // 当音频开始播放
     onPlay(res) {
-      console.log(res);
+      console.log("onPlay");
+      this.audio.waiting = false;
+      this.audio.maxTime = parseInt(res.target.duration);
       this.audio.playing = true;
+      //这里重复设置时间是处理切换歌曲导致进度条丢失
       if (!this.controlList.onlyOnePlaying) {
         return;
       }
@@ -179,6 +196,7 @@ export default {
           item.pause();
         }
       });
+
     },
     // 当timeupdate事件大概每秒一次，用来更新音频流的当前播放时间
     onTimeupdate(res) {

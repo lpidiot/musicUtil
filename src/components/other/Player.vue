@@ -1,84 +1,106 @@
 <template>
-<transition mode="in-out">
-  <div v-show="show" class="backgroundBox" :style="bgi">
-    <div :class="hg" v-show="playerListIsOk()">
-      <div class="player-head-wyy">
-        <div class="head-wyy-btn" @click="trigger">
-          <img src="@/assets/images/back.png" alt />
+  <transition mode="in-out">
+    <div v-show="show" class="backgroundBox" :style="bgi">
+      <div :class="hg" v-show="playerListIsOk()">
+        <div class="player-head-wyy">
+          <div class="head-wyy-btn" @click="trigger">
+            <img src="@/assets/images/back.png" alt />
+          </div>
+          <div class="head-wyy-title">
+            {{playingList[idx]?playingList[idx].songName:''}}
+            <div
+              class="head-wyy-title-subtit"
+            >{{playingList[idx]?playingList[idx].singer.singerName:''}}</div>
+          </div>
+          <div class="head-wyy-btn">
+            <img src="@/assets/images/option.png" alt />
+          </div>
         </div>
-        <div class="head-wyy-title">
-          {{playingList[idx]?playingList[idx].songName:''}}
-          <div
-            class="head-wyy-title-subtit"
-          >{{playingList[idx]?playingList[idx].singer.singerName:''}}</div>
+        <div class="around-box">
+          <div class="around1">
+            <div class="around2"></div>
+          </div>
         </div>
-        <div class="head-wyy-btn">
-          <img src="@/assets/images/option.png" alt />
+
+        <div class="player-content">
+          <div :class="['bracket',isPlaying?'':'rotate']"></div>
+          <div class="whiteRound">
+            <div :class="['msk','animation',isPlaying?'running':'stop']">
+              <img
+                class="cover"
+                :src="playingList[idx]?playingList[idx].cover:'@/assets/images/m.jpg'"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="control-box">
+          <VueAudio
+            ref="audio"
+            :url="getCurrentUrl()"
+            theControlList="noDownload noSpeed onlyOnePlaying"
+          />
+          <div class="toolbar-box">
+            <div class="toolbar">
+              <img
+                src="@/assets/images/circle.png"
+                style=" width: 25px;
+          height: 25px;"
+                alt
+              />
+            </div>
+            <div class="toolbar" @click="prevSong">
+              <img src="@/assets/images/prev.png" style=" width: 25px;
+          height: 25px;" alt />
+            </div>
+
+            <div v-if="isPlaying" class="toolbar" @click="play()">
+              <img src="@/assets/images/stop.png" alt />
+            </div>
+            <div v-else class="toolbar" @click="play()">
+              <img src="@/assets/images/c_play.png" alt />
+            </div>
+
+            <div class="toolbar" @click="nextSong">
+              <img src="@/assets/images/next.png" style=" width: 25px;
+          height: 25px;" alt />
+            </div>
+
+            <div class="toolbar" @click="recentSong">
+              <img src="@/assets/images/menu.png" style=" width: 25px;
+          height: 25px;" alt />
+            </div>
+          </div>
         </div>
       </div>
-      <div class="around-box">
-        <div class="around1">
-          <div class="around2"></div>
+      <wrapper ref="recentSongList" height="65%" padding="0">
+        <div class="recentBox">
+          <div class="head">
+            <h3>{{"当前播放("+songListLength+")"}}</h3>
+          </div>
+          <div class="songBox" v-for="(song) in playingList" :key="song.songId">
+            <div class="info">
+              {{song.songName+" -"}}
+              <p>{{" "+song.singer.name}}</p>
+            </div>
+            <div class="bar">
+              <i class="el-icon-close"></i>
+            </div>
+          </div>
+           
         </div>
-      </div>
-
-      <div class="player-content">
-        <div :class="['bracket',isPlaying?'':'rotate']"></div>
-        <div class="whiteRound">
-          <div :class="['msk','animation',isPlaying?'running':'stop']">
-            <img
-              class="cover"
-              :src="playingList[idx]?playingList[idx].cover:'@/assets/images/m.jpg'"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="control-box">
-        <VueAudio
-          ref="audio"
-          :url="getCurrentUrl()"
-          theControlList="noDownload noSpeed onlyOnePlaying"
-          @onPause="onPause"
-        />
-        <div class="toolbar-box">
-          <div class="toolbar">
-            <img src="@/assets/images/circle.png" style=" width: 25px;
-          height: 25px;" alt />
-          </div>
-          <div class="toolbar" @click="prevSong">
-            <img src="@/assets/images/prev.png" style=" width: 25px;
-          height: 25px;" alt />
-          </div>
-
-          <div v-if="isPlaying" class="toolbar" @click="play()">
-            <img src="@/assets/images/stop.png" alt />
-          </div>
-          <div v-else class="toolbar" @click="play()">
-            <img src="@/assets/images/c_play.png" alt />
-          </div>
-
-          <div class="toolbar" @click="nextSong">
-            <img src="@/assets/images/next.png" style=" width: 25px;
-          height: 25px;" alt />
-          </div>
-
-          <div class="toolbar">
-            <img src="@/assets/images/menu.png" style=" width: 25px;
-          height: 25px;" alt />
-          </div>
-        </div>
-      </div>
+      </wrapper>
     </div>
-  </div>
-</transition>
+  </transition>
 </template>
 
 <script>
 import VueAudio from "../other/VueAudio";
+import Wrapper from "../other/Wrapper";
 export default {
   components: {
     VueAudio,
+    Wrapper,
   },
   data() {
     return {
@@ -108,6 +130,10 @@ export default {
       this.isPlaying = !this.isPlaying;
       this.$refs.audio.startPlayOrPause();
     },
+    startPlay() {
+      this.isPlaying = true;
+      this.$refs.audio.startPlay();
+    },
     trigger() {
       this.show = !this.show;
     },
@@ -124,7 +150,7 @@ export default {
       }
       this.playingList = localData.songList;
       this.idx = localData.index;
-      console.log('updatePlayingList=====');
+      console.log("updatePlayingList=====");
       console.log(localData);
       if (
         idx &&
@@ -136,10 +162,9 @@ export default {
         localData.index = idx;
         this.$util.localUtil("playingList", localData);
       }
-
       if (now) {
         setTimeout(function () {
-          that.play();
+          that.startPlay();
         }, 750);
       }
     },
@@ -183,9 +208,8 @@ export default {
       this.isPlaying = false;
       this.$refs.audio.pausePlay();
     },
-    //歌曲暂停时
-    onPause() {
-      console.log("aa");
+    recentSong() {
+      this.$refs.recentSongList.sw();
     },
   },
   computed: {
@@ -209,6 +233,9 @@ export default {
         return { "background-color": "#c6c6c6" };
       }
     },
+     songListLength(){
+      return this.playingList.length;
+    }
   },
   created() {
     this.updatePlayingList();
@@ -217,8 +244,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-.v-enter,.v-leave-to{
+.v-enter,
+.v-leave-to {
   opacity: 0;
   transform: translateX(100%);
 }
@@ -231,7 +258,6 @@ export default {
 .v-leave-active {
   transition: all 0.5s ease;
 }
-
 
 @keyframes around {
   from {
@@ -463,6 +489,39 @@ export default {
         }
       }
     }
+  }
+}
+
+.recentBox {
+  .head{
+    width: 100%;
+    padding: 0 10px;
+    position: absolute;
+    background-color: #F0EFEC;//同wrapper背景
+  }
+  .songBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 0.5px #c1c1c1 solid;
+    padding: 0 10px;
+    .info {
+      color: black;
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      p {
+        color: #5c5c5c;
+        font-size: 13px;
+      }
+    }
+    .bar {
+    }
+  }
+
+  .songBox:hover {
+    background-color: #dadadf;
   }
 }
 </style>

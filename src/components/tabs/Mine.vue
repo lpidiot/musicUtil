@@ -2,27 +2,27 @@
   <div>
     <div class="container">
       <div class="musicList-head">
-        <h3>官方歌单</h3>
+        <h3>我的歌单</h3>
         <div class="station">
           <div class="musicList-more">
             <div>新增&nbsp;&nbsp;</div>
             <i class="el-icon-plus"></i>
             <!-- <div class="lcon-more">
               <img src="../../assets/images/add.png" />
-            </div> -->
+            </div>-->
           </div>
 
           <div class="musicList-more">
-            <div>更多</div>
-            <i class="el-icon-arrow-right"></i>
+            <div>导入</div>
+            <i class="el-icon-upload"></i>
           </div>
         </div>
       </div>
       <div class="songListBox">
         <div class="coverBox" :style="conheight" @click="test" ref="qqq">
-          <img src="@/assets/images/cover.jpg" alt />
+          <img src="@/assets/images/taiga.jpg" alt />
         </div>
-        <div class="songLIstInfo">我的e歌单</div>
+        <div class="songLIstInfo">播放列表</div>
       </div>
 
       <div class="songListBox">
@@ -67,6 +67,9 @@ export default {
   mounted() {
     this.getHeight;
   },
+  beforeDestroy(){
+    window.addEventListener("resize", null);
+  }
 };
 </script>
 
@@ -101,6 +104,7 @@ export default {
   flex-direction: row;
   flex-wrap: wrap;
   box-sizing: border-box;
+  padding-top: 10px;
 }
 .songListBox {
   display: flex;
@@ -110,12 +114,13 @@ export default {
   box-sizing: border-box;
   .coverBox {
     width: 100%;
-    border: 1px solid #000000;
-    border-radius: 5px;
     img {
       width: 100%;
       height: 100%;
       overflow: hidden;
+      //border: 1px solid #515151;
+      border-radius: 5px;
+      display: block;
     }
   }
   .songLIstInfo {
@@ -124,7 +129,6 @@ export default {
     width: 100%;
     text-align: center;
     color: #303133;
-    font-size: 15px;
     overflow: hidden;
     text-overflow: ellipsis;
     -ms-text-overflow: ellipsis;

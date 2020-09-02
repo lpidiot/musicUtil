@@ -16,13 +16,13 @@
           搜索音乐
         </div>
         <div class="bar" @click="playerTrigger" v-show="playingListExist()">
-          <img src="@/assets/images/setting2.png" />
+          <img :src="getCurrentSongCover" />
         </div>
       </div>
 
       <el-tabs @tab-click="handleClick" stretch v-model="activeName">
         <el-tab-pane label="推荐" name="/home/discover"></el-tab-pane>
-        <el-tab-pane label="排行" name="www"></el-tab-pane>
+        <el-tab-pane label="排行" name="www" disabled></el-tab-pane>
         <el-tab-pane label="我的" name="/home/mine"></el-tab-pane>
       </el-tabs>
     </div>
@@ -40,7 +40,7 @@
 export default {
   data() {
     return {
-      activeName: "",
+      activeName: ""
     };
   },
   methods: {
@@ -99,7 +99,17 @@ export default {
       // });
       var result = await this.$getMusic("002jD2Q83NmcPJ");
       console.log(result);
-    },
+    }
+  },
+  computed:{
+     getCurrentSongCover(){
+      var playingList= this.$util.localUtil("playingList", "{}");
+      var songList=playingList.songList;
+      if(songList){
+          return songList[playingList.index].cover;
+      }
+      return require("@/assets/images/cover.jpg");
+    }
   },
   watch: {
     activeName(val) {
@@ -108,8 +118,8 @@ export default {
     },
   },
   created() {
-    //this.activeName = "/home/mine";
-    this.activeName = "/home/discover";
+    this.activeName = "/home/mine";
+    //this.activeName = "/home/discover";
   },
 };
 </script>
@@ -119,10 +129,6 @@ export default {
 }
 .el-tabs__nav-wrap::after {
   color: #e4e7ed;
-  display: none !important;
-}
-
-.el-tabs__content {
   display: none !important;
 }
 .el-tabs {

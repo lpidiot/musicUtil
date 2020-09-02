@@ -39,7 +39,7 @@
       </div>
 
       <div :class="['list-box', changeAppear&&!isSinger?'distance':'']">
-        <div class="list-item" v-for="item in songList" :key="item.id" @click="prin(item)">
+        <div class="list-item" v-for="item in songList" :key="item.id" @click="playSong(item)">
           <div class="content">
             <div class="info">{{item.name}}</div>
             <div class="subInfo">{{item.singer[0].name+" - "+item.album.name}}</div>
@@ -89,6 +89,32 @@ export default {
   },
 
   methods: {
+    prin(e){
+      console.log(e);
+    },
+    async playSong(song){
+       console.log(this);
+      return;
+      var url = await this.$getMusic(song.mid);
+      console.log(url);
+      if (url) {
+        var coverImg = this.$util.getAlbumImg(song.album.mid);
+        var goal = {
+          songId: song.mid,
+          songName: song.name,
+          singer: song.singer[0],
+          album: {
+            albumname: song.album.name,
+            albummId: song.album.mid,
+          },
+          cover: coverImg,
+          url: url,
+        };
+        this.$addMusic(goal);
+        this.updatePlayingList(null, true);
+        this.playerTrigger();
+      }
+    },
     handleScroll() {
       const self = this;
       //下滑head加上下边框线 已弃用
