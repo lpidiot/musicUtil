@@ -77,7 +77,6 @@ export default {
       audio: {
         currentTime: 0,
         maxTime: 0,
-        playing: false,
         muted: false,
         speed: 1,
         waiting: true,
@@ -98,9 +97,6 @@ export default {
     };
   },
   methods: {
-    isPlaying() {
-      return this.audio.playing;
-    },
     setControlList() {
       let controlList = this.theControlList.split(" ");
       controlList.forEach((item) => {
@@ -130,15 +126,11 @@ export default {
       this.audio = {
         currentTime: 0,
         maxTime: 0,
-        playing: false,
         muted: false,
         speed: 1,
         waiting: true,
         preload: "auto",
       };
-    },
-    startPlayOrPause() {
-      return this.audio.playing ? this.pausePlay() : this.startPlay();
     },
     // 开始播放
     async startPlay() {
@@ -150,7 +142,7 @@ export default {
     },
     // 当音频暂停
     onPause() {
-      this.audio.playing = false;
+      this.$store.commit("stop");
       //this.$parent.pausePlay();
       if (this.$refs.audio.ended) {
         //下一首或者单曲循环a操作
@@ -170,6 +162,7 @@ export default {
         );
         if (result) {
           localData.songList[localData.index].url = result;
+          this.$store.commit('updateList',localData.songList);
           this.$util.localUtil("playingList", localData);
         }
       }
@@ -184,7 +177,7 @@ export default {
       console.log("onPlay");
       this.audio.waiting = false;
       this.audio.maxTime = parseInt(res.target.duration);
-      this.audio.playing = true;
+      this.$store.commit("play");
       //这里重复设置时间是处理切换歌曲导致进度条丢失
       if (!this.controlList.onlyOnePlaying) {
         return;

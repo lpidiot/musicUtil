@@ -54,10 +54,10 @@
           height: 25px;" alt />
             </div>
 
-            <div v-if="isPlaying" class="toolbar" @click="play()">
+            <div v-if="isPlaying" class="toolbar" @click="pausePlay()">
               <img src="@/assets/images/stop.png" alt />
             </div>
-            <div v-else class="toolbar" @click="play()">
+            <div v-else class="toolbar" @click="startPlay()">
               <img src="@/assets/images/c_play.png" alt />
             </div>
 
@@ -87,7 +87,6 @@
               <i class="el-icon-close"></i>
             </div>
           </div>
-           
         </div>
       </wrapper>
     </div>
@@ -97,6 +96,7 @@
 <script>
 import VueAudio from "../other/VueAudio";
 import Wrapper from "../other/Wrapper";
+import {mapState} from "vuex"
 export default {
   components: {
     VueAudio,
@@ -104,19 +104,14 @@ export default {
   },
   data() {
     return {
-      isPlaying: false,
-      idx: 0,
-      playingList: [],
       show: false,
     };
   },
   methods: {
     getCurrentUrl() {
       if (this.playingList.length > 0) {
-        if (this.playingList[this.idx]) {
-          //console.log(this.playingList[this.idx]);
-          return this.playingList[this.idx].url;
-        }
+        //console.log(this.playingList[this.idx]);
+        return this.playingList[this.idx].url;
       }
       return "";
     },
@@ -126,13 +121,13 @@ export default {
       }
       return false;
     },
-    play() {
-      this.isPlaying = !this.isPlaying;
-      this.$refs.audio.startPlayOrPause();
-    },
     startPlay() {
-      this.isPlaying = true;
+      this.$store.commit("play");
       this.$refs.audio.startPlay();
+    },
+    pausePlay() {
+      this.$store.commit("stop");
+      this.$refs.audio.pausePlay();
     },
     trigger() {
       this.show = !this.show;
@@ -148,8 +143,8 @@ export default {
       if (localData.index == undefined) {
         return;
       }
-      this.playingList = localData.songList;
-      this.idx = localData.index;
+      this.$store.commit("updateList",localData.songList);
+       this.$store.commit("updateIdx",localData.index);
       console.log("updatePlayingList=====");
       console.log(localData);
       if (
@@ -158,7 +153,7 @@ export default {
         this.$util.isRealNum(idx) &&
         idx < localData.songList.length
       ) {
-        this.idx = idx;
+        this.$store.commit("updateIdx",idx);
         localData.index = idx;
         this.$util.localUtil("playingList", localData);
       }
@@ -173,16 +168,16 @@ export default {
       this.pausePlay();
       if (this.playingList.length > 0) {
         if (this.idx == 0) {
-          this.idx = this.playingList.length - 1;
+          this.$store.commit('updateIdx',this.playingList.length - 1);
         } else {
-          this.idx = this.idx - 1;
+          this.$store.commit('updateIdx',this.idx - 1);
         }
         var localData = this.$util.localUtil("playingList", "{}");
         localData.index = this.idx;
         this.$util.localUtil("playingList", localData);
         this.$refs.audio.origin();
         setTimeout(function () {
-          that.play();
+          that.startPlay();
         }, 750);
       }
     },
@@ -191,23 +186,20 @@ export default {
       this.pausePlay();
       if (this.playingList.length > 0) {
         if (this.idx == this.playingList.length - 1) {
-          this.idx = 0;
+          this.$store.commit('updateIdx',0);
         } else {
-          this.idx = this.idx + 1;
+          this.$store.commit('updateIdx',this.idx + 1);
         }
         var localData = this.$util.localUtil("playingList", "{}");
         localData.index = this.idx;
         this.$util.localUtil("playingList", localData);
         this.$refs.audio.origin();
         setTimeout(function () {
-          that.play();
+          that.startPlay();
         }, 750);
       }
     },
-    pausePlay() {
-      this.isPlaying = false;
-      this.$refs.audio.pausePlay();
-    },
+
     recentSong() {
       this.$refs.recentSongList.sw();
     },
@@ -233,9 +225,10 @@ export default {
         return { "background-color": "#c6c6c6" };
       }
     },
-     songListLength(){
+    songListLength() {
       return this.playingList.length;
-    }
+    },
+    ...mapState(['isPlaying','playingList','idx'])
   },
   created() {
     this.updatePlayingList();
@@ -493,11 +486,11 @@ export default {
 }
 
 .recentBox {
-  .head{
+  .head {
     width: 100%;
     padding: 0 10px;
     position: absolute;
-    background-color: #F0EFEC;//同wrapper背景
+    background-color: #f0efec; //同wrapper背景
   }
   .songBox {
     display: flex;

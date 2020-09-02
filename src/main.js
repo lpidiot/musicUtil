@@ -5,12 +5,17 @@ import './plugins/element.js'
 import './assets/css/common.css'
 import './assets/css/animate.css'
 
+import Vuex from 'vuex'
+Vue.use(Vuex)
+
 import 'lib-flexible'
 import Meta from 'vue-meta'
 Vue.use(Meta)
 
 
-import { Message } from 'element-ui';
+import {
+  Message
+} from 'element-ui';
 Vue.component(Message.name, Message)
 
 
@@ -90,6 +95,47 @@ axios.interceptors.response.use(
 
   }
 )
+
+
+const store = new Vuex.Store({
+  state: {
+    isPlaying: false, //是否正在播放
+    playingList: [], //当前播放列表
+    idx: -1, //播放列表对应的索引
+  },
+  mutations: {
+    sw(state) {
+      state.isPlaying = !state.isPlaying
+    },
+    play(state) {
+      state.isPlaying = true
+    },
+    stop(state) {
+      state.isPlaying = false
+    },
+    updateList(state, newList) {
+      state.playingList = newList
+    },
+    updateIdx(state, newIdx) {
+      state.idx = newIdx
+    }
+  },
+  actions: {
+
+  },
+  getters: {
+    isPlaying(state) {
+      return state.isPlaying
+    },
+    playingList(state) {
+      return state.playingList
+    },
+    idx(state) {
+      return state.idx
+    },
+
+  }
+})
 
 Vue.prototype.$getLoading = function () {
   var loading = this.$loading({
@@ -268,6 +314,8 @@ Vue.prototype.$addMusic = function (music) {
       }
     }
     originData.songList.unshift(music);
+    store.commit('updateList',originData.songList);
+    store.commit('updateIdx',originData.index);
     util.localUtil("playingList", originData);
   }
 }
@@ -300,8 +348,10 @@ Vue.directive('focus', {
   }
 });
 
+
 new Vue({
   router,
+  store,
   metaInfo() {
     return {
       title: 'music',
