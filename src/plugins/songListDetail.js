@@ -8,6 +8,13 @@ export default {
     instance.$mount(document.createElement('div')) //挂载实例到创建的DOM上
     document.body.appendChild(instance.$el)
     _Vue.prototype.$showSongList = (mark, val, context) => {
+      if(mark=='local'){
+        instance.freshSongList_local();
+        instance.show = true;
+        instance.isLocal=true;
+        instance.context=context;
+        return;
+      }
       var patt = new RegExp(/^[0-9]*$/);
       //mark有tid(常规)或者url(封面推荐)
 

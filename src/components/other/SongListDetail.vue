@@ -36,15 +36,15 @@
 
       <div :class="['list-box', changeAppear&&!isSinger?'distance':'']">
         <div class="list-item" v-for="item in songList" :key="item.id" @click="playSong(item)">
-          <div class="content">
+          <div :class="['content',isCurrentSong(item.mid)?'active':'']">
             <div class="info">{{item.name}}</div>
             <div class="subInfo">{{item.singer[0].name+" - "+item.album.name}}</div>
           </div>
 
           <div class="toolbar-box">
-            <div class="toolbar">
+            <!-- <div class="toolbar">
               <img src="@/assets/images/play_operation.png" />
-            </div>
+            </div>-->
             <div class="toolbar" @click.stop="songDetailSwitch(item)">
               <img src="@/assets/images/more_option.png" />
             </div>
@@ -77,6 +77,7 @@ export default {
   data() {
     return {
       isSinger: false,
+      isLocal: false,
       changeAppear: false, //是否改变信息栏显示状态
       logo: require("@/assets/images/m.jpg"), //默认显示图片
       songList: [],
@@ -92,12 +93,20 @@ export default {
       isEnded: false, //数据是否到底
       singerId: "", //歌手id 歌手歌单加载数据用
       context: null, //打开歌单的页面，用来处理切歌等操作
-      barList:[]  //歌曲n选项
+      barList: [], //歌曲n选项
     };
   },
 
   methods: {
     async playSong(song) {
+      console.log('song='+song.mid);
+      if (this.isLocal) {
+        var idx = this.$util.findSongByMid(song.mid);
+        console.log('idx='+idx);
+        this.context.$parent.$parent.updatePlayingList(idx, true);
+        this.context.$parent.$parent.playerTrigger();
+        return;
+      }
       var url = await this.$getMusic(song.mid);
       if (url) {
         var coverImg = this.$util.getAlbumImg(song.album.mid);
@@ -106,7 +115,7 @@ export default {
           songName: song.name,
           singer: song.singer[0],
           album: {
-            albumname: song.album.name,
+            albumName: song.album.name,
             albummId: song.album.mid,
           },
           cover: coverImg,
@@ -118,7 +127,7 @@ export default {
         //这个确实有点离谱...用vuex的话感觉更离谱 先这样吧
       }
     },
-       songDetailSwitch(info) {
+    songDetailSwitch(info) {
       console.log(info);
       const that = this;
       var bars = [
@@ -149,19 +158,19 @@ export default {
             id: 1,
             title: "歌手" + " (" + info.singer[0].name + ")",
             imgUrl: require("@/assets/images/singer2.png"),
-            disable:true
+            disable: true,
           },
           {
             id: 2,
             title: "专辑" + " (" + info.album.name + ")",
             imgUrl: require("@/assets/images/cd.png"),
-            disable:true
+            disable: true,
           },
           {
             id: 3,
             title: "信息",
             imgUrl: require("@/assets/images/info.png"),
-            disable:true
+            disable: true,
           },
         ],
       ];
@@ -375,9 +384,51 @@ export default {
         }
       }
     },
+    //将本地歌单转换为此插件所需的数据结构
+    //本地歌单就先这么凑数吧。。
+    freshSongList_local() {
+      var localData = this.$util.localUtil("playingList", "{}");
+      if (localData.songList) {
+        var songList = localData.songList;
+        //console.log(songarr);
+        this.songListInfo = {
+          songListName: "播放列表",
+          singer: "本地",
+          describe: "这里是当前播放列表ovo",
+        };
+        var goal = [];
+        for (var item of songList) {
+          var singer = [];
+          var album = {
+            mid: item.album.albummId,
+            name: item.album.albumName,
+          };
+          singer.push(item.singer);
+          var data = {
+            mid: item.songId,
+            singer: singer,
+            album: album,
+            name: item.songName,
+            url: item.url,
+          };
+          goal.push(data);
+        }
+        this.songList = goal;
+        this.logo = require("@/assets/images/taiga.jpg");
+        this.isEnded = true; //本地不存在加载
+      }
+    },
+    isCurrentSong(mid){
+      var currentSong=this.context.$store.getters.playingList[this.context.$store.getters.idx];
+      if(currentSong.songId==mid){
+        return true;
+      }
+      return false;
+    },
 
     back() {
       this.isSinger = false;
+      this.isLocal = false;
       this.changeAppear = false; //是否改变信息栏显示状态
       this.logo = require("@/assets/images/m.jpg");
       this.songList = [];
@@ -482,8 +533,8 @@ export default {
   }
 }
 .filter {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(45px);
+  -webkit-backdrop-filter: blur(45px);
 }
 
 .fixedTop {
@@ -585,13 +636,17 @@ export default {
     align-items: center;
     border: 0 solid black;
     border-bottom: 2px solid rgb(230, 236, 240);
-    padding: 10px;
+    padding: 10px 0;
     box-sizing: border-box;
+    .active {
+      border-left: 3px solid #1296db;
+    }
     .content {
       display: flex;
       flex-direction: row;
       flex: 1;
       flex-wrap: wrap;
+      padding: 0 10px;
       div {
         width: 100%;
       }

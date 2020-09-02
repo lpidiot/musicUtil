@@ -12,14 +12,14 @@
             </div>-->
           </div>
 
-          <div class="musicList-more">
+          <div class="musicList-more" @click="mesBoxClick">
             <div>导入</div>
             <i class="el-icon-upload"></i>
           </div>
         </div>
       </div>
       <div class="songListBox">
-        <div class="coverBox" :style="conheight" @click="test" ref="qqq">
+        <div class="coverBox" :style="conheight" @click="openLocalSongList" ref="qqq">
           <img src="@/assets/images/taiga.jpg" alt />
         </div>
         <div class="songLIstInfo">播放列表</div>
@@ -43,22 +43,46 @@
         </div>
       </div>
     </div>
+    <MessageBox ref="importSong" height="200px" headText="导入歌单" :cancel="mesBoxClick" :confirm="importSongList">
+      <div class="importContainer">
+        <div class="importBox">
+          <input type="text" v-model="songListUrl" placeholder="输入歌单url"/>
+        </div>
+      </div>
+    </MessageBox>
   </div>
 </template>
 
 <script>
+import MessageBox from "../other/MessageBox";
 export default {
+  components: {
+    MessageBox,
+  },
   data() {
     return {
       conheight: {
         height: "",
       },
+      songListUrl:""
     };
   },
   methods: {
-    test() {},
+    openLocalSongList() {
+      this.$showSongList("local", null, this);
+    },
+    importSongList(){
+      var url=this.songListUrl;
+      console.log(url);
+      const loading=this.$getLoading('处理中。。。');
+      this.mesBoxClick();
+      loading.close();
+    },
     getHeight() {
       this.conheight.height = this.$refs.qqq.offsetWidth + "px";
+    },
+    mesBoxClick() {
+      this.$refs.importSong.sw();
     },
   },
   created() {
@@ -67,9 +91,9 @@ export default {
   mounted() {
     this.getHeight;
   },
-  beforeDestroy(){
+  beforeDestroy() {
     window.addEventListener("resize", null);
-  }
+  },
 };
 </script>
 
@@ -137,6 +161,32 @@ export default {
     line-clamp: 1;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
+  }
+}
+.importContainer {
+  width: 100%;
+  height: 110px;
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  justify-content: center;
+  .importBox {
+    width: 300px;
+    height: 2.5em;
+    background-color: #e5e5e5;
+    padding: 0 5px;
+    input {
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+      border: none;
+      background: none;
+    }
+    input:focus {
+      border: none;
+    }
   }
 }
 </style>

@@ -74,16 +74,24 @@
         </div>
       </div>
       <wrapper ref="recentSongList" height="65%" padding="0">
+        <div class="head">
+          <h3>{{"当前播放("+songListLength+")"}}</h3>
+        </div>
         <div class="recentBox">
-          <div class="head">
-            <h3>{{"当前播放("+songListLength+")"}}</h3>
-          </div>
-          <div class="songBox" v-for="(song) in playingList" :key="song.songId" @click="playSong(song.songId)">
-            <div class="info">
+          <div
+            class="songBox"
+            v-for="(song) in playingList"
+            :key="song.songId"
+            @click="playSong(song.songId)"
+          >
+            <div class="info" :style="{'color':isCurrent(song.songId)?'#1296db':''}">
+              <div class="current" v-if="isCurrent(song.songId)">
+                <img src="@/assets/images/playing.png" alt />
+              </div>
               {{song.songName+" -"}}
-              <p>{{" "+song.singer.name}}</p>
+              <p :style="{'color':isCurrent(song.songId)?'#1296db':''}">{{" "+song.singer.name}}</p>
             </div>
-            <div class="bar">
+            <div class="bar" @click.stop="deleteSong(song.songId)">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -148,18 +156,20 @@ export default {
       console.log("updatePlayingList=====");
       console.log(localData);
       if (
-        idx &&
-        idx != "current" &&
-        this.$util.isRealNum(idx) &&
-        idx < localData.songList.length
+        idx == 0 ||
+        (idx &&
+          idx != "current" &&
+          this.$util.isRealNum(idx) &&
+          idx < localData.songList.length)
       ) {
         this.$store.commit("updateIdx", idx);
         localData.index = idx;
         this.$util.localUtil("playingList", localData);
-
-        //切换歌曲
-        this.pausePlay();
-        this.$refs.audio.origin();
+        if (now) {
+          //切换歌曲
+          this.pausePlay();
+          this.$refs.audio.origin();
+        }
       }
       if (now) {
         setTimeout(function () {
@@ -215,6 +225,27 @@ export default {
       this.recentSong();
       this.updatePlayingList(idx, true);
     },
+    isCurrent(songId) {
+      var idx = this.$util.findSongByMid(songId);
+      if (idx == this.idx) {
+        return true;
+      }
+      return false;
+    },
+    deleteSong(songId) {
+      var idx = this.$util.findSongByMid(songId);
+      var localData = this.$util.localUtil("playingList", "{}");
+      var songList = localData.songList;
+      songList.splice(idx, 1);
+      localData.songList = songList;
+      this.$util.localUtil("playingList", localData);
+      if (idx > this.idx) {
+        //序号在后边的不管
+        this.updatePlayingList("current", false);
+      } else if (idx < this.idx) {
+        this.updatePlayingList(this.idx - 1, false);
+      }
+    },
   },
   computed: {
     hg() {
@@ -240,6 +271,7 @@ export default {
     songListLength() {
       return this.playingList.length;
     },
+
     ...mapState(["isPlaying", "playingList", "idx"]),
   },
   created() {
@@ -335,8 +367,8 @@ export default {
 .player-container {
   width: 100%;
   height: 100vh;
-  -webkit-backdrop-filter: blur(45px);
-  backdrop-filter: blur(45px);
+  -webkit-backdrop-filter: blur(120px);
+  backdrop-filter: blur(120px);
   transition: 0.5s ease;
   display: flex;
   flex-direction: column;
@@ -497,13 +529,15 @@ export default {
   }
 }
 
+.head {
+  width: 100%;
+  padding: 0 10px;
+  position: absolute;
+  max-height: 50px;
+  background-color: #f0efec; //同wrapper背景
+}
 .recentBox {
-  .head {
-    width: 100%;
-    padding: 0 10px;
-    position: absolute;
-    background-color: #f0efec; //同wrapper背景
-  }
+  padding-top: 50px;
   .songBox {
     display: flex;
     flex-direction: row;
@@ -516,6 +550,17 @@ export default {
       display: flex;
       align-items: center;
       flex-direction: row;
+      font-size: 14px;
+      .current {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+        img {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+        }
+      }
       p {
         color: #5c5c5c;
         font-size: 13px;

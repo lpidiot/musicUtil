@@ -7,7 +7,7 @@ import {
   Slider,
   Tag,
   InfiniteScroll,
-  Loading,
+  Loading
 } from 'element-ui'
 Vue.use(Tabs)
 Vue.use(TabPane)
@@ -17,7 +17,6 @@ Vue.use(Slider)
 Vue.use(Tag)
 Vue.use(InfiniteScroll)
 Vue.use(Loading)
-
 
 import {Swipe,SwipeItem } from 'mint-ui'
 import 'mint-ui/lib/swipe/style.css'

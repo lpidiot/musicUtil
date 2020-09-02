@@ -143,11 +143,14 @@ const store = new Vuex.Store({
   }
 })
 
-Vue.prototype.$getLoading = function () {
+Vue.prototype.$getLoading = function (text) {
+  if(!text){
+    text="正在加载...";
+  }
   var loading = this.$loading({
     // 声明一个loading对象
     lock: true, // 是否锁屏
-    text: "正在加载...", // 加载动画的文字
+    text: text, // 加载动画的文字
     //spinner: "el-icon-loading", // 引入的loading图标
     //background: "rgba(0, 0, 0, 0.3)", // 背景颜色
     target: ".sub-main", // 需要遮罩的区域

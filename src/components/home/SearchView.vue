@@ -36,7 +36,7 @@
       mode="out-in"
     >-->
     <div class="headTopMargin" v-if="currentContent=='search'">
-      <el-tabs stretch v-model="activeName">
+      <el-tabs stretch v-model="activeName" @tab-click="watchActive">
         <el-tab-pane label="单曲" name="single">
           <div class="music-box">
             <ul ref="tab_single">
@@ -388,6 +388,13 @@ export default {
       }
       this.historyTags = historyTags.splice(0, tagNum);
     },
+    //切换到search并刷新列表
+    watchActive() {
+      this.isEnded = false;
+      this.page = 0;
+      this.getSearchResult(this.searchText);
+      this.currentContent = "search";
+    },
     //展开搜索内容详细
     openSearchDetail(mark, val, e) {
       // console.log(e);
@@ -397,12 +404,12 @@ export default {
         val = this.searchText.trim();
         mark = "single";
       }
-
       this.activeName = mark;
       this.searchText = val;
       this.initHistoryData();
       //========
       //展开搜索页面
+      this.watchActive();
 
       //this.getSearchResult(val);
       //添加搜索历史
@@ -508,6 +515,7 @@ export default {
       this.currentContent = "search";
       this.searchText = val.name;
       this.activeName = val.type ? val.type : "single";
+      this.watchActive();
     },
     //清空历史搜索
     clearHistory() {
@@ -726,6 +734,7 @@ export default {
             imgUrl: require("@/assets/images/singer2.png"),
             fun: function () {
               //console.log(info);
+              that.$refs.songDetail.close();
               that.openSongListDetail("singer", info.singer[0].mid);
             },
           },
@@ -734,6 +743,7 @@ export default {
             title: "专辑" + " (" + info.albumname + ")",
             imgUrl: require("@/assets/images/cd.png"),
             fun: function () {
+              that.$refs.songDetail.close();
               that.openSongListDetail(null, info.albummid);
               //this.$showSongList(info.albummid);
             },
@@ -761,7 +771,7 @@ export default {
           songName: song.songname,
           singer: song.singer[0],
           album: {
-            albumname: song.albumname,
+            albumName: song.albumname,
             albummId: song.albummid,
           },
           cover: coverImg,
@@ -797,21 +807,8 @@ export default {
       this.goalHistory = goal;
       this.initHistoryData();
     },
-    activeName(val) {
-      this.isEnded = false;
-      this.page = 0;
-      this.getSearchResult(this.searchText);
-
-      // if (val == "single") {
-      //   console.log("single");
-      //   //this.$refs.tab_single.scrollTop=0;
-      // } else if (val == "songlist") {
-      //   console.log("songlist");
-      // } else if (val == "album") {
-      //   //this.$refs.tab_single.scrollTop=0;
-      // }
-      this.currentContent = "search";
-    },
+ 
+    immediate: true,
   },
   created() {
     this.initHistoryData();

@@ -1,26 +1,25 @@
 <template>
   <div>
     <!--  :class="['wrapper',isShow?'fade-in':'fade-out']" -->
-<transition>
-    <div
-      class="wrapper"
-      v-if="isShow"
-      :style="{
+    <transition>
+      <div
+        class="wrapper"
+        v-if="isShow"
+        :style="{
         'width': width,
         'height': height,
         'backgroundColor': backgroundColor,
         'backdrop-filter':filter?'blur(45px)':'',
         'opacity':filter?'0.9':'1'
       }"
-    >
-      <div class="wrapper-content" :style="{'padding':padding}">
-        <slot></slot>
+      >
+        <div class="wrapper-content" :style="{'padding':padding}">
+          <slot></slot>
+        </div>
       </div>
-    </div>
     </transition>
     <div class="cover" v-if="isShow&&showMask" @click="sw" />
   </div>
-
 </template>
 
 <script>
@@ -46,19 +45,19 @@ export default {
     width: {
       type: String,
       default: "100%",
-    }, //模态
+    }, 
     height: {
       type: String,
       default: "auto",
-    }, //模态
+    }, 
     backgroundColor: {
       type: String,
       default: "#F0EFEC",
     },
-    padding:{
-      type:String,
-      default:"10px"
-    }
+    padding: {
+      type: String,
+      default: "10px",
+    },
   },
   methods: {
     sw() {
@@ -67,13 +66,20 @@ export default {
         self.isShow = !self.isShow;
       }, 200);
     },
+    close() {
+      const self = this;
+      setTimeout(function () {
+        self.isShow = false;
+      }, 200);
+    },
   },
   computed: {},
 };
 </script>
 
 <style lang="scss" scoped>
-.v-enter,.v-leave-to{
+.v-enter,
+.v-leave-to {
   opacity: 0;
   transform: translateY(100%);
 }
@@ -102,7 +108,6 @@ export default {
     opacity: 1;
   }
 }
-
 
 @keyframes moveBottom {
   0% {
@@ -163,7 +168,7 @@ export default {
 }
 .fade-in {
   animation: moveTop 0.5s forwards;
-  -webkit-animation:moveTop 0.5s forwards;
+  -webkit-animation: moveTop 0.5s forwards;
 }
 .fade-out {
   animation: moveBottom 0.5s forwards;
