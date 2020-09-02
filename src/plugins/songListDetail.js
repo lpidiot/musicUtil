@@ -7,7 +7,7 @@ export default {
     const instance = new SongListConstructor() //创建子实例
     instance.$mount(document.createElement('div')) //挂载实例到创建的DOM上
     document.body.appendChild(instance.$el)
-    _Vue.prototype.$showSongList = (mark, val, callback) => {
+    _Vue.prototype.$showSongList = (mark, val, context) => {
       var patt = new RegExp(/^[0-9]*$/);
       //mark有tid(常规)或者url(封面推荐)
 
@@ -22,8 +22,10 @@ export default {
       }
 
       instance.show = true;
-      if (callback) {
-        callback()
+      if (context) {
+        //callback()
+        //console.log(callback);
+        instance.context=context;
       }
 
     }

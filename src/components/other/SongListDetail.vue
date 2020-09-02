@@ -28,11 +28,7 @@
         </div>
       </div>
 
-      <div
-        class="appear_singer"
-        v-else
-        :style="{backgroundImage:'url('+logo+')'}"
-      >
+      <div class="appear_singer" v-else :style="{backgroundImage:'url('+logo+')'}">
         <div class="filterBox">
           <div class="singer">{{songListInfo.singer}}</div>
         </div>
@@ -49,7 +45,7 @@
             <div class="toolbar">
               <img src="@/assets/images/play_operation.png" />
             </div>
-            <div class="toolbar">
+            <div class="toolbar" @click.stop="songDetailSwitch(item)">
               <img src="@/assets/images/more_option.png" />
             </div>
           </div>
@@ -63,11 +59,21 @@
           v-if="isEnded&&isSinger"
         >数据全部加载完毕</div>
       </div>
+
+      <wrapper ref="songDetail" :filter="true">
+        <ListGroup :barList="barList"></ListGroup>
+      </wrapper>
     </div>
   </transition>
 </template>
 <script>
+import Wrapper from "../other/Wrapper";
+import ListGroup from "../other/ListGroup";
 export default {
+  components: {
+    Wrapper,
+    ListGroup,
+  },
   data() {
     return {
       isSinger: false,
@@ -85,18 +91,14 @@ export default {
       page: 0, //歌手歌单默认页数（从0开始）
       isEnded: false, //数据是否到底
       singerId: "", //歌手id 歌手歌单加载数据用
+      context: null, //打开歌单的页面，用来处理切歌等操作
+      barList:[]  //歌曲n选项
     };
   },
 
   methods: {
-    prin(e){
-      console.log(e);
-    },
-    async playSong(song){
-       console.log(this);
-      return;
+    async playSong(song) {
       var url = await this.$getMusic(song.mid);
-      console.log(url);
       if (url) {
         var coverImg = this.$util.getAlbumImg(song.album.mid);
         var goal = {
@@ -111,10 +113,62 @@ export default {
           url: url,
         };
         this.$addMusic(goal);
-        this.updatePlayingList(null, true);
-        this.playerTrigger();
+        this.context.$parent.$parent.updatePlayingList(null, true);
+        this.context.$parent.$parent.playerTrigger();
+        //这个确实有点离谱...用vuex的话感觉更离谱 先这样吧
       }
     },
+       songDetailSwitch(info) {
+      console.log(info);
+      const that = this;
+      var bars = [
+        [
+          {
+            id: 1,
+            title: "下一首播放",
+            imgUrl: require("@/assets/images/share2.png"),
+            fun: this.aaa,
+          },
+          {
+            id: 2,
+            title: "收藏到歌单",
+            imgUrl: require("@/assets/images/download.png"),
+            fun: this.aaa,
+          },
+          {
+            id: 3,
+            title: "下载",
+            imgUrl: require("@/assets/images/download.png"),
+            fun: function () {
+              that.downloadSong(info.songmid);
+            },
+          },
+        ],
+        [
+          {
+            id: 1,
+            title: "歌手" + " (" + info.singer[0].name + ")",
+            imgUrl: require("@/assets/images/singer2.png"),
+            disable:true
+          },
+          {
+            id: 2,
+            title: "专辑" + " (" + info.album.name + ")",
+            imgUrl: require("@/assets/images/cd.png"),
+            disable:true
+          },
+          {
+            id: 3,
+            title: "信息",
+            imgUrl: require("@/assets/images/info.png"),
+            disable:true
+          },
+        ],
+      ];
+      this.barList = bars;
+      this.$refs.songDetail.sw();
+    },
+
     handleScroll() {
       const self = this;
       //下滑head加上下边框线 已弃用
@@ -146,14 +200,14 @@ export default {
       //   !this.isLoading &&
       //   !this.isEnded
       // ) {
-        //   设置为正在加载中
-        //this.isLoading = true;
-        //console.log("Refresh");
-        // setTimeout(() => {
-        //   this.freshSongList_singer(self.singerId);
-        // }, 200);
+      //   设置为正在加载中
+      //this.isLoading = true;
+      //console.log("Refresh");
+      // setTimeout(() => {
+      //   this.freshSongList_singer(self.singerId);
+      // }, 200);
       //}
-     // console.log(moveHeight);
+      // console.log(moveHeight);
       if (this.isSinger) {
         //console.log(moveHeight);
         // if (moveHeight >= 230) {
@@ -378,7 +432,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 999;
+  z-index: 888;
   background-color: #f5f5f5;
   overflow-y: auto;
 }

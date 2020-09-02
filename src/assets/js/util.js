@@ -123,6 +123,25 @@ export default {
     return null;
   },
 
+  findSongByMid(mid) {
+    var localData = this.localUtil("playingList", "{}");
+    if (!localData.songList) {
+      return null;
+    }
+    var songList = localData.songList;
+    // for(var item of songList){
+    //   if(item.songId==mid){
+    //     return item;
+    //   }
+    // }
+    for (var i = 0; i < songList.length; i++) {
+      if (songList[i].songId == mid) {
+        return i;
+      }
+    }
+    return null;
+  },
+
   sign_main(n, t) {
     "object" == typeof exports && "undefined" != typeof module ? module.exports = t() : "function" == typeof define && define.amd ? define(t) : (n = n || self).getSecuritySign = t()
   },

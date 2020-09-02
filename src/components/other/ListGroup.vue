@@ -2,7 +2,7 @@
   <div>
     <div class="listGroup" v-if="isSingle">
       <div v-for="item in barList" :key="item.id" class="list" @click.prevent="item.fun?item.fun():''">
-        <div>{{item.title}}</div>
+        <div :class="item.disable?'disable':''">{{item.title}}</div>
         <div class="list-img" :style="{width:width,height:height}">
           <img :src="item.imgUrl" />
         </div>
@@ -11,7 +11,7 @@
 
     <div class="listGroup" v-else v-for="(arr,idx) in barList" :key="idx">
       <div v-for="item in arr" :key="item.id" class="list" @click.prevent="item.fun?item.fun():''">
-        <div>{{item.title}}</div>
+        <div :class="item.disable?'disable':''">{{item.title}}</div>
         <div class="list-img" :style="{width:width,height:height}">
           <img :src="item.imgUrl" />
         </div>
@@ -52,6 +52,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.disable{
+  color:#6c6c6c;
+}
 .listGroup {
   display: flex;
   flex-direction: column;

@@ -16,7 +16,7 @@
           搜索音乐
         </div>
         <div class="bar" @click="playerTrigger" v-show="playingListExist()">
-          <img :src="getCurrentSongCover" />
+          <img :src="$store.getters.currentSongCover" />
         </div>
       </div>
 
@@ -102,14 +102,6 @@ export default {
     }
   },
   computed:{
-     getCurrentSongCover(){
-      var playingList= this.$util.localUtil("playingList", "{}");
-      var songList=playingList.songList;
-      if(songList){
-          return songList[playingList.index].cover;
-      }
-      return require("@/assets/images/cover.jpg");
-    }
   },
   watch: {
     activeName(val) {

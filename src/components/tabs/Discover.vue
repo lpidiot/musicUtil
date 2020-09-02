@@ -96,14 +96,15 @@ export default {
   },
   methods: {
     openSongListDetail(mark, val) {
+      const that=this;
       if (typeof (val) == "string") {
         var first = val.substring(0, 1);
         if (/^[a-zA-Z]/.test(first)) {
-          alert('不是歌单');
+          //alert('不是歌单');
           return;
         }
       }
-      this.$showSongList(mark,val);
+      this.$showSongList(mark,val,that);
     },
     //获取热门专辑封面及数据
     async getCover() {

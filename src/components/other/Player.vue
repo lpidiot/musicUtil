@@ -78,7 +78,7 @@
           <div class="head">
             <h3>{{"当前播放("+songListLength+")"}}</h3>
           </div>
-          <div class="songBox" v-for="(song) in playingList" :key="song.songId">
+          <div class="songBox" v-for="(song) in playingList" :key="song.songId" @click="playSong(song.songId)">
             <div class="info">
               {{song.songName+" -"}}
               <p>{{" "+song.singer.name}}</p>
@@ -96,7 +96,7 @@
 <script>
 import VueAudio from "../other/VueAudio";
 import Wrapper from "../other/Wrapper";
-import {mapState} from "vuex"
+import { mapState } from "vuex";
 export default {
   components: {
     VueAudio,
@@ -143,8 +143,8 @@ export default {
       if (localData.index == undefined) {
         return;
       }
-      this.$store.commit("updateList",localData.songList);
-       this.$store.commit("updateIdx",localData.index);
+      this.$store.commit("updateList", localData.songList);
+      this.$store.commit("updateIdx", localData.index);
       console.log("updatePlayingList=====");
       console.log(localData);
       if (
@@ -153,9 +153,13 @@ export default {
         this.$util.isRealNum(idx) &&
         idx < localData.songList.length
       ) {
-        this.$store.commit("updateIdx",idx);
+        this.$store.commit("updateIdx", idx);
         localData.index = idx;
         this.$util.localUtil("playingList", localData);
+
+        //切换歌曲
+        this.pausePlay();
+        this.$refs.audio.origin();
       }
       if (now) {
         setTimeout(function () {
@@ -168,9 +172,9 @@ export default {
       this.pausePlay();
       if (this.playingList.length > 0) {
         if (this.idx == 0) {
-          this.$store.commit('updateIdx',this.playingList.length - 1);
+          this.$store.commit("updateIdx", this.playingList.length - 1);
         } else {
-          this.$store.commit('updateIdx',this.idx - 1);
+          this.$store.commit("updateIdx", this.idx - 1);
         }
         var localData = this.$util.localUtil("playingList", "{}");
         localData.index = this.idx;
@@ -186,9 +190,9 @@ export default {
       this.pausePlay();
       if (this.playingList.length > 0) {
         if (this.idx == this.playingList.length - 1) {
-          this.$store.commit('updateIdx',0);
+          this.$store.commit("updateIdx", 0);
         } else {
-          this.$store.commit('updateIdx',this.idx + 1);
+          this.$store.commit("updateIdx", this.idx + 1);
         }
         var localData = this.$util.localUtil("playingList", "{}");
         localData.index = this.idx;
@@ -202,6 +206,14 @@ export default {
 
     recentSong() {
       this.$refs.recentSongList.sw();
+    },
+    playSong(mid) {
+      var idx = this.$util.findSongByMid(mid);
+      if (idx == null) {
+        return;
+      }
+      this.recentSong();
+      this.updatePlayingList(idx, true);
     },
   },
   computed: {
@@ -228,7 +240,7 @@ export default {
     songListLength() {
       return this.playingList.length;
     },
-    ...mapState(['isPlaying','playingList','idx'])
+    ...mapState(["isPlaying", "playingList", "idx"]),
   },
   created() {
     this.updatePlayingList();

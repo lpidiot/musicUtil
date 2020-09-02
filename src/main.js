@@ -101,7 +101,7 @@ const store = new Vuex.Store({
   state: {
     isPlaying: false, //是否正在播放
     playingList: [], //当前播放列表
-    idx: -1, //播放列表对应的索引
+    idx: 0, //播放列表对应的索引
   },
   mutations: {
     sw(state) {
@@ -133,6 +133,12 @@ const store = new Vuex.Store({
     idx(state) {
       return state.idx
     },
+    currentSongCover(state){
+      if(state.playingList.length>0){
+        return state.playingList[state.idx].cover;
+      }
+      return require("@/assets/images/cover.jpg");
+    }
 
   }
 })
