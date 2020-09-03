@@ -305,7 +305,7 @@ Vue.prototype.$getMusic = async function (songId) {
 }
 
 
-Vue.prototype.$addMusic = function (music) {
+Vue.prototype.$addMusic = function (music,asc) {
   if (music) {
     var originData = util.localUtil("playingList", "{}");
     if (originData.songList == undefined) {
@@ -322,7 +322,11 @@ Vue.prototype.$addMusic = function (music) {
         return;
       }
     }
-    originData.songList.unshift(music);
+    if(asc){
+      originData.songList.push(music);
+    }else{
+      originData.songList.unshift(music);
+    }
     store.commit('updateList',originData.songList);
     store.commit('updateIdx',originData.index);
     util.localUtil("playingList", originData);

@@ -99,33 +99,66 @@ export default {
 
   methods: {
     async playSong(song) {
-      console.log('song='+song.mid);
+      console.log("song=" + song.mid);
       if (this.isLocal) {
         var idx = this.$util.findSongByMid(song.mid);
-        console.log('idx='+idx);
+        console.log("idx=" + idx);
         this.context.$parent.$parent.updatePlayingList(idx, true);
         this.context.$parent.$parent.playerTrigger();
         return;
       }
-      var url = await this.$getMusic(song.mid);
-      if (url) {
-        var coverImg = this.$util.getAlbumImg(song.album.mid);
-        var goal = {
-          songId: song.mid,
-          songName: song.name,
-          singer: song.singer[0],
-          album: {
-            albumName: song.album.name,
-            albummId: song.album.mid,
-          },
-          cover: coverImg,
-          url: url,
-        };
-        this.$addMusic(goal);
-        this.context.$parent.$parent.updatePlayingList(null, true);
-        this.context.$parent.$parent.playerTrigger();
-        //这个确实有点离谱...用vuex的话感觉更离谱 先这样吧
+      var songList = this.songList;
+      var idx = null;
+      var localData = this.$util.localUtil("playingList"); //临时备份下出错后恢复
+
+      this.$util.localUtil("playingList", {}); //切歌清空下数据
+      try {
+        for (var i = 0; i < songList.length; i++) {
+          if (songList[i].mid == song.mid) {
+            idx = i;
+          }
+          var coverImg = this.$util.getAlbumImg(songList[i].album.mid);
+          var goal = {
+            songId: songList[i].mid,
+            songName: songList[i].name,
+            singer: songList[i].singer[0],
+            album: {
+              albumName: songList[i].album.name,
+              albummId: songList[i].album.mid,
+            },
+            cover: coverImg,
+            url: "mark",
+          };
+          this.$addMusic(goal,'asc');
+        }
+      } catch (e) {
+        console.log("覆盖当前播放列表失败");
+        this.$util.localUtil("playingList", localData); //恢复数据
       }
+      if (idx != null) {
+        this.context.$parent.$parent.updatePlayingList(idx, true);
+        this.context.$parent.$parent.playerTrigger();
+      }
+
+      // var url = await this.$getMusic(song.mid);
+      // if (url) {
+      //   var coverImg = this.$util.getAlbumImg(song.album.mid);
+      //   var goal = {
+      //     songId: song.mid,
+      //     songName: song.name,
+      //     singer: song.singer[0],
+      //     album: {
+      //       albumName: song.album.name,
+      //       albummId: song.album.mid,
+      //     },
+      //     cover: coverImg,
+      //     url: url,
+      //   };
+      //   this.$addMusic(goal);
+      //   this.context.$parent.$parent.updatePlayingList(null, true);
+      //   this.context.$parent.$parent.playerTrigger();
+      //   //这个确实有点离谱...用vuex的话感觉更离谱 先这样吧
+      // }
     },
     songDetailSwitch(info) {
       console.log(info);
@@ -418,9 +451,11 @@ export default {
         this.isEnded = true; //本地不存在加载
       }
     },
-    isCurrentSong(mid){
-      var currentSong=this.context.$store.getters.playingList[this.context.$store.getters.idx];
-      if(currentSong.songId==mid){
+    isCurrentSong(mid) {
+      var currentSong = this.context.$store.getters.playingList[
+        this.context.$store.getters.idx
+      ];
+      if (currentSong.songId == mid) {
         return true;
       }
       return false;
