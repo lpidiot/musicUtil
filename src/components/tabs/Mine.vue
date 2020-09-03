@@ -25,28 +25,23 @@
         <div class="songLIstInfo">播放列表</div>
       </div>
 
-      <div class="songListBox">
+      <div class="songListBox" v-for="item in mySongList" :key="item.id" @click="openSongList(item.id)">
         <div class="coverBox" :style="conheight">
-          <img src="@/assets/images/cover.jpg" alt />
+          <img :src="item.logo||'@/assets/images/cover.jpg'" alt />
         </div>
-      </div>
-
-      <div class="songListBox">
-        <div class="coverBox" :style="conheight">
-          <img src="@/assets/images/cover.jpg" alt />
-        </div>
-      </div>
-
-      <div class="songListBox">
-        <div class="coverBox" :style="conheight">
-          <img src="@/assets/images/cover.jpg" alt />
-        </div>
+        <div class="songLIstInfo">{{item.songListName}}</div>
       </div>
     </div>
-    <MessageBox ref="importSong" height="200px" headText="导入歌单" :cancel="mesBoxClick" :confirm="importSongList">
+    <MessageBox
+      ref="importSong"
+      height="200px"
+      headText="导入歌单"
+      :cancel="mesBoxClick"
+      :confirm="importSongList"
+    >
       <div class="importContainer">
         <div class="importBox">
-          <input type="text" v-model="songListUrl" placeholder="输入歌单url"/>
+          <input type="text" v-model="songListUrl" placeholder="输入歌单url" />
         </div>
       </div>
     </MessageBox>
@@ -64,19 +59,78 @@ export default {
       conheight: {
         height: "",
       },
-      songListUrl:""
+      songListUrl: "",
+      mySongList: [],
     };
   },
   methods: {
     openLocalSongList() {
       this.$showSongList("local", null, this);
     },
-    importSongList(){
-      var url=this.songListUrl;
-      console.log(url);
-      const loading=this.$getLoading('处理中。。。');
+    async importSongList() {
+      var url = this.songListUrl.replace(/ /g, "");
+      if (url == "") {
+        return;
+      }
+      var headNum = url.indexOf("id=");
+      if (headNum < 0) {
+        this.$message("url格式错误");
+        return;
+      }
+      const loading = this.$getLoading("处理中。。。");
+      var foot = url.substring(headNum);
+      var id = foot.substring(3, foot.indexOf("&"));
+      var myList = this.$util.localUtil("mySongList");
+
+      var result = await this.$getData(
+        "https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg",
+        {
+          header: {
+            origin: "https://y.qq.com",
+            referer: "https://y.qq.com/n/yqq/playlist/" + id + ".html",
+          },
+          params: {
+            type: "1",
+            json: "1",
+            utf8: "1",
+            onlysong: "0",
+            new_format: "1",
+            disstid: id,
+            loginUin: "1195188852",
+            hostUin: "0",
+            format: "json",
+            inCharset: "utf8",
+            outCharset: "utf-8",
+            notice: "0",
+            platform: "yqq.json",
+            needNewCode: "0",
+          },
+        },
+        false
+      );
+
+      if (result) {
+        var data = result.cdlist[0];
+        if (data) {
+          myList.push({
+            id: id,
+            songListName: data.dissname,
+            author: data.nickname,
+            describe: data.desc,
+            logo: data.logo,
+          });
+        }
+      }
+      if (myList.length > 0) {
+        this.$util.localUtil("mySongList", myList);
+        this.mySongList = myList;
+      }
       this.mesBoxClick();
       loading.close();
+      //this.$showSongList("songList", id, this);
+    },
+    openSongList(id) {
+      this.$showSongList("songList", id, this);
     },
     getHeight() {
       this.conheight.height = this.$refs.qqq.offsetWidth + "px";
@@ -87,6 +141,7 @@ export default {
   },
   created() {
     window.addEventListener("resize", this.getHeight);
+    this.mySongList = this.$util.localUtil("mySongList");
   },
   mounted() {
     this.getHeight;

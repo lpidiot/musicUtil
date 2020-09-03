@@ -17,7 +17,7 @@ import {
   Message
 } from 'element-ui';
 Vue.component(Message.name, Message)
-
+Vue.prototype.$message = Message
 
 //引入可能用到的方法
 import util from './assets/js/util' // 引入

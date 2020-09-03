@@ -38,7 +38,12 @@
         <div class="list-item" v-for="item in songList" :key="item.id" @click="playSong(item)">
           <div :class="['content',isCurrentSong(item.mid)?'active':'']">
             <div class="info">{{item.name}}</div>
-            <div class="subInfo">{{item.singer[0].name+" - "+item.album.name}}</div>
+            <div class="subInfo">
+              <div class="subName-icon" v-if="item.pay.pay_down">
+                <img src="@/assets/images/vip.png" />
+              </div>
+              {{item.singer[0].name+" - "+item.album.name}}
+            </div>
           </div>
 
           <div class="toolbar-box">
@@ -129,7 +134,7 @@ export default {
             cover: coverImg,
             url: "mark",
           };
-          this.$addMusic(goal,'asc');
+          this.$addMusic(goal, "asc");
         }
       } catch (e) {
         console.log("覆盖当前播放列表失败");
@@ -689,13 +694,27 @@ export default {
         color: rgba(0, 0, 0, 1);
       }
       .subInfo {
-        word-break: break-all;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1;
-        overflow: hidden;
-        color: rgb(101, 119, 134);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        .subName {
+          word-break: break-all;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 1;
+          overflow: hidden;
+          color: rgb(101, 119, 134);
+        }
+        .subName-icon {
+          width: 20px;
+          height: 18px;
+          img {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+          }
+        }
       }
     }
     .toolbar-box {
