@@ -174,14 +174,14 @@ export default {
           {
             id: 1,
             title: "下一首播放",
-            imgUrl: require("@/assets/images/share2.png"),
-            fun: this.aaa,
+            imgUrl: require("@/assets/images/nextPlay.png"),
+            disable: true,
           },
           {
             id: 2,
             title: "收藏到歌单",
-            imgUrl: require("@/assets/images/download.png"),
-            fun: this.aaa,
+            imgUrl: require("@/assets/images/sc.png"),
+            disable: true,
           },
           {
             id: 3,

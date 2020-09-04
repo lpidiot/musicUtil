@@ -107,11 +107,13 @@
 <script>
 import VueAudio from "../other/VueAudio";
 import Wrapper from "../other/Wrapper";
+import ListGroup from "../other/ListGroup";
 import { mapState } from "vuex";
 export default {
   components: {
     VueAudio,
     Wrapper,
+    ListGroup
   },
   data() {
     return {
@@ -230,13 +232,13 @@ export default {
           {
             id: 1,
             title: "下一首播放",
-            imgUrl: require("@/assets/images/share2.png"),
+            imgUrl: require("@/assets/images/nextPlay.png"),
             disable: true,
           },
           {
             id: 2,
             title: "收藏到歌单",
-            imgUrl: require("@/assets/images/download.png"),
+            imgUrl: require("@/assets/images/sc.png"),
             disable: true,
           },
           {
@@ -244,7 +246,7 @@ export default {
             title: "下载",
             imgUrl: require("@/assets/images/download.png"),
             fun: function () {
-              //window.open(info.songmid);
+              window.open(currentSong.url);
             },
           },
         ],
@@ -253,21 +255,15 @@ export default {
             id: 1,
             title: "歌手" + " (" + currentSong.singer.name + ")",
             imgUrl: require("@/assets/images/singer2.png"),
-            fun: function () {
-              //console.log(info);
-              that.$refs.songDetail.close();
-              that.$showSongList("singer", currentSong.singer.mid);
-            },
+            disable: true,
+            
           },
           {
             id: 2,
-            title: "专辑" + " (" + currentSong.album.albumname + ")",
+            title: "专辑" + " (" + currentSong.album.albumName + ")",
             imgUrl: require("@/assets/images/cd.png"),
-            fun: function () {
-              that.$refs.option.close();
-              that.$showSongList(null, currentSong.album.albummId);
-              //this.$showSongList(info.albummid);
-            },
+            disable: true,
+            
           },
           {
             id: 3,
@@ -278,7 +274,7 @@ export default {
         ],
       ];
       this.barList = bars;
-      //this.$refs.recentSongList.close();
+      this.$refs.recentSongList.close();
       this.$refs.songOpt.sw();
     },
     playSong(mid) {

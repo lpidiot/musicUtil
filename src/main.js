@@ -280,7 +280,7 @@ Vue.prototype.$getMusic = async function (songId) {
   }
   var sign = util.getSign(data);
   var result = await this.$post(
-    "http://127.0.0.1:9900/music/api/getMusic", {
+    "http://101.200.165.62:8080/music/api/getMusic", {
       url: 'https://u.y.qq.com/cgi-bin/musics.fcg',
       params: {
         "-": "getplaysongvkey734640045891823",
@@ -337,7 +337,7 @@ Vue.prototype.$getData = function (url, params, load) {
   }
   //console.log('ok');
   return this.$post(
-    "http://127.0.0.1:9900/music/api/getWebData", params, load
+    "http://101.200.165.62:8080/music/api/getWebData", params, load
   ).catch((err) => {
     console.log(err);
     return null;
@@ -361,7 +361,7 @@ Vue.directive('focus', {
   }
 });
 
-axios.post("http://127.0.0.1:9900/music/getToken", {
+axios.post("http://101.200.165.62:8080/music/getToken", {
   username: "admin",
   password: "admin",
 }).then(res => {
