@@ -69,7 +69,7 @@ export default {
     theControlList: {
       type: String,
       default: "",
-    }
+    },
   },
   name: "VueAudio",
   data() {
@@ -134,7 +134,25 @@ export default {
     },
     // 开始播放
     async startPlay() {
+      var src = this.$refs.audio.src;
+      if (src.substring(src.length - 4) == "mark") {
+        this.reGet();
+      }
       this.$refs.audio.play();
+    },
+    async reGet() {
+      var localData = this.$util.localUtil("playingList", "{}");
+      if (localData.songList) {
+        var result = await this.$getMusic(
+          localData.songList[localData.index].songId
+        );
+        if (result) {
+          localData.songList[localData.index].url = result;
+          this.$store.commit("updateList", localData.songList);
+          this.$util.localUtil("playingList", localData);
+        }
+      }
+      this.audio.waiting = true;
     },
     // 暂停
     pausePlay() {
@@ -155,18 +173,7 @@ export default {
     async onError() {
       console.log("error");
       //链接失效 重新获取当前音乐链接
-      var localData = this.$util.localUtil("playingList", "{}");
-      if (localData.songList) {
-        var result = await this.$getMusic(
-          localData.songList[localData.index].songId
-        );
-        if (result) {
-          localData.songList[localData.index].url = result;
-          this.$store.commit('updateList',localData.songList);
-          this.$util.localUtil("playingList", localData);
-        }
-      }
-      this.audio.waiting = true;
+      this.reGet();
     },
     // 当音频开始等待
     onWaiting(res) {
@@ -189,7 +196,6 @@ export default {
           item.pause();
         }
       });
-
     },
     // 当timeupdate事件大概每秒一次，用来更新音频流的当前播放时间
     onTimeupdate(res) {

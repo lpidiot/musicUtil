@@ -1,8 +1,13 @@
 <template>
   <div>
     <div class="listGroup" v-if="isSingle">
-      <div v-for="item in barList" :key="item.id" class="list" @click.prevent="item.fun?item.fun():''">
-        <div :class="item.disable?'disable':''">{{item.title}}</div>
+      <div
+        v-for="item in barList"
+        :key="item.id"
+        class="list"
+        @click.prevent="item.fun?item.fun():''"
+      >
+        <div :class="['info',item.disable?'disable':'']">{{item.title}}</div>
         <div class="list-img" :style="{width:width,height:height}">
           <img :src="item.imgUrl" />
         </div>
@@ -11,7 +16,7 @@
 
     <div class="listGroup" v-else v-for="(arr,idx) in barList" :key="idx">
       <div v-for="item in arr" :key="item.id" class="list" @click.prevent="item.fun?item.fun():''">
-        <div :class="item.disable?'disable':''">{{item.title}}</div>
+        <div :class="['info',item.disable?'disable':'']">{{item.title}}</div>
         <div class="list-img" :style="{width:width,height:height}">
           <img :src="item.imgUrl" />
         </div>
@@ -52,8 +57,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.disable{
-  color:#6c6c6c;
+.disable {
+  color: #6c6c6c;
 }
 .listGroup {
   display: flex;
@@ -70,6 +75,17 @@ export default {
     color: black;
     padding: 8px 10px;
     margin-bottom: 2px;
+    .info {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -ms-text-overflow: ellipsis;
+      display: box;
+      display: -webkit-box;
+      line-clamp: 1;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+    }
+
     .list-img {
       img {
         width: 100%;

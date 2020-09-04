@@ -39,10 +39,11 @@
           <div :class="['content',isCurrentSong(item.mid)?'active':'']">
             <div class="info">{{item.name}}</div>
             <div class="subInfo">
-              <div class="subName-icon" v-if="item.pay.pay_down">
+              <div class="subName-icon" v-if="item.pay&&item.pay.pay_down">
                 <img src="@/assets/images/vip.png" />
               </div>
-              {{item.singer[0].name+" - "+item.album.name}}
+              <div class="singleLine">{{item.singer[0].name+" - "+item.album.name}}</div>
+              
             </div>
           </div>
 
@@ -697,6 +698,10 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -ms-text-overflow: ellipsis;
+       
         .subName {
           word-break: break-all;
           text-overflow: ellipsis;

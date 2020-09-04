@@ -405,12 +405,11 @@ export default {
         mark = "single";
       }
       this.activeName = mark;
-      this.searchText = val;
       this.initHistoryData();
       //========
+
       //展开搜索页面
       this.watchActive();
-
       //this.getSearchResult(val);
       //添加搜索历史
 
@@ -519,8 +518,9 @@ export default {
     },
     //清空历史搜索
     clearHistory() {
-      this.dialogVisible = true;
-      return;
+      this.$util.localUtil("historyTags", []);
+      this.historyTags = [];
+      this.showTagBar = false;
     },
     //获取搜索结果
     async getSearchResult(val) {
@@ -807,7 +807,7 @@ export default {
       this.goalHistory = goal;
       this.initHistoryData();
     },
- 
+
     immediate: true,
   },
   created() {

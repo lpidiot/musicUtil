@@ -51,6 +51,9 @@ Vue.prototype.$axios = axios
 //   return Promise.reject(error);
 // });
 
+
+
+
 axios.interceptors.response.use(
   (response) => {
     //console.log(response);
@@ -59,13 +62,8 @@ axios.interceptors.response.use(
         var goal = JSON.parse(response.data.data);
         return goal;
       } catch (e) {
-        //json解析出错 结果可能为字符串
-        //url response.config.url
-        //status response.config.status
-        if (typeof (response.data.data) == 'string') {
-          return response.data.data;
-        }
-        return null;
+
+        return response.data.data;
       }
     } else if (typeof (response.data.isok) == 'boolean') {
       //处理
@@ -133,8 +131,8 @@ const store = new Vuex.Store({
     idx(state) {
       return state.idx
     },
-    currentSongCover(state){
-      if(state.playingList.length>0){
+    currentSongCover(state) {
+      if (state.playingList.length > 0) {
         return state.playingList[state.idx].cover;
       }
       return require("@/assets/images/cover.jpg");
@@ -144,8 +142,8 @@ const store = new Vuex.Store({
 })
 
 Vue.prototype.$getLoading = function (text) {
-  if(!text){
-    text="正在加载...";
+  if (!text) {
+    text = "正在加载...";
   }
   var loading = this.$loading({
     // 声明一个loading对象
@@ -305,7 +303,7 @@ Vue.prototype.$getMusic = async function (songId) {
 }
 
 
-Vue.prototype.$addMusic = function (music,asc) {
+Vue.prototype.$addMusic = function (music, asc) {
   if (music) {
     var originData = util.localUtil("playingList", "{}");
     if (originData.songList == undefined) {
@@ -322,13 +320,13 @@ Vue.prototype.$addMusic = function (music,asc) {
         return;
       }
     }
-    if(asc){
+    if (asc) {
       originData.songList.push(music);
-    }else{
+    } else {
       originData.songList.unshift(music);
     }
-    store.commit('updateList',originData.songList);
-    store.commit('updateIdx',originData.index);
+    store.commit('updateList', originData.songList);
+    store.commit('updateIdx', originData.index);
     util.localUtil("playingList", originData);
   }
 }
@@ -347,6 +345,8 @@ Vue.prototype.$getData = function (url, params, load) {
 }
 
 
+
+
 Vue.config.productionTip = false;
 
 Vue.directive('focus', {
@@ -361,25 +361,34 @@ Vue.directive('focus', {
   }
 });
 
-
-new Vue({
-  router,
-  store,
-  metaInfo() {
-    return {
-      title: 'music',
-      meta: [{
-        name: "viewport",
-        content: 'initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width'
-      }]
-    }
-  },
-  directives: {
-    focus: {
-      inserted: function (el) {
-        el.focus();
+axios.post("http://127.0.0.1:9900/music/getToken", {
+  username: "admin",
+  password: "admin",
+}).then(res => {
+  console.log(res);
+  var token = res.token;
+  axios.defaults.headers.common["token"] = token;
+  new Vue({
+    router,
+    store,
+    metaInfo() {
+      return {
+        title: 'music',
+        meta: [{
+          name: "viewport",
+          content: 'initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width'
+        }]
       }
-    }
-  },
-  render: h => h(App)
-}).$mount('#app')
+    },
+    directives: {
+      focus: {
+        inserted: function (el) {
+          el.focus();
+        }
+      }
+    },
+    render: h => h(App)
+  }).$mount('#app')
+},error=>{
+  alert('服务器没有响应=忘了我吧');
+});

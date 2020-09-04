@@ -12,7 +12,7 @@
               class="head-wyy-title-subtit"
             >{{playingList[idx]?playingList[idx].singer.singerName:''}}</div>
           </div>
-          <div class="head-wyy-btn">
+          <div class="head-wyy-btn" @click="openOption">
             <img src="@/assets/images/option.png" alt />
           </div>
         </div>
@@ -97,6 +97,9 @@
           </div>
         </div>
       </wrapper>
+      <wrapper ref="songOpt" :filter="true">
+        <ListGroup :barList="barList"></ListGroup>
+      </wrapper>
     </div>
   </transition>
 </template>
@@ -113,6 +116,7 @@ export default {
   data() {
     return {
       show: false,
+      barList: [],
     };
   },
   methods: {
@@ -215,7 +219,67 @@ export default {
     },
 
     recentSong() {
+      this.$refs.songOpt.close();
       this.$refs.recentSongList.sw();
+    },
+    openOption() {
+      const that = this;
+      var currentSong=this.playingList[this.idx];
+      var bars = [
+        [
+          {
+            id: 1,
+            title: "下一首播放",
+            imgUrl: require("@/assets/images/share2.png"),
+            disable: true,
+          },
+          {
+            id: 2,
+            title: "收藏到歌单",
+            imgUrl: require("@/assets/images/download.png"),
+            disable: true,
+          },
+          {
+            id: 3,
+            title: "下载",
+            imgUrl: require("@/assets/images/download.png"),
+            fun: function () {
+              //window.open(info.songmid);
+            },
+          },
+        ],
+        [
+          {
+            id: 1,
+            title: "歌手" + " (" + currentSong.singer.name + ")",
+            imgUrl: require("@/assets/images/singer2.png"),
+            fun: function () {
+              //console.log(info);
+              that.$refs.songDetail.close();
+              that.$showSongList("singer", currentSong.singer.mid);
+            },
+          },
+          {
+            id: 2,
+            title: "专辑" + " (" + currentSong.album.albumname + ")",
+            imgUrl: require("@/assets/images/cd.png"),
+            fun: function () {
+              that.$refs.option.close();
+              that.$showSongList(null, currentSong.album.albummId);
+              //this.$showSongList(info.albummid);
+            },
+          },
+          {
+            id: 3,
+            title: "信息",
+            imgUrl: require("@/assets/images/info.png"),
+            disable: true,
+          },
+        ],
+      ];
+      this.barList = bars;
+      //this.$refs.recentSongList.close();
+      this.$refs.songOpt.sw();
     },
     playSong(mid) {
       var idx = this.$util.findSongByMid(mid);

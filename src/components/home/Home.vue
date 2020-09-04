@@ -37,7 +37,10 @@
 </template>
 
 <script>
+//import Wrapper from "../other/Wrapper";
 export default {
+   components: {
+  },
   data() {
     return {
       activeName: ""
@@ -97,8 +100,7 @@ export default {
       //     data: data,
       //   },
       // });
-      var result = await this.$getMusic("002jD2Q83NmcPJ");
-      console.log(result);
+      
     }
   },
   computed:{
