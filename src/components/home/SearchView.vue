@@ -49,12 +49,12 @@
 
               <li v-for="(song,idx) in searchResult" :key="page*15+idx" @click="startPlay(song)">
                 <div class="musicInfo">
-                  <div class="musicName">{{song.songname}}</div>
+                  <div class="musicName">{{song.songname||'数据错误'}}</div>
                   <div class="subName">
                     <div class="subName-icon" v-if="song.pay.paydownload">
                       <img src="@/assets/images/vip.png" />
                     </div>
-                    <div class="subName-content">{{song.singer[0].name}}</div>
+                    <div class="subName-content">{{song.singer[0].name||'数据错误'}}</div>
                   </div>
                 </div>
                 <div class="toolBar">
@@ -389,11 +389,14 @@ export default {
       this.historyTags = historyTags.splice(0, tagNum);
     },
     //切换到search并刷新列表
-    watchActive() {
+    watchActive(val) {
+      console.log(val);
+      this.flag = true;
       this.isEnded = false;
-      this.page = 0;
-      this.getSearchResult(this.searchText);
+      this.page = 1;
+      this.getSearchResult(val);
       this.currentContent = "search";
+      console.log(this.currentContent);
     },
     //展开搜索内容详细
     openSearchDetail(mark, val, e) {
@@ -401,7 +404,7 @@ export default {
       // return;
       //为obj就是从keyup
       if (typeof mark == "object") {
-        val = this.searchText.trim();
+        val = this.searchText;
         mark = "single";
       }
       this.activeName = mark;
@@ -409,7 +412,7 @@ export default {
       //========
 
       //展开搜索页面
-      this.watchActive();
+      this.watchActive(val);
       //this.getSearchResult(val);
       //添加搜索历史
 
@@ -514,7 +517,7 @@ export default {
       this.currentContent = "search";
       this.searchText = val.name;
       this.activeName = val.type ? val.type : "single";
-      this.watchActive();
+      this.watchActive(this.searchText);
     },
     //清空历史搜索
     clearHistory() {
@@ -528,7 +531,7 @@ export default {
       this.isEnded = false;
       var remoteplace = "txt.yqq.song";
       var result;
-      if (this.page == 0) {
+      if (this.page == 1) {
         this.searchResult = [];
         this.searchResult_album = [];
         this.searchResult_songList = [];
@@ -541,9 +544,9 @@ export default {
             params: {
               p: self.page++, //页数
               n: 15, //每页数据数量
-              w: val,
+              w: val.replace(/ /g,"%20"),
               format: "json",
-              remoteplace: "", //获取类型 单曲/专辑...
+              remoteplace: "txt.yqq.center", //获取类型 单曲/专辑...
             },
           },
           true
@@ -551,11 +554,11 @@ export default {
         //console.dir(result);
         if (result) {
           if (typeof result == "string") {
-            if (result.substring(0, 9).indexOf("call")) {
+            if (result.substring(0, 9).indexOf("call") >= 0) {
               result = result.substring(9, result.length - 1);
               result = JSON.parse(result);
             }
-            // console.dir(result);
+             console.dir(result);
           }
 
           var goalData = result.data.song.list;
@@ -590,7 +593,7 @@ export default {
         if (result) {
           console.dir(result);
           if (typeof result == "string") {
-            if (result.substring(0, 9).indexOf("call")) {
+            if (result.substring(0, 9).indexOf("call") >= 0) {
               result = result.substring(9, result.length - 1);
               result = JSON.parse(result);
             }
@@ -624,7 +627,7 @@ export default {
         );
         if (result) {
           if (typeof result == "string") {
-            if (result.substring(0, 9).indexOf("call")) {
+            if (result.substring(0, 9).indexOf("call") >= 0) {
               result = result.substring(9, result.length - 1);
               result = JSON.parse(result);
             }

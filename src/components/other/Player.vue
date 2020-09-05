@@ -113,7 +113,7 @@ export default {
   components: {
     VueAudio,
     Wrapper,
-    ListGroup
+    ListGroup,
   },
   data() {
     return {
@@ -226,7 +226,7 @@ export default {
     },
     openOption() {
       const that = this;
-      var currentSong=this.playingList[this.idx];
+      var currentSong = this.playingList[this.idx];
       var bars = [
         [
           {
@@ -256,14 +256,12 @@ export default {
             title: "歌手" + " (" + currentSong.singer.name + ")",
             imgUrl: require("@/assets/images/singer2.png"),
             disable: true,
-            
           },
           {
             id: 2,
             title: "专辑" + " (" + currentSong.album.albumName + ")",
             imgUrl: require("@/assets/images/cd.png"),
             disable: true,
-            
           },
           {
             id: 3,
@@ -307,6 +305,17 @@ export default {
       }
     },
   },
+  watch: {
+    show(val) {
+      if (val) {
+        document
+          .querySelector("body")
+          .setAttribute("style", " overflow: hidden;");
+      } else {
+        document.querySelector("body").removeAttribute("style");
+      }
+    },
+  },
   computed: {
     hg() {
       var s = ["player-container"];
@@ -317,7 +326,7 @@ export default {
         localStorage.setItem("isSafari", 1);
         return ["player-container", "safariheight"];
       }
-      return ["player-container"];
+      return ["player-container","fullheight"];
     },
     bgi() {
       if (this.playingList[this.idx]) {
@@ -423,10 +432,16 @@ export default {
   position: absolute;
   background-color: #c5c5c5;
   top: 0;
+  bottom: 0;
+}
+.safariheight{
+  height: calc(100vh - 75px);
+}
+.fullheight{
+  height: 100vh;
 }
 .player-container {
   width: 100%;
-  height: 100vh;
   -webkit-backdrop-filter: blur(120px);
   backdrop-filter: blur(120px);
   transition: 0.5s ease;

@@ -66,7 +66,7 @@
         >数据全部加载完毕</div>
       </div>
 
-      <wrapper ref="songDetail" :filter="true">
+      <wrapper ref="songDetail">
         <ListGroup :barList="barList"></ListGroup>
       </wrapper>
     </div>

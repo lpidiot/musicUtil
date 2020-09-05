@@ -335,9 +335,10 @@ Vue.prototype.$getData = function (url, params, load) {
   if (!load) {
     load = false;
   }
+  //http://101.200.165.62:8080
   //console.log('ok');
   return this.$post(
-    "http://101.200.165.62:8080/music/api/getWebData", params, load
+    "http://127.0.0.1:9900/music/api/getWebData", params, load
   ).catch((err) => {
     console.log(err);
     return null;
@@ -360,8 +361,9 @@ Vue.directive('focus', {
 
   }
 });
+//axios.post("http://101.200.165.62:8080/music/getToken", {
 
-axios.post("http://101.200.165.62:8080/music/getToken", {
+axios.post("http://127.0.0.1:9900/music/getToken", {
   username: "admin",
   password: "admin",
 }).then(res => {
