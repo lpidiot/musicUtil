@@ -36,7 +36,7 @@
       mode="out-in"
     >-->
     <div class="headTopMargin" v-if="currentContent=='search'">
-      <el-tabs stretch v-model="activeName" @tab-click="watchActive">
+      <el-tabs stretch v-model="activeName" @tab-click="watchActive(searchText)">
         <el-tab-pane label="单曲" name="single">
           <div class="music-box">
             <ul ref="tab_single">
