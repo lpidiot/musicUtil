@@ -51,7 +51,6 @@
           </li>
         </ul>
 
-        <div style="background-color:#325423; padding:50px;">asdsds</div>
       </div>
       <!-- /歌单区域 -->
     </div>

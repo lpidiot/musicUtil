@@ -618,7 +618,7 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 0.5px #c1c1c1 solid;
+    border-bottom: 1px #c1c1c1 solid;
     padding: 0 10px;
     .info {
       color: black;
