@@ -458,6 +458,7 @@ export default {
       }
     },
     isCurrentSong(mid) {
+      console.log(this.context);
       var currentSong = this.context.$store.getters.playingList[
         this.context.$store.getters.idx
       ];

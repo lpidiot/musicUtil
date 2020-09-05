@@ -696,7 +696,7 @@ export default {
       }
     },
     openSongListDetail(mark, val) {
-      this.$showSongList(mark, val);
+      this.$showSongList(mark, val,this);
     },
     async downloadSong(songmid) {
       var result = await this.$getMusic(songmid);
