@@ -99,48 +99,18 @@ export default {
       //     data: data,
       //   },
       // });
-      var result = await this.$getData(
-        "https://c.y.qq.com/soso/fcgi-bin/client_search_cp",
-        {
-          header: {
-            origin: 'https://y.qq.com',
-            cookie:'pgv_pvi=8605431808; pgv_pvid=6605262745; ts_uid=1239952281; ptui_loginuin=1195188852; RK=I0AxlGKHba; ptcz=77e89dcb9d3223f38300285f48686d04900f5a28c10b8479d0557016bd643683; psrf_qqrefresh_token=6CE28D629A55C5C3B2FA5201F9BBE76E; psrf_qqaccess_token=69454B3F0A42B668866D7C0603319016; euin=oK6q7K6FNeckoc**; psrf_qqunionid=; tmeLoginType=2; uin=1195188852; psrf_qqopenid=2CC58CEAF778A2A3A8179F38E02DED0F; yq_index=0; ts_refer=www.baidu.com/link; qqmusic_key=Q_H_L_24MNIz50eu1BPF7zvAJmn_5gMPnH2gG-hw7_AQNrDDyfW2ImfxaTcB3AZ1GcgV8; qm_keyst=Q_H_L_24MNIz50eu1BPF7zvAJmn_5gMPnH2gG-hw7_AQNrDDyfW2ImfxaTcB3AZ1GcgV8; psrf_access_token_expiresAt=1607009377; psrf_musickey_createtime=1599233377; userAction=1; yqq_stat=0; pgv_info=ssid=s1217192781; pgv_si=s8435678208; ts_last=y.qq.com/portal/search.html',
-            referer: "https://y.qq.com/portal/search.html",
-          },
-          params: {
-            ct: 24,
-            qqmusic_ver: "1298",
-            new_json: 1,
-            remoteplace: "txt.yqq.center",
-            searchid: "39881661903180678",
-            t: 0,
-            aggr: 1,
-            cr: 1,
-            catZhida: 1,
-            lossless: 0,
-            flag_qc: 0,
-            p: 1,
-            n: 10,
-            w: "take%20a%20bow",
-            g_tk_new_20200303: "2061076798",
-            g_tk: "2061076798",
-            loginUin: "1195188852",
-            hostUin: "0",
-            format: "json",
-            inCharset: "utf8",
-            outCharset: "utf-8",
-            notice: 0,
-            platform: "yqq.json",
-            needNewCode: 0,
-          },
-        },
-        true
-      );
-      if (result.substring(0, 9).indexOf("call") >= 0) {
-              result = result.substring(9, result.length - 1);
-              result = JSON.parse(result);
-            }
-      console.log(result);
+
+      
+      // var aaa="MusicJsonCallback([1,2,3,5,56,4,4,3,23,2,2])";
+      
+      //  if (typeof(aaa) == "string") {
+      //       var a=aaa.substring(0, 20);
+      //       if (a.indexOf("allback") >= 0) {
+      //         aaa = aaa.substring(a.indexOf("allback")+8, aaa.length - 1);
+      //         aaa = JSON.parse(aaa);
+      //       }
+      //        console.dir(aaa);
+      //     }
     },
   },
   computed: {},

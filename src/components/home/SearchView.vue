@@ -403,7 +403,7 @@ export default {
       // console.log(e);
       // return;
       //为obj就是从keyup
-      if (typeof mark == "object") {
+      if (typeof(mark) == "object") {
         val = this.searchText;
         mark = "single";
       }
@@ -544,7 +544,7 @@ export default {
             params: {
               p: self.page++, //页数
               n: 15, //每页数据数量
-              w: val.replace(/ /g,"%20"),
+              w: val.replace(/ /g, "%20"),
               format: "json",
               remoteplace: "txt.yqq.center", //获取类型 单曲/专辑...
             },
@@ -553,12 +553,16 @@ export default {
         );
         //console.dir(result);
         if (result) {
-          if (typeof result == "string") {
-            if (result.substring(0, 9).indexOf("call") >= 0) {
-              result = result.substring(9, result.length - 1);
+          if (typeof(result) == "string") {
+            var a = result.substring(0, 20);
+            if (a.indexOf("allback") >= 0) {
+              result = result.substring(
+                a.indexOf("allback") + 8,
+                result.length - 1
+              );
               result = JSON.parse(result);
             }
-             console.dir(result);
+            console.dir(result);
           }
 
           var goalData = result.data.song.list;
@@ -591,13 +595,16 @@ export default {
           true
         );
         if (result) {
-          console.dir(result);
-          if (typeof result == "string") {
-            if (result.substring(0, 9).indexOf("call") >= 0) {
-              result = result.substring(9, result.length - 1);
+          if (typeof(result) == "string") {
+            var a = result.substring(0, 20);
+            if (a.indexOf("allback") >= 0) {
+              result = result.substring(
+                a.indexOf("allback") + 8,
+                result.length - 1
+              );
               result = JSON.parse(result);
             }
-            // console.dir(result);
+            console.dir(result);
           }
 
           var goalData = result.data.list;
@@ -626,12 +633,16 @@ export default {
           true
         );
         if (result) {
-          if (typeof result == "string") {
-            if (result.substring(0, 9).indexOf("call") >= 0) {
-              result = result.substring(9, result.length - 1);
+          if (typeof(result) == "string") {
+            var a = result.substring(0, 20);
+            if (a.indexOf("allback") >= 0) {
+              result = result.substring(
+                a.indexOf("allback") + 8,
+                result.length - 1
+              );
               result = JSON.parse(result);
             }
-            // console.dir(result);
+            console.dir(result);
           }
 
           var goalData = result.data.album.list;
@@ -696,7 +707,7 @@ export default {
       }
     },
     openSongListDetail(mark, val) {
-      this.$showSongList(mark, val,this);
+      this.$showSongList(mark, val, this);
     },
     async downloadSong(songmid) {
       var result = await this.$getMusic(songmid);
